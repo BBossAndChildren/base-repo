@@ -23,6 +23,7 @@ docs/
 | 사용자가 가입하고 게임을 시작하기까지의 **화면 흐름** | `development/01-user-flow.md` |
 | 게임 안에서 벌어지는 **이야기 · 진행 단계** | `game/` |
 | AI 프롬프트를 **호출하는 API** (요청·응답 형식) | `development/03-api.md` |
-| AI 프롬프트의 **내용 · 의도 · 버전 변화** | `game/` |
+| `game/` 문서를 **프롬프트에 넣는 순서 · 파일 읽기 규칙** | `development/10-prompt-assembly.md` |
+| AI 프롬프트의 **내용 · 의도 · 버전 변화** | `game/` (시나리오 작가 담당) |
 | 게임 규칙을 **어떤 데이터로 저장하는지** | `development/04-database.md` |
 | 게임 규칙 **자체** (점수, 승패 조건) | `game/` |
