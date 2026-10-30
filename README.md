@@ -1,11 +1,43 @@
-# 뽀스와아이들 공동 작업 레포
+# <!-- 서비스 이름 --> — <!-- 한 줄 설명 -->
 
-## 최신 프로젝트 문서
+> 저장소 루트 README 뼈대. 모든 docs 를 채운 뒤 마지막에 요약해 작성한다.
+> 문서 폴더 안내: [docs/README.md](docs/README.md)
 
-[2026-10-30 통합 문서 묶음](docs/hackathon/2026-10-30/README.md)에서 통합 지침서, 오프라인 열람본, 원본 PDF와 다운로드 ZIP을 확인합니다.
+## 1. 프로젝트 개요
+### 문제 정의
+### 타겟 사용자
+### 핵심 시나리오
 
-- [통합 지침서](docs/hackathon/2026-10-30/코디세이-해커톤-통합지침서.md)
-- [전체 패키지 ZIP](docs/hackathon/2026-10-30/코디세이-해커톤-통합패키지.zip)
-- [협업 규칙](docs/CONTRIBUTING.md)
+## 2. 기술 스택
+| 구분 | 기술 |
+|------|------|
+| | |
 
-문서에는 자유 입력 진로·일상 시뮬레이션의 기획, 직업 자료 552건, AI 시제품 현황과 미검증 항목이 정리되어 있습니다. 실제 모델·Unity 통합·배포 완료 기록과는 구분합니다.
+## 3. 시스템 구조
+
+## 4. API 명세 (요약)
+상세: [docs/development/03-api.md](docs/development/03-api.md)
+
+## 5. DB 구조 (요약)
+상세: [docs/development/04-database.md](docs/development/04-database.md)
+
+## 6. 실행 방법
+### 로컬
+### 배포
+### 환경변수
+| 키 | 설명 |
+|----|------|
+| | |
+
+## 7. 민감정보 관리
+
+## 8. 팀 구성 · 역할
+
+## 9. 문서
+| 문서 | 내용 |
+|------|------|
+| [00-idea.md](docs/00-idea.md) | 아이디어 원문 |
+| [features.md](docs/development/features.md) | 기능 목록 |
+| [01-user-flow.md](docs/development/01-user-flow.md) | 사용자 흐름 |
+| [game/](docs/game/README.md) | 게임 콘텐츠 |
+| [CONTRIBUTING.md](docs/CONTRIBUTING.md) | 협업 규칙 |
