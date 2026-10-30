@@ -16,7 +16,7 @@
 3. **커밋** — `<type>(<scope>): <내용> #<이슈번호>` (type: feat fix hotfix refactor docs test style chore / scope: be, fe 또는 생략 / 한국어 50자 이내, 마침표 없음)
 4. **PR** — `.github/pull_request_template.md` 의 모든 섹션을 채운다. 제목은 커밋 형식과 같고, 본문에 `close #이슈번호`
 5. **확인** — 머지 전에 테스트 · lint · build 를 실제로 실행해 통과를 확인하고, PR 체크리스트를 모두 체크한다. 실패하면 머지하지 않는다
-6. **머지** — 승인 없이 작성자가 직접 머지한다. 머지 방식: 작업 PR(→ develop)·hotfix PR(→ main)은 **Squash and merge** (`gh pr merge --squash`, 커밋 제목은 PR 제목 그대로), 릴리스(develop → main)·동기화(main → develop) PR 은 **Create a merge commit** (`gh pr merge --merge`). 릴리스·동기화를 Squash 하면 두 브랜치 이력이 갈라지므로 절대 Squash 하지 않는다. base 는 일반 작업 `develop`, hotfix `main`. hotfix 머지 후에는 `main → develop` 반영 PR 을 이어서 만든다
+6. **머지** — 승인 없이 작성자가 직접 머지한다. 머지 방식: 작업 PR(→ develop)·hotfix PR(→ main)은 **Squash and merge** (`gh pr merge --squash`, 커밋 제목은 PR 제목 그대로), 릴리스(develop → main)·동기화(main → develop)·`docs → develop` PR 은 **Create a merge commit** (`gh pr merge --merge`). `docs` 는 머지 후에도 계속 쓰는 장기 브랜치라 삭제하지 않는다. 이런 PR 을 Squash 하면 두 브랜치 이력이 갈라지므로 절대 Squash 하지 않는다. base 는 일반 작업 `develop`, hotfix `main`. hotfix 머지 후에는 `main → develop` 반영 PR 을 이어서 만든다
 
 ## 절대 하지 말 것
 
