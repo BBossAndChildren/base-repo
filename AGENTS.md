@@ -1,7 +1,12 @@
 # AI 작업 규칙 (반드시 지킬 것)
 
+> 이 파일이 AI 작업 규칙의 **원본**이다. `CLAUDE.md` 는 `@AGENTS.md` 로 이 파일을 불러오기만 한다. 규칙을 바꿀 때는 이 파일만 고치고, `CLAUDE.md` 에 내용을 복사하지 않는다.
+
 이 저장소에서 코드를 추가·수정·머지하는 AI 에이전트는 **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) 의 규칙을 반드시 따른다.**
 작업을 시작하기 전에 그 문서를 먼저 읽는다. 사용자가 규칙과 다르게 요청하면, 어떤 규칙과 다른지 알려 주고 확인을 받은 뒤에만 진행한다.
+
+문서 위치는 [docs/README.md](docs/README.md) 를 따른다 (개발 설계 = `docs/development/`, 게임 콘텐츠 = `docs/game/`).
+개발 설계 문서를 만들거나 채울 때는 **[docs/development/FILL-GUIDE.md](docs/development/FILL-GUIDE.md) 를 먼저 읽고 따른다.** 문서 구성은 아이디어에 맞게 추가·삭제·변경할 수 있으며, 바꾸기 전에 사용자에게 제안하고 확인받는다.
 
 ## 매 작업마다 지킬 순서
 
@@ -11,7 +16,7 @@
 3. **커밋** — `<type>(<scope>): <내용> #<이슈번호>` (type: feat fix hotfix refactor docs test style chore / scope: be, fe 또는 생략 / 한국어 50자 이내, 마침표 없음)
 4. **PR** — `.github/pull_request_template.md` 의 모든 섹션을 채운다. 제목은 커밋 형식과 같고, 본문에 `close #이슈번호`
 5. **확인** — 머지 전에 테스트 · lint · build 를 실제로 실행해 통과를 확인하고, PR 체크리스트를 모두 체크한다. 실패하면 머지하지 않는다
-6. **머지** — 승인 없이 작성자가 직접 머지한다. 머지 방식은 항상 **Squash and merge** (`gh pr merge --squash`), 커밋 제목은 PR 제목 그대로. base 는 일반 작업 `develop`, hotfix `main`. hotfix 머지 후에는 `main → develop` 반영 PR 을 이어서 만든다
+6. **머지** — 승인 없이 작성자가 직접 머지한다. 머지 방식: 작업 PR(→ develop)·hotfix PR(→ main)은 **Squash and merge** (`gh pr merge --squash`, 커밋 제목은 PR 제목 그대로), 릴리스(develop → main)·동기화(main → develop) PR 은 **Create a merge commit** (`gh pr merge --merge`). 릴리스·동기화를 Squash 하면 두 브랜치 이력이 갈라지므로 절대 Squash 하지 않는다. base 는 일반 작업 `develop`, hotfix `main`. hotfix 머지 후에는 `main → develop` 반영 PR 을 이어서 만든다
 
 ## 절대 하지 말 것
 
