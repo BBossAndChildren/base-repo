@@ -2,9 +2,43 @@
 
 import copy
 import hashlib
+import re
 
 from .models import NPC, GameEvent, InformationTransfer, NPCMemory
 from .rules import RuleViolation, text
+
+# 대화 상대를 고르는 기준 (#111). 이름 바로 뒤 "한테 · 에게 · 께" 또는 같은 절의 만남 · 이동 동사
+TARGET_PARTICLES = ("한테", "에게", "께")
+OBJECT_PARTICLES = ("을", "를")
+MEET_WORDS = ("만나", "찾아", "보러")
+MOVE_WORDS = ("갈게", "갈래", "간다", "가자", "가서", "가볼", "가야", "가요", "갈까")
+PAST_MARKERS = ("했던", "었던", "았던", "였던", "했었", "했어", "던 ")
+
+
+def target_npc(npcs, message):
+    """입력에서 플레이어가 지금 찾아가거나 말을 거는 인물을 고른다. 없으면 None.
+
+    이름이 나왔다는 것만으로 고르지 않는다. 절(문장 부호 · 쉼표 단위)마다 이름 뒤가 대상 조사이거나
+    같은 절에 만남 · 이동 동사가 있는지 본다. 우선순위: 만남 · 이동이 있는 절
+    > 이름 뒤에 대상 조사(한테 · 을/를)가 붙은 이름 > 과거 이야기가 아닌 절 > 앞선 절 · 위치.
+    """
+    best = None
+    for index, clause in enumerate(re.split(r"[.!?\n,。]+", message)):
+        moving = any(word in clause for word in (*MEET_WORDS, *MOVE_WORDS))
+        for npc in npcs:
+            position = clause.find(npc.name)
+            if position < 0:
+                continue
+            after = clause[position + len(npc.name) :].lstrip()
+            addressed = after.startswith(TARGET_PARTICLES)
+            if not (addressed or moving):
+                continue
+            marked = addressed or after.startswith(OBJECT_PARTICLES)
+            past = any(marker in after for marker in PAST_MARKERS)
+            rank = (not moving, not marked, past, index, position)
+            if best is None or rank < best[0]:
+                best = (rank, npc)
+    return best[1] if best else None
 
 
 def current_scene(play, message=""):
@@ -12,11 +46,9 @@ def current_scene(play, message=""):
         play.progress.get("scene", {"id": "opening", "npcIds": [], "speakerNpcId": None})
     )
     # 플레이어가 이미 만난 인물을 이름으로 찾아가는 경우 그 인물 범위로 먼저 전환한다.
-    for npc in play.npcs.all():
-        if npc.name in message and any(
-            word in message for word in ("만나", "에게", "한테", "찾아")
-        ):
-            return {"id": "npc:" + npc.key, "npcIds": [npc.key], "speakerNpcId": npc.key}
+    npc = target_npc(list(play.npcs.all()), message)
+    if npc:
+        return {"id": "npc:" + npc.key, "npcIds": [npc.key], "speakerNpcId": npc.key}
     return scene
 
 
