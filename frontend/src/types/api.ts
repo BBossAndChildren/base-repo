@@ -19,7 +19,12 @@ export type ApiErrorType =
   | 'NOT_FOUND'
   | 'ALREADY_ENDED'
   | 'NOT_ENDED'
+  | 'REQUEST_CONFLICT'
+  | 'STATE_CONFLICT'
+  | 'PLAY_PAUSED'
+  | 'TURN_IN_PROGRESS'
   | 'AI_UNAVAILABLE'
+  | 'CONTENT_UNAVAILABLE'
   | 'TIMEOUT'
   | 'NETWORK'
   | 'UNKNOWN'
@@ -105,6 +110,8 @@ export interface StartPlayResponse {
 
 // 1-3
 export interface TurnRequest {
+  /** 같은 행동을 다시 보낼 때는 유지하고, 새 행동에는 새 UUID (03 게임 상태와 턴 확장) */
+  requestId: string
   message: string
 }
 
@@ -116,6 +123,13 @@ export interface TurnResponse {
   experience: ExperienceOffer | null
   notice?: Notice
   ended: boolean
+  /** 이번 턴 저장 후 백엔드가 확정한 전체 상태 (있으면 이 값을 화면에 쓴다) */
+  state?: PlayState
+  stateVersion?: number
+  /** 자금 부족 · 입원 · 중요 결정에서 기다리는 선택 */
+  pendingChoices?: unknown[]
+  /** 이번 턴의 공개 사건 */
+  events?: unknown[]
 }
 
 // 1-5
@@ -155,4 +169,11 @@ export interface PlayResume {
   state: PlayState
   messages: ChatMessage[]
   ended: boolean
+  /** 명시적 일시정지 여부 (03 게임 상태와 턴 확장) */
+  paused?: boolean
+  stateVersion?: number
+  activePlaySeconds?: number
+  scene?: unknown
+  pendingChoices?: unknown[]
+  lastTurnId?: string | null
 }

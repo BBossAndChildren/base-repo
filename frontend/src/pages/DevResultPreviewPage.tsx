@@ -9,7 +9,7 @@ let endedPlay: Promise<string> | null = null
 function createEndedPlay(): Promise<string> {
   endedPlay ??= (async () => {
     const play = await gameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
-    await gameApi.sendTurn(play.playId, { message: '이제 끝' })
+    await gameApi.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '이제 끝' })
     return play.playId
   })()
   // 실패하면 다음 방문 때 다시 만든다

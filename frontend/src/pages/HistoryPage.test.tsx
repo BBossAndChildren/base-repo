@@ -40,7 +40,7 @@ describe('HistoryPage', () => {
   it('진행 중은 [이어하기], 끝난 인생은 [결말 보기] 로 이어진다', async () => {
     const ongoing = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
     const done = await mockGameApi.startPlay({ name: '하늘', age: 24, situation: '구직 중', hasDreamJob: false })
-    await mockGameApi.sendTurn(done.playId, { message: '끝' })
+    await mockGameApi.sendTurn(done.playId, { requestId: crypto.randomUUID(), message: '끝' })
     renderHistory()
     const list = await screen.findByRole('list', { name: '지난 인생 목록' })
     const items = within(list).getAllByRole('listitem')

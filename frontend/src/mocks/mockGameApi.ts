@@ -8,6 +8,7 @@
 //   "끝"     → 인생 종료 (ended: true). 끝나기 전 결말 요청은 409 NOT_ENDED
 //   "오류"   → AI 서버 실패 (502 AI_UNAVAILABLE)
 //   "느려"   → 시간 초과 (504 TIMEOUT)
+//   "충돌"   → 생성 중 상태가 바뀜 (409 STATE_CONFLICT)
 import { ApiError } from '../api/errors'
 import type { GameApi } from '../api/gameApi'
 import { getPlayerId } from '../api/player'
@@ -15,6 +16,9 @@ import { readStorage, removeStorage, writeStorage } from '../lib/storage'
 import type { ChatMessage, PlayState, StartPlayRequest, TurnResponse } from '../types/api'
 
 interface MockPlay {
+  /** requestId → 저장한 응답 (같은 ID · 같은 입력이면 그대로 돌려준다) */
+  requests: Map<string, { message: string; response: TurnResponse }>
+  stateVersion: number
   playId: string
   playerId: string
   sessionId: string
@@ -95,6 +99,8 @@ export const mockGameApi: GameApi = {
     const playerId = currentPlayer()
     validateStart(body)
     const play: MockPlay = {
+      requests: new Map(),
+      stateVersion: 1,
       playId: uuid(),
       playerId,
       sessionId: uuid(),
@@ -120,17 +126,34 @@ export const mockGameApi: GameApi = {
   async getPlay(playId) {
     await wait()
     const play = ownPlay(playId)
-    return { playId: play.playId, sessionId: play.sessionId, state: { ...play.state }, messages: [...play.messages], ended: play.ended }
+    return {
+      playId: play.playId,
+      sessionId: play.sessionId,
+      state: { ...play.state },
+      messages: [...play.messages],
+      ended: play.ended,
+      paused: false,
+      stateVersion: play.stateVersion,
+      activePlaySeconds: 0,
+      scene: null,
+      pendingChoices: [],
+      lastTurnId: null,
+    }
   },
 
   async sendTurn(playId, body) {
     await wait()
     const play = ownPlay(playId)
     const message = body.message?.trim()
-    if (!message) throw new ApiError(400, 'INVALID_INPUT')
+    // 실제 백엔드처럼 requestId(UUID)가 필수다 (03 1-3)
+    if (!message || !body.requestId) throw new ApiError(400, 'INVALID_INPUT')
+    const previous = play.requests.get(body.requestId)
+    if (previous && previous.message !== message) throw new ApiError(409, 'REQUEST_CONFLICT')
+    if (previous) return previous.response
     if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
     if (message.includes('오류')) throw new ApiError(502, 'AI_UNAVAILABLE')
     if (message.includes('느려')) throw new ApiError(504, 'TIMEOUT')
+    if (message.includes('충돌')) throw new ApiError(409, 'STATE_CONFLICT')
 
     play.turn += 1
     const userMessage: ChatMessage = { role: 'user', speaker: play.profile.name, text: message }
@@ -183,6 +206,12 @@ export const mockGameApi: GameApi = {
 
     play.ended = ended
     play.messages.push(userMessage, ...response.messages)
+    play.stateVersion += 1
+    response.state = { ...play.state }
+    response.stateVersion = play.stateVersion
+    response.pendingChoices = []
+    response.events = []
+    play.requests.set(body.requestId, { message, response })
     return response
   },
 

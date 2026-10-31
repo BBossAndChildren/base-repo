@@ -14,7 +14,7 @@ import { ResultPage } from './ResultPage'
 async function createPlay(ended: boolean) {
   await ensurePlayerId(mockGameApi)
   const play = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
-  if (ended) await mockGameApi.sendTurn(play.playId, { message: '끝' })
+  if (ended) await mockGameApi.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '끝' })
   return play.playId
 }
 

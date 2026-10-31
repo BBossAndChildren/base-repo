@@ -34,7 +34,7 @@ function renderApp(path = '/') {
 async function createPlay({ ended = false } = {}) {
   await ensurePlayerId(mockGameApi)
   const play = await mockGameApi.startPlay(START)
-  if (ended) await mockGameApi.sendTurn(play.playId, { message: '끝' })
+  if (ended) await mockGameApi.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '끝' })
   return play.playId
 }
 

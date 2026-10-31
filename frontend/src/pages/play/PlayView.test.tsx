@@ -166,6 +166,47 @@ describe('PlayView', () => {
     expect(await screen.findByRole('heading', { name: '결말 화면' })).toBeInTheDocument()
   })
 
+  it('채팅마다 requestId(UUID)를 보내고, 실패한 문장을 그대로 다시 보내면 같은 ID · 고치면 새 ID (05 화면 2)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn')
+    const { say, input, user } = await setup()
+    await say('느려')
+    expect(await screen.findByText('응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.')).toBeInTheDocument()
+    expect(input).toHaveValue('느려')
+    const first = spy.mock.calls[0][1].requestId
+    expect(first).toMatch(/^[0-9a-f-]{36}$/)
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await waitFor(() => expect(spy).toHaveBeenCalledTimes(2))
+    expect(spy.mock.calls[1][1].requestId).toBe(first)
+    await say('안녕')
+    await waitFor(() => expect(spy).toHaveBeenCalledTimes(3))
+    expect(spy.mock.calls[2][1].requestId).not.toBe(first)
+    spy.mockRestore()
+  })
+
+  it('턴 응답의 state 를 확정 값으로 상태 패널에 쓴다', async () => {
+    const real = mockGameApi.sendTurn.bind(mockGameApi)
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockImplementationOnce(async (playId, body) => {
+      const turn = await real(playId, body)
+      return { ...turn, state: { ...(turn.state ?? { age: 15 }), energy: 42 } }
+    })
+    const { say } = await setup()
+    await say('안녕')
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    await waitFor(() => expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '42'))
+    spy.mockRestore()
+  })
+
+  it('STATE_CONFLICT 면 안내 후 대화 · 상태를 다시 조회하고 입력 문장은 남긴다', async () => {
+    const getPlay = vi.spyOn(mockGameApi, 'getPlay')
+    const { say, input } = await setup()
+    getPlay.mockClear()
+    await say('충돌')
+    expect(await screen.findByText('최신 상태를 조회한 뒤 다시 시도해 주세요.')).toBeInTheDocument()
+    await waitFor(() => expect(getPlay).toHaveBeenCalledTimes(1))
+    expect(input).toHaveValue('충돌')
+    getPlay.mockRestore()
+  })
+
   it('이미 끝난 플레이에 보내면 결말 화면으로 간다', async () => {
     const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(409, 'ALREADY_ENDED'))
     const { say } = await setup()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiError, gameApi } from '../../api'
 import { usePlayer } from '../../app/playerContext'
@@ -24,6 +24,9 @@ function pickStatus(state: PlayResume['state']): StatusValues {
 }
 
 const NO_CHANGES: ReadonlySet<StatusField> = new Set()
+
+/** 이 오류 뒤에 같은 문장을 다시 보내면 같은 requestId 를 쓴다 (서버가 저장한 결과를 주거나 다시 처리). REQUEST_CONFLICT 만 새 ID */
+const KEEP_REQUEST_ID = new Set(['TIMEOUT', 'NETWORK', 'AI_UNAVAILABLE', 'TURN_IN_PROGRESS', 'STATE_CONFLICT', 'PLAY_PAUSED', 'CONTENT_UNAVAILABLE', 'UNKNOWN'])
 
 interface PlayViewProps {
   play: PlayResume
@@ -53,6 +56,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [waiting, setWaiting] = useState(false)
   const [ended, setEnded] = useState(play.ended)
   const [activeExperience, setActiveExperience] = useState<{ cardId: string; offer: ExperienceOffer } | null>(null)
+  // 실패한 문장과 그때의 requestId. 같은 문장을 다시 보내면 재사용한다 (05 화면 2)
+  const failedRequest = useRef<{ message: string; requestId: string } | null>(null)
 
   useEffect(() => {
     if (changed.size === 0) return
@@ -70,10 +75,10 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       if (field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
     }
     const changedFields = Object.keys(updates) as StatusField[]
-    if (changedFields.length > 0) {
-      setStatus((prev) => ({ ...prev, ...updates }))
-      setChanged(new Set(changedFields))
-    }
+    // 턴 응답의 state 가 백엔드 확정 값이다. 없을 때(이전 형식)만 stateChanges 로 맞춘다
+    if (turn.state) setStatus(pickStatus(turn.state))
+    else if (changedFields.length > 0) setStatus((prev) => ({ ...prev, ...updates }))
+    if (changedFields.length > 0) setChanged(new Set(changedFields))
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
     if (turn.notice) toast.show({ message: turn.notice.message })
     setItems((prev) => [...prev, ...added])
@@ -90,13 +95,21 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     setDraft('')
     setHints([])
     setWaiting(true)
+    const requestId = failedRequest.current?.message === message ? failedRequest.current.requestId : crypto.randomUUID()
     try {
-      applyTurn(await gameApi.sendTurn(play.playId, { message }))
+      applyTurn(await gameApi.sendTurn(play.playId, { requestId, message }))
+      failedRequest.current = null
     } catch (error) {
       const apiError = error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN')
       // 보내지 못한 말은 화면에서 빼고 입력칸에 되돌린다 (05 6절: 입력한 내용은 지우지 않는다)
       setItems((prev) => prev.filter((item) => item.id !== pendingId))
       setDraft(message)
+      failedRequest.current = KEEP_REQUEST_ID.has(apiError.type) ? { message, requestId } : null
+      if (apiError.type === 'STATE_CONFLICT') {
+        toast.show({ type: 'error', message: apiError.message })
+        await reloadLatest()
+        return
+      }
       if (apiError.type === 'ALREADY_ENDED') {
         navigate(`/play/${play.playId}/result`, { replace: true })
         return
@@ -108,6 +121,18 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       toast.show({ type: 'error', message: apiError.message })
     } finally {
       setWaiting(false)
+    }
+  }
+
+  /** STATE_CONFLICT: 대화 · 상태를 서버의 최신 값으로 바꾼다 (입력 문장은 그대로) */
+  async function reloadLatest() {
+    try {
+      const latest = await gameApi.getPlay(play.playId)
+      setItems(messagesToTimeline(latest.messages))
+      setStatus(pickStatus(latest.state))
+      setEnded(latest.ended)
+    } catch {
+      // 다시 조회하지 못하면 지금 화면을 유지한다. 다음 전송에서 다시 안내된다
     }
   }
 
