@@ -22,6 +22,8 @@ backend/.local/
 backend/.ruff_cache/
 backend/staticfiles/
 backend/dist/
+# 배포용 정적 에셋은 이미지에 넣지 않고 게이트웨이가 마운트한다
+backend/deploy/assets/
 backend/*.egg-info/
 **/__pycache__/
 **/*.py[cod]

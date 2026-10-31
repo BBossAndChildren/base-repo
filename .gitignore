@@ -32,3 +32,5 @@ local-receiver-data/
 backend/.local/
 backend/staticfiles/
 backend/dist/
+# 배포용 정적 에셋 (인트로 모델 71개 · Unity 빌드). git 에 넣지 않고 서버에 따로 복사한다 (06 5-2 · 5-2-1)
+backend/deploy/assets/
