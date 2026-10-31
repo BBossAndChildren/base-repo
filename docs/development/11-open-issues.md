@@ -90,7 +90,7 @@
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |
 |---|------|----|
-| F11 | **Vercel 프로젝트가 두 개다** — `base-repo` (https://base-repo-zeta.vercel.app, 2026-11-01 배포 주소로 사용) · `base-repo-ck83` (이전 주소). 하나만 남길지, 둘 다 쓸지? 둘 다 쓰면 CORS · Nginx 허용 출처를 둘 다 넣어야 한다 ([06 5-4](06-deployment.md#5-4-웹-프론트--vercel)) | |
+| F11 | **Vercel 프로젝트가 두 개다** — `base-repo` (https://base-repo-zeta.vercel.app, 2026-11-01 배포 주소로 사용) · `base-repo-ck83` (이전 주소). 하나만 남길지, 둘 다 쓸지? 둘 다 쓰면 CORS · Nginx 허용 출처를 둘 다 넣어야 한다 ([06 5-4](06-deployment.md#5-4-웹-프론트--vercel)) | 결정 전까지 **둘 다 허용**한다 (#86: 게이트웨이 `map $http_origin` · Django `CORS_ALLOWED_ORIGINS` 에 두 주소). 하나로 정하면 나머지를 뺀다 |
 | F10 | 최신 상태 계약 구현 | 기획은 `06-life-career-design.md`, API·DB 반영 설계는 03·04 참조. 원화 자금·빚·건강·스트레스·주거·성장 및 기억/턴 원자성 구현은 후속 작업. 현재 프론트의 기존 상태 표시와 구분 |
 | F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | |
 | F7 | 백엔드 저장소 주소 · AI 서버 사설 IP · 포트 · OS (06 의 TODO) | |

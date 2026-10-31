@@ -229,6 +229,7 @@ server {
     }
 }
 ```
+- 허용 출처: 실제 설정(`backend/deploy/nginx.conf`)은 `map $http_origin` 으로 **Vercel 두 주소(`base-repo-zeta` · `base-repo-ck83`)를 모두 허용**하고 요청 출처를 그대로 돌려준다 (#86, [11 F11](11-open-issues.md#f-확인이-필요한-질문)). 위 예시는 한 주소만 쓰는 경우다
 - 비압축 빌드에 `Content-Encoding` 을 붙이지 않는다. Unity 담당이 Brotli · Gzip 압축 빌드를 주면 `/builds/` 안에 아래를 추가하고, 안쪽 블록에도 `Content-Security-Policy` 를 함께 넣는다 (안쪽 `add_header` 가 있으면 바깥 것이 이어지지 않는다)
 ```nginx
     location ~ .+\.(data|symbols\.json)\.br$ { add_header Content-Encoding br; default_type application/octet-stream; }
