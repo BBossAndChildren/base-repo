@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 인트로 3D 모델 (약 238MB) — 로컬 개발용 사본. 배포는 백엔드 서버 /intro-assets/ (docs/development/06-deployment.md 5-2-1)
+public/intro-assets/

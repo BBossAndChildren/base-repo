@@ -1,0 +1,13 @@
+/* 인트로 화면 틀 + 건너뛰기 (원본에 없어 추가, 05-ui-ux.md 화면 0). 색은 원본 인트로 조작 버튼과 맞춘다 */
+.intro-page { position: fixed; inset: 0; z-index: 50; background: #000; }
+.intro-skip {
+  position: absolute; right: 16px; bottom: 12px; z-index: 20;
+  font: inherit; font-size: 13px; line-height: 1; cursor: pointer;
+  color: #edf7ef; background: #091416c9; border: 1px solid #ffffff30; border-radius: 999px;
+  padding: 10px 18px; backdrop-filter: blur(15px);
+}
+.intro-skip:hover { background: #1b2a2cd9; }
+.intro-skip:focus-visible { outline: 2px solid #b5edce; outline-offset: 4px; }
+@media (max-width: 700px) {
+  .intro-skip { top: 12px; bottom: auto; right: 12px; font-size: 12px; padding: 8px 14px; }
+}

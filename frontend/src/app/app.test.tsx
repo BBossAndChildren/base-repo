@@ -5,10 +5,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ensurePlayerId } from '../api'
 import { clearPlayerId, getPlayerId, setPlayerId } from '../api/player'
 import { ToastProvider } from '../components'
+import { markIntroSeen } from '../lib/introSeen'
 import { clearLastPlayId, getLastPlayId, setLastPlayId } from '../lib/lastPlay'
 import { mockControl, mockGameApi } from '../mocks/mockGameApi'
 import { AppRoutes } from './AppRoutes'
 import { PlayerGate } from './PlayerGate'
+
+// 인트로 화면은 따로 테스트한다 (pages/intro). 여기서는 주소 이동만 확인한다
+vi.mock('../pages/intro/IntroPage', () => ({ default: () => <h1>인트로 화면</h1> }))
 
 const START = { name: '민준', age: 15, situation: '중학생', hasDreamJob: false }
 
@@ -38,6 +42,22 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
     clearPlayerId()
     clearLastPlayId()
     localStorage.clear()
+    sessionStorage.clear()
+    markIntroSeen()
+  })
+
+  it('처음 방문이면 시작 화면 대신 인트로로 보낸다 (FE11)', async () => {
+    localStorage.clear()
+    renderApp()
+    expect(await screen.findByRole('heading', { name: '인트로 화면' })).toBeInTheDocument()
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument()
+  })
+
+  it('인트로를 본 뒤에는 시작 화면을 바로 보여 주고, 헤더에서 인트로를 다시 볼 수 있다', async () => {
+    renderApp()
+    expect(await screen.findByRole('heading', { name: '어른왕자', level: 1 })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('link', { name: '인트로 다시 보기' }))
+    expect(await screen.findByRole('heading', { name: '인트로 화면' })).toBeInTheDocument()
   })
 
   it('첫 접속이면 게스트 ID 를 발급 · 보관하고 시작 화면과 공통 틀을 보여 준다', async () => {

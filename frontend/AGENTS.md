@@ -6,8 +6,8 @@
 ## 코드를 쓰기 전에 읽을 문서
 | 문서 | 내용 |
 |------|------|
-| [docs/development/features.md](../docs/development/features.md) | 기능 번호 FE1~FE10 |
-| [docs/development/05-ui-ux.md](../docs/development/05-ui-ux.md) | 화면 · 라우팅 · API 호출 규칙 · 3D 체험 연결 · 오류 문구 |
+| [docs/development/features.md](../docs/development/features.md) | 기능 번호 FE1~FE11 |
+| [docs/development/05-ui-ux.md](../docs/development/05-ui-ux.md) | 화면(화면 0 인트로 포함) · 라우팅 · API 호출 규칙 · 3D 체험 연결 · 오류 문구 |
 | [docs/development/03-api.md](../docs/development/03-api.md) 1부 | 백엔드 API 계약 |
 | [docs/development/01-user-flow.md](../docs/development/01-user-flow.md) | 사용자 흐름 · 예외 상황 |
 | [docs/development/10-prompt-assembly.md 4-4](../docs/development/10-prompt-assembly.md#4-4-오류-안내-문구) | 3D 오류 안내 문구 |
@@ -18,4 +18,5 @@
 - 백엔드 어댑터는 `credentials: 'omit'` + `X-Player-Id` 헤더
 - 브라우저 `alert` 를 쓰지 않는다 (토스트 · 모달)
 - 백엔드 주소는 환경변수로만 둔다
+- 인트로(`src/pages/intro/`)의 `CareerIntro` · `introEngine` · CSS 는 Unity 담당 원본을 옮긴 것이다. 연출을 바꾸지 말고, 인트로 에셋(모델)은 커밋하지 않는다 (`public/intro-assets/` 는 git 제외)
 - 머지 전 lint · build 를 실행해 통과를 확인한다

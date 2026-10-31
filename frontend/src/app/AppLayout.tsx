@@ -20,6 +20,7 @@ export function AppLayout() {
           어른왕자
         </Link>
         <nav className="site-nav" aria-label="주요 메뉴">
+          <Link to="/intro">인트로 다시 보기</Link>
           <Link to="/history">지난 기록</Link>
         </nav>
       </header>
