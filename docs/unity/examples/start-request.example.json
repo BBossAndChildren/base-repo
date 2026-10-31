@@ -1,0 +1,15 @@
+{
+  "schema_version": 3,
+  "example_kind": "synthetic_request_not_execution_evidence",
+  "request": {
+    "schemaVersion": 1,
+    "protocol": "career-experience",
+    "requestId": "request-example-start-001",
+    "action": "start_experience",
+    "sessionId": "session-example-001",
+    "experienceId": "experience-example-001",
+    "roomId": "PAN-002",
+    "scenarioId": "career-net-10077-experience",
+    "scenarioVersion": "v002"
+  }
+}

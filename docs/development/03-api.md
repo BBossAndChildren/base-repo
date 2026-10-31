@@ -2,7 +2,7 @@
 
 > 관련 문서: [02-architecture.md](02-architecture.md) · [04-database.md](04-database.md) · [10-prompt-assembly.md](10-prompt-assembly.md)
 > **API 계약의 기준 문서다.** 프론트·백엔드·AI 서버가 병렬로 작업하므로 이 문서를 먼저 확정하고, API 가 바뀌면 같은 PR 에서 함께 고친다.
-> 두 부분으로 나눈다: **1부 프론트 ↔ 백엔드**, **2부 백엔드 ↔ AI 서버**. 프론트는 AI 서버를 직접 호출하지 않는다. 프론트 ↔ Unity 는 [docs/unity/](../unity/README.md) 를 따른다.
+> 두 부분으로 나눈다: **1부 프론트 ↔ 백엔드**, **2부 백엔드 ↔ AI 서버**. 프론트는 AI 서버를 직접 호출하지 않는다. 프론트 ↔ Unity 는 [docs/unity/](../unity/USAGE.md) 를 따른다.
 > 각 API 의 요청·응답 필드는 1차 설계안이다. 기능 번호는 [features.md](features.md) 를 채우며 연결한다.
 
 ## 0. 공통 규약
@@ -30,6 +30,8 @@
 | 백엔드 → AI 서버 | 내부용 키 하나를 헤더 `X-Internal-Key` 로 보낸다. 값은 환경변수 `AI_SERVER_KEY` 로만 관리한다 |
 
 ### 공통 응답 형식
+> 예외: 3D 연동 API 1-4 · 1-8 · 1-9 · 1-10 은 Unity 어댑터가 본문을 그대로 읽으므로 감싸지 않는다 ([1-4](#1-4-3d-체험-이벤트-전달)).
+
 성공
 ```json
 { "code": 200, "data": {} }
@@ -69,9 +71,10 @@
 | POST | `/api/v1/plays` | 게임 시작 (플레이어 정보 입력) | |
 | GET | `/api/v1/plays/{playId}` | 플레이 재개 (현재 상태 · 최근 대화) | |
 | POST | `/api/v1/plays/{playId}/turns` | 채팅 한 턴 | |
-| POST | `/api/v1/plays/{playId}/experiences/{experienceId}/events` | 3D 체험 이벤트 전달 | |
-| POST | `/api/v1/plays/{playId}/experiences/reconcile` | 종료 응답 없는 체험 정산 | |
-| POST | `/api/v1/plays/{playId}/experiences/{experienceId}/heartbeat` | 체험 생존 신호 | |
+| POST | `/api/v1/plays/{playId}/experience-events` | 3D 체험 이벤트 전달 (응답 감싸지 않음) | |
+| POST | `/api/v1/plays/{playId}/experience-reconcile` | 종료 응답 없는 체험 정산 (응답 감싸지 않음) | |
+| POST | `/api/v1/plays/{playId}/experience-heartbeat` | 체험 생존 신호 (응답 감싸지 않음) | |
+| POST | `/api/v1/plays/{playId}/experience-pending` | 종료 응답 미수신 기록 (응답 감싸지 않음) | |
 | GET | `/api/v1/plays/{playId}/result` | 결말 · 추천 직업 | |
 | GET | `/api/v1/players/me/plays` | 지난 플레이 기록 목록 | |
 
@@ -174,8 +177,8 @@
 - `experience` 는 3D 분기일 때만 채운다. 맞는 빌드가 없으면 `null` 과 함께 `notice` 를 준다
 ```json
 "experience": {
-  "buildId": "career-pilot-v007",
-  "buildUrl": "https://<현재 터널 주소>/builds/career-pilot-v007/",
+  "buildId": "career-suite-integration-v005",
+  "buildUrl": "https://<현재 터널 주소>/builds/career-suite-integration-v005/",
   "roomId": "PAN-002",
   "scenarioId": "career-net-951-experience",
   "scenarioVersion": "v002"
@@ -195,36 +198,27 @@
 | 502 · 504 | AI 서버 실패 · 시간 초과 |
 
 ### 1-4. 3D 체험 이벤트 전달
-`POST /api/v1/plays/{playId}/experiences/{experienceId}/events` · 인증: `X-Player-Id`
+`POST /api/v1/plays/{playId}/experience-events` · 인증: `X-Player-Id`
 
-> Unity 응답을 **받을 때마다 즉시** 한 건씩 보낸다 ([10 4-3](10-prompt-assembly.md#4-3-프론트--백엔드-전달)).
+> Unity 어댑터(`docs/unity/frontend/backend.js` 의 `sendEvent`)가 Unity 이벤트를 **받을 때마다 즉시** 보낸다 ([10 4-3](10-prompt-assembly.md#4-3-프론트--백엔드-전달)).
+> **3D 연동 API(1-4 · 1-8 · 1-9 · 1-10)는 공통 응답 형식 `{code, data}` 의 예외다.** 어댑터가 응답 본문을 그대로 읽으므로 감싸지 않고 돌려준다. 실패는 HTTP 상태 코드로만 알린다.
 
-요청
+요청: Unity 가 보낸 이벤트 객체 **원본 그대로** (감싸지 않음). 이벤트 안에 `buildId` · `roomId` · `scenarioId` · `scenarioVersion` · `sessionId` · `experienceId` 가 이미 들어 있다 (필드: `docs/unity/contracts/realtime-v002/realtime-contract.json`)
+
+응답 (성공, 감싸지 않음)
 ```json
-{
-  "buildId": "career-pilot-v007",
-  "roomId": "PAN-002",
-  "scenarioId": "career-net-951-experience",
-  "scenarioVersion": "v002",
-  "unityEvent": { }
-}
+{ "stored": true, "sessionId": "…", "eventId": "…" }
 ```
-- `unityEvent` 는 Unity 가 준 응답 객체를 **고치지 않고 그대로** 담는다 (종류 · 필드: `docs/unity/tx/realtime-contract.json`)
+- **DB 저장을 마친 뒤에만** 준다. 어댑터 전송 큐는 이 값을 받을 때까지 같은 이벤트를 다시 보낸다
+- 이미 받은 `(sessionId, eventId)` 와 내용이 같으면 같은 응답을 준다 (중복)
+- `type` 이 `experience.ended` 면 이때 플레이어 기록에 반영하고, 다음 채팅 턴부터 결과를 프롬프트에 넣는다
 
-응답 (성공)
-```json
-{ "code": 200, "data": { "stored": true, "sessionId": "…", "eventId": "…", "duplicate": false } }
-```
-- **DB 저장을 마친 뒤에만** `stored: true` 를 준다. 프론트 전송 큐는 이 값을 받을 때까지 같은 이벤트를 2초마다 다시 보낸다 ([10 4-3](10-prompt-assembly.md#4-3-프론트--백엔드-전달))
-- 이미 받은 `(sessionId, eventId)` 와 내용이 같으면 `duplicate: true` 로 성공 처리한다
-- `unityEvent.type` 이 `experience.ended` 면 백엔드는 이때 플레이어 기록에 반영하고, 다음 채팅 턴부터 결과를 프롬프트에 넣는다
-
-실패
+실패 (HTTP 상태 코드)
 | code | 조건 |
 |------|------|
-| 400 | `unityEvent` 가 Unity 명세 형식에 맞지 않음 → 프론트는 체험 종료 모달 ([10 4-4](10-prompt-assembly.md#4-4-오류-안내-문구)) |
-| 404 | 없는 `playId` |
-| 409 | `EVENT_CONFLICT`: 같은 `(sessionId, eventId)` 인데 내용이 다름 |
+| 400 | Unity 명세 형식에 맞지 않음 → 프론트는 체험 종료 모달 ([10 4-4](10-prompt-assembly.md#4-4-오류-안내-문구)) |
+| 401 · 404 | 모르는 플레이어 · 플레이 |
+| 409 | 같은 `(sessionId, eventId)` 인데 내용이 다름 (충돌, 격리 보존) |
 
 ### 1-5. 결말 · 추천 직업
 `GET /api/v1/plays/{playId}/result` · 인증: `X-Player-Id`
@@ -259,38 +253,42 @@
 - 재접속만으로는 진행 중이던 3D 체험을 정산하지 않는다 (정산은 [1-8](#1-8-종료-응답-없는-체험-정산))
 
 ### 1-8. 종료 응답 없는 체험 정산
-`POST /api/v1/plays/{playId}/experiences/reconcile` · 인증: `X-Player-Id`
+`POST /api/v1/plays/{playId}/experience-reconcile` · 인증: `X-Player-Id`
 
-> 새 3D 체험을 시작하기 전, 종료 응답을 받지 못한 이전 체험이 있으면 프론트가 보낸다. 규칙: [10 4-5](10-prompt-assembly.md#4-5-종료-응답이-오지-않은-체험-정산-v003)
+> 새 3D 체험을 시작하기 전, 종료 응답을 받지 못한 이전 체험이 있으면 어댑터(`reconcile`)가 보낸다. 규칙: [10 4-5](10-prompt-assembly.md#4-5-종료-응답이-오지-않은-체험-정산-v003)
 
-요청: `docs/unity/tx/reconcile-request.example.json` 의 `request` 객체 그대로
-```json
-{
-  "schemaVersion": 1,
-  "protocol": "career-experience-resolution",
-  "action": "reconcile_experience",
-  "reconcileRequestId": "…",
-  "sessionId": "…",
-  "experienceId": "이전 체험",
-  "roomId": "PAN-002",
-  "trigger": "NEW_PLAY_START",
-  "newExperienceId": "새 체험"
-}
-```
+요청: `docs/unity/contracts/reconciliation-v003/reconcile-request.example.json` 의 `request` 객체 그대로 (어댑터의 `reconciliationRequest()` 로 만든다)
 
-응답 (성공): `data` 에 `docs/unity/tx/resolution-response.schema.json` 형식의 `experience.reconciled` 객체 (예시: `resolution-responses.example.json`)
+응답 (성공, 감싸지 않음): `experience.reconciled` 객체 — `docs/unity/contracts/reconciliation-v003/resolution-response.schema.json`
 - 소유자는 요청 값이 아니라 `X-Player-Id` 로 서버가 판단한다
 - 같은 `reconcileRequestId` · 같은 내용이면 같은 응답, 내용이 다르면 409
 
 ### 1-9. 체험 생존 신호
-`POST /api/v1/plays/{playId}/experiences/{experienceId}/heartbeat` · 인증: `X-Player-Id`
+`POST /api/v1/plays/{playId}/experience-heartbeat` · 인증: `X-Player-Id`
 
-> 체험 중 30초마다 보낸다. 백엔드는 마지막 신호 뒤 120초가 지나면 lease 만료로 본다 (정산 판단에만 쓰며, 시간 초과만으로 체험을 끝내지 않는다).
+> 체험 중 30초마다 어댑터(`heartbeat`)가 보낸다. 마지막 신호 뒤 120초가 지나면 lease 만료로 본다 (정산 판단에만 쓰며, 시간 초과만으로 체험을 끝내지 않는다).
 
-요청: 없음
-응답 (성공)
+요청
 ```json
-{ "code": 200, "data": { "leaseExpiresAt": "2026-10-31T10:32:00+09:00" } }
+{ "sessionId": "…", "experienceId": "…" }
+```
+응답 (성공, 감싸지 않음)
+```json
+{ "sessionId": "…", "experienceId": "…", "leaseExpiresAt": "2026-10-31T10:32:00+09:00" }
+```
+
+### 1-10. 종료 응답 미수신 기록
+`POST /api/v1/plays/{playId}/experience-pending` · 인증: `X-Player-Id`
+
+> 종료 호출 후 5초 안에 종료 응답이 없으면 어댑터(`markPending`)가 보낸다. 백엔드는 그 체험을 `pending_reconciliation` 으로 기록만 한다 (중단 확정이 아니다).
+
+요청
+```json
+{ "sessionId": "…", "experienceId": "…", "roomId": "PAN-002", "requestId": "종료 호출 requestId", "reason": "END_RESPONSE_TIMEOUT" }
+```
+응답 (성공, 감싸지 않음)
+```json
+{ "sessionId": "…", "experienceId": "…", "lifecycleStatus": "pending_reconciliation" }
 ```
 
 ---
@@ -350,12 +348,13 @@
 요청
 ```json
 {
-  "catalog": { "builds": [ ] },
+  "candidates": [ { "buildId": "…", "roomId": "PAN-002", "scenarioId": "…", "scenarioVersion": "v002", "jobs": ["행사기획자"], "description": "…" } ],
   "situation": "현재 인생 상황 요약",
   "player": { }
 }
 ```
-- `catalog` 는 빌드 카탈로그 JSON ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-json-형식))
+- `candidates` 는 백엔드가 Unity 카탈로그에서 미리 줄인 후보 약 20개 ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공))
+- AI 서버는 RAG 로 직업 정보를 함께 참고할 수 있다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버))
 
 응답 (성공)
 ```json
@@ -363,7 +362,7 @@
   "code": 200,
   "data": {
     "found": true,
-    "buildId": "career-pilot-v007",
+    "buildId": "career-suite-integration-v005",
     "roomId": "PAN-002",
     "scenarioId": "career-net-951-experience",
     "scenarioVersion": "v002",

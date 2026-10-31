@@ -1,6 +1,6 @@
 # 06. 설치 · 실행 · 배포
 
-> 관련 문서: [02-architecture.md](02-architecture.md) · [03-api.md](03-api.md) · [docs/unity/README.md](../unity/README.md)
+> 관련 문서: [02-architecture.md](02-architecture.md) · [03-api.md](03-api.md) · [docs/unity/USAGE.md](../unity/USAGE.md)
 
 ## 0. 배포 환경 한눈에
 
@@ -8,7 +8,7 @@
 |------|--------|----------------|-----|
 | 웹 프론트 | **Vercel** | Vercel 주소 (`https://<프로젝트>.vercel.app`) | Vercel 자동 |
 | 백엔드 (Django · 3D 빌드 · game/ 문서) | **제공받은 네이버 클라우드 일반 서버** (사설 IP, SSL VPN 으로만 접속) | **Cloudflare Tunnel** (`https://<랜덤>.trycloudflare.com`) | Cloudflare 자동 |
-| AI 서버 | 제공받은 네이버 클라우드 GPU 서버 | **공개하지 않음.** 백엔드만 사설망으로 호출 | — |
+| AI 서버 (Qwen + RAG) | 제공받은 네이버 클라우드 GPU 서버 | **기본은 공개하지 않음** — 백엔드가 사설망으로 호출. 사설망이 막혀 있으면 터널 + 내부 키 ([5-3](#5-3-ai-서버-gpu-서버)) | — |
 
 ```
 사용자 브라우저 ──▶ Vercel (프론트 화면)
@@ -60,6 +60,12 @@
 ## 5. 배포
 
 ### 5-0. 서버 접속 (백엔드 · AI 공통)
+> **연결 조건 (서버 제공 안내):** VPN 은 내 PC 에서 **아웃바운드 443 · 8443 · 12000~13000** 포트가 열려 있어야 연결된다. 사설 서버는 **SSH 포트만 허용**한다. VPN 이 연결되어도 **ACG 에서 허용된 서버 IP · 포트에만** 접근할 수 있다.
+> - 학교 · 회사 네트워크에서 VPN 이 안 붙으면 위 포트가 막힌 것이다 (휴대폰 핫스팟으로 확인)
+> - VPN 으로는 SSH(22)만 된다. 서버의 8000 · 80 포트를 내 PC 에서 직접 열 수 없으니, 개발 중 확인은 SSH 포트 포워딩을 쓴다: `ssh -p 22 -L 8000:127.0.0.1:8000 ncloud@10.1.1.14` 후 내 PC 에서 `http://localhost:8000`
+> - 서버끼리도 ACG 가 적용될 수 있다 ([5-3 먼저 확인](#먼저-확인-백엔드에서-사설망으로-닿는가))
+> - Cloudflare Tunnel 은 서버에서 **바깥으로 나가는** 연결이라 ACG 의 들어오는 규칙과 상관없다
+
 1. 네이버 클라우드 **SSL VPN** 클라이언트에 VPN 을 추가하고 아이디 · 비밀번호로 연결한다 (계정 정보는 팀 내부로만 공유, 문서에 쓰지 않는다)
 2. 터미널에서 SSH 접속: `ssh -p 22 ncloud@<서버 사설 IP>` (백엔드 서버: `10.1.1.14`)
 3. 서버 OS: x86_64 리눅스 <!-- TODO: 배포판 이름 (cat /etc/os-release) -->
@@ -128,6 +134,8 @@ server {
             application/javascript    js;
             application/wasm          wasm;
             application/octet-stream  data;
+            application/json          json;
+            audio/mpeg                mp3;
             text/css                  css;
         }
         # Vercel 프론트 페이지만 이 빌드를 iframe 으로 넣을 수 있게 한다
@@ -186,15 +194,36 @@ tmux attach -t backend    # Ctrl+C 로 Gunicorn 종료 후 ③ 명령 다시 실
 | 저장 위치 | 백엔드 서버 폴더 `/srv/builds/<buildId>/`. Unity 가 준 `site/` 폴더 내용을 그대로 둔다 (`index.html` · `Build/` 등) |
 | Git | **빌드 파일은 Git 저장소에 넣지 않는다.** 수십 MB 바이너리라 GitHub 제한(50MB 경고 · 100MB 차단)에 걸리고 저장소가 계속 커진다. 저장소에는 빌드 카탈로그 JSON 만 둔다 |
 | 올리는 방법 | VPN 을 켠 PC 에서 `scp -r site/ ncloud@10.1.1.14:/tmp/<buildId>/` 로 보낸 뒤 서버에서 `sudo mkdir -p /srv/builds && sudo mv /tmp/<buildId> /srv/builds/`. 새 `buildId` 는 새 폴더에 두고 기존 폴더는 덮어쓰지 않는다 |
-| 카탈로그 반영 | 빌드를 올린 뒤 빌드 카탈로그 JSON 에 `buildId` · 방 · 시나리오를 추가한다 ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-json-형식)) |
+| 카탈로그 반영 | 빌드를 올린 뒤 Unity 가 준 카탈로그 · 허용 목록(`docs/unity/builds/production-*`)을 백엔드에 반영한다 ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공)) |
 | 프론트 전달 | 채팅 응답의 `experience.buildUrl` 로 준다. 터널 주소가 바뀌므로 백엔드는 **요청이 들어온 주소(Host) 기준으로** `https://<현재 터널 주소>/builds/<buildId>/` 를 만든다. 카탈로그에는 `/builds/<buildId>/` 경로만 둔다 |
 | 지우기 | 카탈로그에서 뺀 빌드는 진행 중인 체험이 없을 때 폴더를 지운다 |
 
-### 5-3. AI 서버
-- 제공받은 네이버 클라우드 GPU 서버. 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같은 방식 <!-- TODO: AI 서버 사설 IP · 실행 절차 (AI 담당) -->
-- **외부에 공개하지 않는다** (터널 없음). 백엔드가 사설망으로 `AI_SERVER_URL` 을 호출한다
-- 백엔드 → AI 서버 호출에는 `X-Internal-Key` 를 붙인다 (값은 `AI_SERVER_KEY`)
-- 확인: 백엔드 서버에서 `curl http://<AI 서버 사설 IP>:<포트>/...` 가 응답하는지
+### 5-3. AI 서버 (GPU 서버)
+- 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
+- 백엔드 → AI 서버 호출에는 항상 `X-Internal-Key` 를 붙이고, AI 서버는 키가 없거나 틀리면 401 로 거부한다 (값은 `AI_SERVER_KEY`)
+- **Nginx 는 필요 없다.** API 하나만 있으므로 앱 포트로 바로 연결한다
+
+#### 먼저 확인: 백엔드에서 사설망으로 닿는가
+```bash
+# 백엔드 서버(10.1.1.14)에서
+curl -m 5 http://<GPU 서버 사설 IP>:<AI 포트>/
+```
+| 결과 | 진행 |
+|------|------|
+| 응답이 온다 | **터널을 쓰지 않는다.** `AI_SERVER_URL=http://<GPU 사설 IP>:<포트>` 로 사설망 호출. AI 서버는 외부에 공개되지 않는다 (권장) |
+| 시간 초과 · 연결 거부 | 서버 사이에도 ACG 가 막고 있는 것이다. 아래 터널로 연결한다 |
+
+#### 사설망이 막혀 있을 때만: GPU 서버에 터널
+```bash
+# GPU 서버에서 (설치는 5-1 ⑥ 과 같다)
+curl -I https://www.cloudflare.com          # HTTP/2 200 이면 가능
+tmux new -s ai-tunnel
+cloudflared tunnel --url http://127.0.0.1:<AI 포트>
+# 출력된 https://<랜덤>.trycloudflare.com 을 백엔드 .env 의 AI_SERVER_URL 에 넣고 Gunicorn 재시작
+```
+- AI 앱은 `127.0.0.1` 에만 열고 외부 공개는 터널로만 한다
+- 터널 주소는 인터넷에 공개되므로 **`X-Internal-Key` 검사가 반드시 켜져 있어야 한다.** 주소는 프론트 · 문서 · 채팅에 공유하지 않는다
+- 터널 주소가 바뀌면 백엔드 `.env` 의 `AI_SERVER_URL` 만 바꾸고 Gunicorn 을 재시작한다 (프론트는 바꿀 것 없음)
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 프론트 저장소를 연결해 배포한다. **https 는 Vercel 이 자동으로 처리한다**
@@ -219,7 +248,7 @@ tmux attach -t backend    # Ctrl+C 로 Gunicorn 종료 후 ③ 명령 다시 실
 - [ ] Vercel 페이지에서 빌드 iframe 이 열리고, 다른 주소에서는 열리지 않는다 (`frame-ancestors`)
 - [ ] `.wasm` 응답의 Content-Type 이 `application/wasm` 이다
 - [ ] Gunicorn(8000) · Nginx(80) 가 외부가 아니라 `127.0.0.1` 에만 열려 있다 (`ss -tlnp`)
-- [ ] AI 서버는 터널 없이 백엔드 서버에서만 호출된다
+- [ ] AI 서버는 백엔드에서만 호출된다. 터널을 쓴 경우 키 없는 요청이 401 로 거부된다
 
 ## 7. 트러블슈팅
 | 증상 | 원인 | 해결 |

@@ -1,0 +1,14 @@
+{
+  "schema_version": 3,
+  "example_kind": "synthetic_request_not_execution_evidence",
+  "request": {
+    "schemaVersion": 1,
+    "protocol": "career-experience",
+    "requestId": "request-example-end-001",
+    "action": "end_experience",
+    "sessionId": "session-example-001",
+    "experienceId": "experience-example-001",
+    "roomId": "PAN-002",
+    "reason": "USER_REQUESTED_END"
+  }
+}

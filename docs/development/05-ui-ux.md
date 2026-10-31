@@ -42,14 +42,23 @@
 | 채팅 대기 | 30초가 넘으면 `TIMEOUT` 안내 |
 
 ### 4-1. 3D 체험 연결 (Unity)
-- Unity 담당의 연결 코드 `docs/unity/integration/frontend/` 의 `Experience.jsx` · `client.js` · `client.d.ts` 를 가져다 쓴다 ([docs/unity/README.md](../unity/README.md))
-- 백엔드가 준 `buildUrl` 을 iframe 으로 열고, URL 의 `parentOrigin` 에 프론트 주소(origin)를 정확히 넣는다
-- `sessionId` 는 플레이 동안 유지하고, 체험을 시작할 때마다 새 `experienceId` · `requestId` 를 만든다
-- 전송 큐(`createOutbox`)의 `send` 함수만 백엔드 API([03 1-4](03-api.md#1-4-3d-체험-이벤트-전달))로 바꾼다. 백엔드가 `stored: true` 를 줄 때만 저장 성공으로 본다
-- 체험 중 30초마다 생존 신호([03 1-9](03-api.md#1-9-체험-생존-신호)), 새 체험 시작 전 이전 체험 정산([03 1-8](03-api.md#1-8-종료-응답-없는-체험-정산))
-- 종료 응답을 받고 저장 확인까지 받은 뒤 iframe 을 제거한다
-- Vercel 쪽에 CSP 를 설정한다면 `frame-src` 에 `https://*.trycloudflare.com` 을 허용한다
-- 백엔드 주소는 터널 주소라 바뀔 수 있다. 바뀌면 Vercel 환경변수만 바꾸고 재배포한다 ([06 터널 주소가 바뀌었을 때](06-deployment.md#터널-주소가-바뀌었을-때))
+> Unity 담당 연결 코드 `docs/unity/frontend/` 를 가져다 쓴다. 파일 안내: [docs/unity/USAGE.md](../unity/USAGE.md)
+
+| 항목 | 규칙 |
+|------|------|
+| 컴포넌트 | `Experience.jsx` (+ `client.js` · `backend.js` · `audio*.js` · `*.d.ts`) |
+| `siteUrl` | 백엔드가 준 `buildUrl` + `index.html` |
+| `manifest` | 같은 빌드의 허용 목록 `buildUrl + supported-manifest.json` 을 받아 넘긴다. 시작할 조합은 이 목록에서 `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 네 값으로 찾는다 |
+| `sessionId` | 플레이 동안 유지. 체험을 시작할 때마다 새 `experienceId` · `requestId` (UUID) |
+| 시작 시점 | `onStatus` 가 `ready` 를 준 뒤 **사용자 버튼 클릭**으로 `client.start()` 한다. 렌더 · StrictMode effect 에서 자동 시작하지 않는다 |
+| 백엔드 어댑터 | `createBackendAdapter({ eventEndpoint, reconcileEndpoint, heartbeatEndpoint, interruptionEndpoint, credentials: 'omit', headers: () => ({ 'X-Player-Id': playerId }) })`. **`credentials: 'omit'` 필수** — 기본값 `include` 는 쿠키를 보내 CORS 에서 막힌다 (우리는 쿠키를 쓰지 않음). 주소는 [03 1-4 · 1-8 · 1-9 · 1-10](03-api.md#1-4-3d-체험-이벤트-전달) |
+| 전송 큐 | `createOutbox({ send: adapter.sendEvent })`. 백엔드가 `stored: true` 를 줄 때만 저장 성공 |
+| 생존 신호 · 정산 | 체험 중 30초마다 `heartbeat`, 새 체험 시작 전 이전 체험 `reconcile`, 종료 5초 무응답 시 `markPending` |
+| 종료 | 종료 응답을 받고 저장 확인까지 받은 뒤 iframe 을 제거한다 |
+| 배경색 | `backgroundColor="#RRGGBB"` prop 또는 `client.setPresentation({ backgroundColor })`. 불투명 6자리만. 페이지 바깥 배경은 CSS 로 따로 |
+| 효과음 | 브라우저는 **iframe 안을 클릭해야** 소리를 켠다. 바깥 시작 버튼 클릭만으로는 보장되지 않으니 게임 화면 안의 효과음 켜기 버튼을 안내한다 |
+| CSP | Vercel 에 CSP 를 설정한다면 `frame-src` 에 `https://*.trycloudflare.com` 을 허용한다 |
+| 주소 변경 | 백엔드 주소는 터널 주소라 바뀔 수 있다. 바뀌면 Vercel 환경변수만 바꾸고 재배포한다 ([06 터널 주소가 바뀌었을 때](06-deployment.md#터널-주소가-바뀌었을-때)) |
 
 ## 5. 결과 코드별 사용자 메시지
 | code | 화면에 보여 줄 문구 | 동작 |

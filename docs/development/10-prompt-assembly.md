@@ -1,6 +1,6 @@
 # 10. 프롬프트 조립 · 콘텐츠 연동
 
-> 관련 문서: [02-architecture.md](02-architecture.md) · [03-api.md 2부](03-api.md#2부-백엔드--ai-서버) · [docs/game/](../game/README.md) · [docs/unity/](../unity/README.md)
+> 관련 문서: [02-architecture.md](02-architecture.md) · [03-api.md 2부](03-api.md#2부-백엔드--ai-서버) · [docs/game/](../game/README.md) · [docs/unity/](../unity/USAGE.md)
 > **시나리오 작가와 백엔드 담당이 함께 보는 문서다.** 작가가 `docs/game/` 에 쓰는 마크다운을 백엔드가 어떻게 읽어 AI 서버에 보내는지, 두 역할이 맞춰야 할 약속을 한곳에 모은다.
 > 게임 콘텐츠 자체(시나리오·NPC·가이드라인 내용)는 `docs/game/` 에만 쓴다. 이 문서에는 **읽는 규칙과 조립 순서**만 쓴다.
 
@@ -27,6 +27,8 @@
 | 4-1 | 최근 대화 **20턴** | 백엔드 DB | 플레이어별 |
 | 5 | 이번 사용자 입력 | 프론트 요청 | — |
 
+> **직업 정보는 백엔드가 넣지 않는다.** AI 서버(Qwen)가 RAG 로 직업 데이터(직업백과 552개)에서 대화에 관련된 직업을 찾아 스스로 붙인다 ([6절](#6-직업-데이터-rag-ai-서버)).
+
 ## 3. AI 응답 처리
 
 - AI 서버는 자유 글이 아니라 **정해진 JSON** 으로 응답한다 (형식: [03-api.md 2-1](03-api.md#2-1-대화-생성))
@@ -44,58 +46,45 @@
 2. AI 서버는 빌드 · 방 · 시나리오를 추천한다
 3. 백엔드는 추천이 카탈로그에 있는지 확인하고, **빌드 주소**와 `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 을 프론트에 보낸다 (빌드는 여러 파일 · 수십 MB 라 API 응답에 직접 담지 않는다. 배포 방식은 [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달))
 4. 맞는 빌드가 없거나 카탈로그에 없는 추천이면 3D 를 건너뛰고 텍스트로 계속한다 (4-4)
-5. 프론트가 빌드 주소를 iframe 으로 열고 Unity 에 체험 시작을 호출한다 (Unity 담당 연결 코드 `integration/frontend/` 사용 — [docs/unity/README.md](../unity/README.md))
+5. 프론트가 빌드 주소를 iframe 으로 열고 Unity 에 체험 시작을 호출한다 (Unity 담당 연결 코드 `docs/unity/frontend/` 사용 — [docs/unity/USAGE.md](../unity/USAGE.md))
 6. Unity 는 물건 상태가 바뀔 때마다 이벤트를 실시간으로 보내고, 프론트는 받을 때마다 즉시 백엔드로 보낸다 (4-3)
 7. 체험이 끝나면(`experience.ended`) 백엔드가 결과를 플레이어 기록에 한 번 반영하고 다음 프롬프트에 넣는다
 8. 종료 응답이 오지 않은 체험은 다음 체험을 새로 시작할 때 백엔드가 정산한다 (4-5)
 
-### 4-1. 빌드 카탈로그 JSON 형식
+### 4-1. 빌드 카탈로그 (Unity 제공)
 
-> 백엔드가 갖고 있는 빌드 목록이며 **이 목록에 있는 체험만 AI 가 추천할 수 있다** (실행 허용 목록). `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 네 값은 Unity 와 **대소문자까지 정확히** 같아야 한다. 지금 실행되는 10개 체험은 [docs/unity/README.md](../unity/README.md) 에 있다. `tx/career-integration-registry-v001.json` 의 552개는 참고용 ID 목록이며 실행 허용 목록이 아니다.
+> **Unity 담당이 준 카탈로그를 그대로 쓴다:** `docs/unity/builds/production-ai-build-catalog.json` (실서비스 빌드 `career-suite-integration-v005`). 테스트 빌드는 `test-ai-build-catalog.json`. 우리가 따로 만들지 않는다.
+> 허용 목록은 같은 폴더의 `production-supported-manifest.json` 이다. 추천 결과의 `buildId` + `roomId` + `scenarioId` + `scenarioVersion` 네 값이 이 목록과 **대소문자까지 정확히** 맞아야 한다. 이전 빌드 목록으로는 대조하지 않는다.
 
+`experiences[]` 한 줄 (555개, 71개 방 · 552개 시나리오):
 ```json
 {
-  "builds": [
-    {
-      "buildId": "career-pilot-v007",
-      "buildPath": "/builds/career-pilot-v007/",
-      "rooms": [
-        {
-          "roomId": "PAN-002",
-          "concept": "행사 기획 사무실",
-          "scenarios": [
-            {
-              "scenarioId": "career-net-951-experience",
-              "scenarioVersion": "v002",
-              "jobs": ["행사기획자"],
-              "description": "TODO: 체험 내용 요약 (AI 가 고를 근거)"
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "buildId": "career-suite-integration-v005",
+  "roomId": "PAN-002",
+  "scenarioId": "career-net-951-experience",
+  "scenarioVersion": "v002",
+  "jobs": ["행사기획자"],
+  "description": "「행사 요청서」의 행사명·날짜·인원 항목을 직접 입력·저장하고, …",
+  "runtimeFamily": "career-pilot-direct-work",
+  "verificationStatus": "unverified_this_build"
 }
 ```
 
-| 필드 | 설명 |
+| 규칙 | 내용 |
 |------|------|
-| `buildId` | 빌드 고유 ID (버전 포함). 한 빌드에 여러 방이 들어 있다 |
-| `buildPath` | 빌드 경로. 백엔드가 현재 터널 주소를 붙여 프론트에 `buildUrl` 로 준다 |
-| `rooms[].roomId` | Unity 방 ID (`PAN-NNN`) |
-| `rooms[].concept` | 환경 콘셉트 (AI 가 읽는 설명) |
-| `rooms[].scenarios[]` | 이 방에서 할 수 있는 직업별 체험. `jobs` 와 `description` 은 AI 가 고를 근거 |
-
-> 값의 출처: ID 는 Unity 담당 목록, `concept` · `description` 은 백엔드가 작성한다.
+| 추천 범위 | **555개 전부 허용**한다. 모두 "이번 빌드 미검증"이므로 체험 중 오류가 나면 4-4 처럼 텍스트로 넘어간다. 시연은 끝까지 확인한 체험 위주로 한다 |
+| 후보 줄이기 | 설명만 약 8만 7천 자라 매번 전부 보낼 수 없다. **백엔드가 먼저 후보를 약 20개로 줄여** AI 서버에 보낸다 — 희망 직업 · 관심사 · 최근 대화의 직업과 `jobs` 를 비교 <!-- TODO: 비교 방식 (단어 일치 · 임베딩) --> |
+| 빌드 경로 | 빌드 파일은 `/srv/builds/<buildId>/` 에 두고, 백엔드는 현재 요청 주소를 붙여 `buildUrl` 로 준다 ([06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달)) |
+| `description` 의 의미 | 체험 내용 설명이다. 사용자의 적성 · 자격 · 능력 판정 자료로 쓰지 않는다 |
 
 ### 4-2. 체험 결과값 형식 (Unity → 프론트)
 
-> **원본: [`docs/unity/`](../unity/README.md) — 송수신 명세 `tx/` (프로필 v003).** Unity 담당이 관리하며 이 문서에 다시 쓰지 않는다.
+> **원본: [`docs/unity/`](../unity/USAGE.md) — 송수신 명세 `contracts/` (실시간 v002 · 정산 v003).** Unity 담당이 관리하며 이 문서에 다시 쓰지 않는다.
 > 상태: Unity 실시간 송신 · 프론트 수신은 테스트 빌드(10개 체험)로 동작 확인. 실서비스 백엔드 저장 · 종료 미수신 정산은 미구현.
 
 | 응답 | 의미 | 백엔드가 쓰는 곳 |
 |------|------|------------------|
-| 실시간 이벤트 (`object.selected` · `interaction.*` · `scenario.*` 등) | 상태가 확정될 때마다 Unity 가 실시간으로 보냄. 종류 · 필수 필드는 `tx/realtime-contract.json` | 이벤트 누적 · 최신 상태 |
+| 실시간 이벤트 (`object.selected` · `interaction.*` · `scenario.*` 등) | 상태가 확정될 때마다 Unity 가 실시간으로 보냄. 종류 · 필수 필드는 `docs/unity/contracts/realtime-v002/realtime-contract.json` | 이벤트 누적 · 최신 상태 |
 | `experience.started` | 방·시나리오 준비 완료 | 체험 시작 기록 |
 | `experience.ended` | 체험 종료. `result.outcome` 이 `completed` · `aborted` · `failed` 중 하나 | 플레이어 기록 반영 (과정 `process` · 결과 `result` · 해석 `context`) |
 | `experience.error` | 호출·라우팅 오류. 업무 실수가 아님 | 체험 종료 → 텍스트 모드 전환 |
@@ -120,7 +109,7 @@
 
 ### 4-5. 종료 응답이 오지 않은 체험 정산 (v003)
 
-> 원본: `docs/unity/tx/README.md` · `interruption-contract.json`. **구현 담당: 백엔드.**
+> 원본: `docs/unity/contracts/CONTRACT-SNAPSHOT.md` · `contracts/reconciliation-v003/interruption-contract.json`. **구현 담당: 백엔드.**
 
 | 단계 | 내용 |
 |------|------|
@@ -132,7 +121,7 @@
 | 금지 | 사용자 포기 · 실수로 해석하지 않는다. 실수 · 재시도 횟수를 더하지 않는다. 서버 정산을 Unity `experience.ended` 로 꾸미지 않는다 (`experience.reconciled` 로 따로 응답) |
 | 늦게 도착한 실제 종료 | 검증 후 같은 `resolutionId` 의 다음 revision 으로 정정한다. 이전 기록은 남긴다 |
 
-구현 때 확인할 사례 16개: `docs/unity/tx/acceptance-cases.json`
+구현 때 확인할 사례 16개: `docs/unity/contracts/reconciliation-v003/acceptance-cases.json`
 
 ### 4-4. 오류 안내 문구
 
@@ -155,3 +144,16 @@
 | 관계 | 만난 인물과 관계 | |
 | 경험 | 경험한 직업 · 활동 · 사건 | |
 | 3D 체험 결과 | `experienceId` 별 결과 요약 (outcome · 평가 코드 · 해석) | 4-2 |
+
+## 6. 직업 데이터 RAG (AI 서버)
+
+> AI 서버 담당. 2026-10-31 결정 ([12 결정 12](12-decisions.md)).
+
+| 항목 | 내용 |
+|------|------|
+| 모델 | 오픈소스 Qwen (GPU 서버) <!-- TODO: 모델 크기 · 버전 --> |
+| 지식 | 직업 데이터(직업백과 552개 · 하는 일 · 핵심 능력 · 준비 방법)를 RAG 저장소(벡터 DB)에 넣어 둔다 <!-- TODO: 벡터 DB · 임베딩 모델 --> |
+| 동작 | 대화 생성(2-1) · 3D 추천(2-2) 요청이 오면 입력과 관련된 직업 문서를 찾아 프롬프트에 붙인다 |
+| 백엔드와 나눔 | 시나리오 · 가이드라인 · 플레이어 기록은 백엔드가 보내고, 직업 지식은 AI 서버가 RAG 로 붙인다 |
+| 원칙 | 직업 설명은 RAG 로 찾은 직업백과 근거를 쓰고, 게임 결과를 실제 진로 · 취업 보장으로 말하지 않는다 ([00-idea.md 10장](../00-idea.md#10-직업-정보와-추천)) |
+| 확인 필요 | 직업백과 데이터의 서비스 이용 · 재배포 조건 |

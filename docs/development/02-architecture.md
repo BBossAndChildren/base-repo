@@ -19,12 +19,14 @@
 | API 문서 | drf-spectacular | TODO | OpenAPI 명세와 Swagger UI 생성. 기준 계약은 [03-api.md](03-api.md) 이며 생성 문서와 다르면 03 을 고친다 |
 | 앱 서버 | Gunicorn (WSGI) | TODO | 배포 환경에서 Django 실행 |
 | 프론트 연동 | django-cors-headers | TODO | 프론트가 다른 주소에서 호출하므로 CORS 허용 출처 지정 |
-| 직업 데이터 | 기존 JSON 파일 (직업 552개) | — | 직업 정보 로딩 · 조회 |
+| 직업 데이터 | 기존 JSON 파일 (직업 552개) | — | 백엔드 조회용. AI 의 직업 지식은 AI 서버 RAG 가 담당 |
 
 ### AI 서버
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
 | 실행 환경 | 네이버 클라우드 GPU 서버 | — | 별도 AI 모델 서버 운영 · 추론 |
+| 모델 | 오픈소스 Qwen | TODO | 자체 GPU 서버에서 추론 |
+| 직업 지식 | RAG (벡터 DB + 임베딩) | TODO | 직업 데이터 552개를 검색해 프롬프트에 붙임 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)) |
 | | | | |
 
 ### 웹 프론트
@@ -35,8 +37,8 @@
 ### 3D 체험 (Unity WebGL)
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
-| 엔진 | Unity WebGL | 6000.3.26f1 | Unity 담당 (테스트 빌드 `career-pilot-v007`) |
-| 연결 | iframe + postMessage (`integration/frontend/`) | 명세 v003 | Unity 담당 연결 코드 ([docs/unity/README.md](../unity/README.md)) |
+| 엔진 | Unity WebGL | 6000.3.26f1 | Unity 담당 (실서비스 빌드 `career-suite-integration-v005`, 테스트 빌드 `career-suite-test-v009`) |
+| 연결 | iframe + postMessage (`docs/unity/frontend/`) | 명세 v003 | Unity 담당 연결 코드 ([docs/unity/USAGE.md](../unity/USAGE.md)) |
 
 ### 외부 서비스
 | 서비스 | 용도 | 비고 |
