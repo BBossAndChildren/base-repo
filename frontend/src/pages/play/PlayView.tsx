@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiError, gameApi } from '../../api'
+import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
 import type { ExperienceOffer, PlayResume, TurnResponse } from '../../types/api'
@@ -111,7 +112,10 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
         void resetPlayer()
         return
       }
-      toast.show({ type: 'error', message: apiError.message })
+      // Cloudflare 가 서버의 502 · 504(AI 실패 · 시간 초과)를 자체 오류 페이지로 바꿔 브라우저에는 네트워크 오류로 보인다.
+      // 채팅 중에는 응답 지연으로 안내한다 (05 5절, 11 E3 결정)
+      const shown = apiError.type === 'NETWORK' ? DEFAULT_ERROR_MESSAGES.TIMEOUT : apiError.message
+      toast.show({ type: 'error', message: shown })
     } finally {
       setWaiting(false)
     }
