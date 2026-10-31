@@ -76,7 +76,10 @@ SPECTACULAR_SETTINGS = {
         "drf_spectacular.hooks.postprocess_schema_enums",
         "apps.game.schema.describe_start_conditions",
     ],
-    "ENUM_NAME_OVERRIDES": {"HealthStateEnum": ["ok", "unavailable"]},
+    "ENUM_NAME_OVERRIDES": {
+        "HealthStateEnum": ["ok", "unavailable"],
+        "BackendOnlyEnum": ["backend"],
+    },
 }
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_HEADERS = (*default_headers, "x-player-id")

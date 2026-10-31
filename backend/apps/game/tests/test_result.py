@@ -6,7 +6,8 @@ from django.utils import timezone
 
 from apps.game.common import GameError
 from apps.game.ending import ending_candidates
-from apps.game.models import Play, Player, Turn
+from apps.game.models import GameEvent, Play, Player, Turn
+from apps.game.serializers import ResultDataSerializer
 
 
 def valid_result():
@@ -123,16 +124,101 @@ class ResultTests(TestCase):
         self.assertEqual(self.play.result, valid_result())
         self.assertEqual(self.play.ending, valid_result())
 
-    def test_ai_failure_does_not_store_result(self):
-        with (
-            patch(
-                "apps.game.ending.generate_ending",
-                side_effect=GameError(502, "AI_UNAVAILABLE", "실패"),
-            ),
+    def ai_down(self):
+        return patch(
+            "apps.game.ending.generate_ending",
+            side_effect=GameError(502, "AI_UNAVAILABLE", "실패"),
+        )
+
+    def died_play(self):
+        self.play.state = {
+            "age": 42,
+            "elapsedDays": 27 * 365 + 40,
+            "profile": {"name": "민준", "age": 15, "situation": "중학생", "dreamJob": "행사기획자"},
+            "occupation": {"status": "employed", "currentJob": "행사기획자"},
+            "interests": {"예술·디자인": None},
+            "experiences": [
+                {
+                    "experienceId": "exp",
+                    "scenarioId": "career-net-951-experience",
+                    "result": {"outcome": "completed"},
+                }
+            ],
+        }
+        self.play.save()
+        GameEvent.objects.create(
+            play=self.play,
+            key="t:death",
+            kind="death",
+            game_date="2053-01-01",
+            participants=[],
+            facts={"cause": "zeroHealthSixMonths"},
+            source_action="t",
+        )
+
+    def test_ai_unavailable_uses_backend_life_story(self):
+        """결정 28: AI 결말 API 가 없으면 저장된 기록으로 살아온 인생을 읊고 추천 3개를 만든다."""
+        self.died_play()
+        with self.ai_down():
+            response = self.get()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()["data"]
+        self.assertEqual(data["generatedBy"], "backend")
+        story = data["ending"]
+        for part in (
+            "민준",
+            "15살 중학생",
+            "행사기획자(으)로 일했어요",
+            "27년",
+            "건강을 되찾지 못한 채 42살에 생을 마쳤어요",
         ):
-            self.assertEqual(self.get().status_code, 502)
+            self.assertIn(part, story)
+        self.assertIn("「", story)  # 해 본 3D 체험 제목
+        self.assertTrue(ResultDataSerializer(data=data).is_valid())
+        jobs = data["recommendedJobs"]
+        self.assertEqual(len({job["job"] for job in jobs}), 3)
+        self.assertTrue(any(job["isNew"] for job in jobs))
+        self.assertTrue(all(2 <= len(job["nextSteps"]) <= 3 for job in jobs))
         self.play.refresh_from_db()
-        self.assertIsNone(self.play.result)
+        self.assertEqual(self.play.ending["generatedBy"], "backend")
+
+    def test_backend_ending_is_replaced_when_ai_becomes_available(self):
+        self.died_play()
+        with self.ai_down():
+            first = self.get().json()["data"]
+        self.assertEqual(first["generatedBy"], "backend")
+        with patch("apps.game.ending.generate_ending", return_value=valid_result()):
+            second = self.get().json()["data"]
+        # AI 결말로 교체된다 (근거 basis 는 백엔드가 기록으로 다시 채운다)
+        self.assertEqual(second["ending"], valid_result()["ending"])
+        self.assertNotIn("generatedBy", second)
+        self.assertEqual(
+            [job["job"] for job in second["recommendedJobs"]], ["행사기획자", "사서", "교사"]
+        )
+        self.play.refresh_from_db()
+        self.assertNotIn("generatedBy", self.play.ending)
+
+    def test_backend_ending_is_kept_while_ai_still_fails(self):
+        self.died_play()
+        with self.ai_down():
+            first = self.get().json()["data"]
+            second = self.get().json()["data"]
+        self.assertEqual(first, second)
+
+    def test_short_play_without_records_still_gets_three_jobs(self):
+        self.play.state = {"age": 15, "profile": {"name": "지우", "age": 15, "situation": "중학생"}}
+        self.play.save()
+        with self.ai_down():
+            data = self.get().json()["data"]
+        self.assertTrue(ResultDataSerializer(data=data).is_valid())
+        self.assertIn("15살에 이번 인생을 마쳤어요", data["ending"])
+        self.assertTrue(any(job["isNew"] for job in data["recommendedJobs"]))
+
+    def test_non_ai_errors_are_not_hidden(self):
+        with patch(
+            "apps.game.ending.generate_ending", side_effect=GameError(400, "INVALID_INPUT", "x")
+        ):
+            self.assertEqual(self.get().status_code, 400)
 
     def test_ongoing_play_has_no_final_result(self):
         self.play.ended_at = None
