@@ -16,7 +16,7 @@
 ## 2. 기술 스택
 | 구분 | 기술 |
 |------|------|
-| 웹 프론트 | React · Vite · TypeScript, Vercel 배포 (https://base-repo-ck83.vercel.app/) |
+| 웹 프론트 | React · Vite · TypeScript · Three.js(인트로), Vercel 배포 (https://base-repo-ck83.vercel.app/) |
 | 백엔드 | Python · Django + DRF · PostgreSQL · HTTPX · Gunicorn · Nginx |
 | AI 서버 (별도 저장소) | 오픈소스 Qwen + 직업 데이터 RAG |
 | 3D 체험 | Unity WebGL (Unity 담당 전달, [docs/unity/USAGE.md](docs/unity/USAGE.md)) |
@@ -26,7 +26,8 @@
 ```
 브라우저 ─▶ Vercel (프론트)
    └─ https ─▶ Cloudflare Tunnel ─▶ Nginx ─┬─ /api/    → Django ──사설망──▶ AI 서버 (Qwen + RAG)
-                                           └─ /builds/ → Unity WebGL 빌드
+                                           ├─ /builds/ → Unity WebGL 빌드
+                                           └─ /intro-assets/ → 인트로 3D 모델
 ```
 상세: [02-architecture.md](docs/development/02-architecture.md) · [06-deployment.md](docs/development/06-deployment.md)
 
@@ -46,6 +47,7 @@ cd frontend
 npm install
 cp .env.example .env.local   # 기본값은 mock 모드 (백엔드 없이 실행)
 npm run dev                  # http://localhost:5173
+# 인트로까지 보려면 인트로 에셋(intro.json + models/)을 frontend/public/intro-assets/ 에 둔다 (git 제외)
 ```
 
 **백엔드** — 상세: [backend/README.md](backend/README.md) <!-- TODO: 백엔드 담당이 실행 방법 확정 후 정리 -->
@@ -58,6 +60,7 @@ npm run dev                  # http://localhost:5173
 | `CORS_ALLOWED_ORIGINS` · `ALLOWED_HOSTS` | 백엔드 접근 허용 |
 | `VITE_API_BASE_URL` | 프론트의 백엔드 주소 (현재 터널 주소) |
 | `VITE_USE_MOCK` | 프론트 mock 사용 여부 (`true` 기본, 백엔드 연결 때 `false`) |
+| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 주소 (선택, 비우면 `VITE_API_BASE_URL` + `/intro-assets/`) |
 
 ## 7. 민감정보 관리
 API 키 · 비밀번호 · VPN 계정 · 토큰은 코드 · 문서 · 커밋에 쓰지 않는다. `.env` 로만 관리하고 저장소에는 `.env.example` 만 둔다. 건강 · 질병 정보는 받지도 저장하지도 않는다.

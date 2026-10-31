@@ -7,7 +7,7 @@
 | 구성 | 어디에 | 외부 공개 방법 | SSL |
 |------|--------|----------------|-----|
 | 웹 프론트 | **Vercel** | Vercel 주소 (`https://base-repo-ck83.vercel.app`) | Vercel 자동 |
-| 백엔드 (Django · 3D 빌드 · game/ 문서) | **제공받은 네이버 클라우드 일반 서버** (사설 IP, SSL VPN 으로만 접속) | **Cloudflare Tunnel** (`https://<랜덤>.trycloudflare.com`) | Cloudflare 자동 |
+| 백엔드 (Django · 3D 빌드 · 인트로 에셋 · game/ 문서) | **제공받은 네이버 클라우드 일반 서버** (사설 IP, SSL VPN 으로만 접속) | **Cloudflare Tunnel** (`https://<랜덤>.trycloudflare.com`) | Cloudflare 자동 |
 | AI 서버 (Qwen + RAG) | 제공받은 네이버 클라우드 GPU 서버 | **기본은 공개하지 않음** — 백엔드가 사설망으로 호출. 사설망이 막혀 있으면 터널 + 내부 키 ([5-3](#5-3-ai-서버-gpu-서버)) | — |
 
 ```
@@ -17,7 +17,8 @@
                                         │
                                         ▼
                               Nginx (127.0.0.1:80) ─┬─ /api/    → 127.0.0.1:8000 (Docker: Gunicorn + Django, PostgreSQL) ──사설망──▶ AI 서버
-                                                    └─ /builds/ → /srv/builds/ (3D 빌드)
+                                                    ├─ /builds/ → /srv/builds/ (3D 빌드)
+                                                    └─ /intro-assets/ → /srv/intro-assets/ (인트로 3D 모델)
 ```
 
 - 서버는 **공인 IP · 도메인이 없고**, 제공처 설정(방화벽 · 로드밸런서)을 바꿀 수 없다. 그래서 서버가 **안에서 바깥으로** 연결을 여는 Cloudflare Tunnel 로 공개한다. 외부 사용자는 아무것도 설치하지 않는다
@@ -86,6 +87,7 @@ docker compose logs --tail=50 backend
 | `HEALTHCHECK_HOST` | 백엔드 컨테이너 | | 상태 확인 요청의 Host, 기본 localhost. `ALLOWED_HOSTS`에 허용된 이름을 지정 |
 | `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 현재 터널 주소 (끝에 `/` 없이) |
 | `VITE_USE_MOCK` | 프론트 (Vercel) | | `true` 면 mock (기본). 백엔드 연결 때 `false` |
+| `VITE_INTRO_ASSET_BASE` | 프론트 (Vercel · 로컬) | | 인트로 에셋 폴더 주소 (끝에 `/`, `intro.json` 과 `models/` 가 들어 있는 곳). **비워 두면** `VITE_API_BASE_URL` + `/intro-assets/`, 그것도 없으면 `/intro-assets/` (로컬 `frontend/public/intro-assets/`). 터널 주소를 따라가도록 보통 비워 둔다 ([5-2-1](#5-2-1-인트로-에셋)) |
 | | | | |
 
 ## 4. 로컬 실행 확인
@@ -206,6 +208,18 @@ server {
         add_header Access-Control-Allow-Origin "https://base-repo-ck83.vercel.app" always;
         add_header Vary "Origin" always;
     }
+
+    # 인트로 3D 모델 (05 화면 0 · 5-2-1). 프론트가 fetch 로 직접 읽는다
+    location /intro-assets/ {
+        alias /srv/intro-assets/;
+        types {
+            application/json          json;
+            model/gltf-binary         glb;
+        }
+        add_header Access-Control-Allow-Origin "https://base-repo-ck83.vercel.app" always;
+        add_header Vary "Origin" always;
+        add_header Cache-Control "public, max-age=604800" always;   # 바뀌지 않는 고정 파일
+    }
 }
 ```
 - 비압축 빌드에 `Content-Encoding` 을 붙이지 않는다. Unity 담당이 Brotli · Gzip 압축 빌드를 주면 `/builds/` 안에 아래를 추가하고, 안쪽 블록에도 `Content-Security-Policy` 를 함께 넣는다 (안쪽 `add_header` 가 있으면 바깥 것이 이어지지 않는다)
@@ -264,6 +278,18 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 프론트 전달 | 채팅 응답의 `experience.buildUrl` 로 준다. 터널 주소가 바뀌므로 백엔드는 **요청이 들어온 주소(Host) 기준으로** `https://<현재 터널 주소>/builds/<buildId>/` 를 만든다. 카탈로그에는 `/builds/<buildId>/` 경로만 둔다 |
 | 지우기 | 카탈로그에서 뺀 빌드는 진행 중인 체험이 없을 때 폴더를 지운다 |
 
+#### 5-2-1. 인트로 에셋
+
+| 항목 | 규칙 |
+|------|------|
+| 내용 | `intro.json` + `models/PAN-001.glb` ~ `PAN-071.glb` (71개, 약 238MB). Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 그대로 쓴다 |
+| 저장 위치 | 백엔드 서버 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
+| Git | **넣지 않는다** (3D 빌드와 같은 이유). 로컬 개발용 사본은 `frontend/public/intro-assets/` 에 두며 git 에서 제외되어 있다 |
+| 올리는 방법 | VPN 을 켠 PC 에서 `scp -r intro-assets/ ncloud@10.1.1.14:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
+| 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. 터널 주소가 바뀌어도 따로 바꿀 것이 없다 |
+| 없을 때 | 에셋을 못 받으면 프론트는 인트로를 건너뛰고 시작 화면으로 간다. 게임 진행에는 영향 없음 |
+| 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (#67), 에셋 전달은 프론트 담당 |
+
 ### 5-3. AI 서버 (GPU 서버)
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
 - 백엔드 → AI 서버 호출에는 항상 `X-Internal-Key` 를 붙이고, AI 서버는 키가 없거나 틀리면 401 로 거부한다 (값은 `AI_SERVER_KEY`)
@@ -308,13 +334,14 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 4. 백엔드 · Nginx 설정은 바꾸지 않는다 (`ALLOWED_HOSTS` 가 `.trycloudflare.com` 전체를 허용하고, 빌드 주소는 요청 주소 기준으로 만든다)
 
 ### 5-5. 배포 순서
-1. AI 서버 실행 → 2. 백엔드 세팅 (5-1 ①~⑤, Docker) → 3. 빌드 파일 업로드 · 카탈로그 반영 (5-2) → 4. 터널 실행 (5-1 ⑥) → 5. Vercel 배포 (5-4) → 6. Vercel 주소를 백엔드 CORS · Nginx frame-ancestors 에 등록
+1. AI 서버 실행 → 2. 백엔드 세팅 (5-1 ①~⑤, Docker) → 3. 빌드 파일 업로드 · 카탈로그 반영 (5-2), 인트로 에셋 업로드 (5-2-1) → 4. 터널 실행 (5-1 ⑥) → 5. Vercel 배포 (5-4) → 6. Vercel 주소를 백엔드 CORS · Nginx frame-ancestors 에 등록
 
 ## 6. 배포 후 확인
 - [ ] VPN 을 끈 휴대폰(LTE)에서 `https://<터널 주소>/api/v1/...` 가 응답한다
 - [ ] Vercel 주소에서 API 호출 시 CORS 오류가 없다 (브라우저 개발자 도구 Network)
 - [ ] Vercel 페이지에서 빌드 iframe 이 열리고, 다른 주소에서는 열리지 않는다 (`frame-ancestors`)
 - [ ] `.wasm` 응답의 Content-Type 이 `application/wasm` 이다
+- [ ] Vercel 주소 첫 방문에서 인트로 모델이 71 / 71 까지 받아지고 재생된다 (`/intro-assets/` CORS · Content-Type `model/gltf-binary`)
 - [ ] Gunicorn(8000) · Nginx(80) 가 외부가 아니라 `127.0.0.1` 에만 열려 있다 (`ss -tlnp`)
 - [ ] AI 서버는 백엔드에서만 호출된다. 터널을 쓴 경우 키 없는 요청이 401 로 거부된다
 
@@ -328,6 +355,7 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 | 3D 체험이 "불러오지 못했어요" 로 바로 닫힘 | 빌드의 `client.js` · `supported-manifest.json` 을 CORS 때문에 못 불러옴 | `/builds/` 에 `Access-Control-Allow-Origin` (5-1 ⑤) |
 | 3D 빌드가 브라우저에서 안 열림 | `.wasm` Content-Type 누락, 비압축 빌드에 `Content-Encoding` 을 붙임, `frame-ancestors` 에 Vercel 주소 누락 | 5-1 ⑤ Nginx 설정 확인 |
 | 프론트에서 API 호출 시 CORS 오류 | 허용 출처에 Vercel 주소 없음, `x-player-id` 헤더 미허용, Nginx 와 Django 가 헤더를 중복으로 붙임 | [CORS](#cors--django-가-담당) 확인 |
+| 인트로가 바로 "불러오지 못해" 토스트 후 시작 화면으로 감 | `/intro-assets/` 미배치 · CORS 누락, mock 배포라 `VITE_API_BASE_URL` 이 비어 있음 | 5-2-1 · 5-1 ⑤ 확인, 필요하면 `VITE_INTRO_ASSET_BASE` 지정 |
 | Django 가 400 Bad Request | `ALLOWED_HOSTS` 에 터널 주소 없음 | `.trycloudflare.com` 추가 |
 
 ## 8. 민감정보 관리 체크
