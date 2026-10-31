@@ -286,9 +286,9 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 저장 위치 | 백엔드 서버 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
 | Git | **넣지 않는다** (3D 빌드와 같은 이유). 로컬 개발용 사본은 `frontend/public/intro-assets/` 에 두며 git 에서 제외되어 있다 |
 | 올리는 방법 | VPN 을 켠 PC 에서 `scp -r intro-assets/ ncloud@10.1.1.14:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
-| 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. 터널 주소가 바뀌어도 따로 바꿀 것이 없다 |
+| 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. `VITE_API_BASE_URL` 을 쓰는 경우 터널 주소가 바뀌어도 따로 바꿀 것이 없다. **mock 배포처럼 `VITE_API_BASE_URL` 이 비어 있으면 `VITE_INTRO_ASSET_BASE` 에 `https://<터널 주소>/intro-assets/` 를 넣고 재배포한다** (안 넣으면 Vercel 의 `/intro-assets/` 를 찾다가 실패) |
 | 없을 때 | 에셋을 못 받으면 프론트는 인트로를 건너뛰고 시작 화면으로 간다. 게임 진행에는 영향 없음 |
-| 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (#67), 에셋 전달은 프론트 담당 |
+| 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (기능 BE15, #67), 에셋 전달은 프론트 담당 |
 
 ### 5-3. AI 서버 (GPU 서버)
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->

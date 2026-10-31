@@ -73,6 +73,7 @@
 | # | 내용 | 결정 |
 |---|------|------|
 | B1 | **`backend.md`(백엔드 담당 구현 계획)가 예전 API 기준이다.** ① 기능 번호가 [features.md](features.md) 와 다르다 (예: 3D 이벤트 = backend.md BE4 / features BE8). ② 3D API 주소가 예전 것이다 (`experiences/{experienceId}/events` → 현재 `experience-events`, `experiences/reconcile` → `experience-reconcile`, heartbeat 동일). ③ 이후 추가된 미수신 기록(03 1-10), 결말 생성(03 2-3), AI 응답 `branch`, 게임 시작 `sessionId`, 3D API 응답 비포장이 빠져 있다. 백엔드 담당이 features.md · 03 기준으로 맞춘다 (다른 담당 영역이라 문서 총괄이 고치지 않음, 링크 경로만 수정) | |
+| B2 | **인트로 에셋 제공(BE15)이 백엔드 쪽 문서에 없다.** features.md 에 BE15 를 추가했지만 `backend/AGENTS.md` 는 "기능 번호 BE1~BE14", `backend.md` 기능 목록에도 없다. 백엔드 담당이 #67 과 함께 반영한다 (다른 담당 영역이라 문서 총괄이 고치지 않음) | |
 | | | |
 
 ## C. 없는 파일 · 깨진 참조

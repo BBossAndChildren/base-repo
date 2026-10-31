@@ -547,7 +547,7 @@
 - Unity 담당이 준 `career-intro-react-v001`(React + Three.js r180, 직업 공간 71개 · 24초)의 `CareerIntro` · `introEngine` · CSS 를 `frontend/src/pages/intro/` 로 옮긴다. **연출 · 문구 · 스타일은 원본 그대로** 두고 TypeScript 로만 바꾼다
 - 원본에 없던 것만 더한다: [건너뛰기], 에셋 · WebGL 실패 시 시작 화면 이동, 첫 방문 기록(localStorage), 헤더 "인트로 다시 보기"
 - Three.js 는 원본 vendor 폴더 대신 같은 버전의 npm `three@0.180.0` 을 쓰고, 인트로 화면은 따로 나눠 불러온다 (lazy import)
-- 모델 71개 + `intro.json` (약 238MB) 은 git 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 제공한다. 주소는 `VITE_INTRO_ASSET_BASE`, 비우면 `VITE_API_BASE_URL` + `/intro-assets/`
+- 모델 71개 + `intro.json` (약 238MB) 은 git 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 제공한다 (백엔드 기능 BE15, 2026-11-01 기능 목록에 추가). 주소는 `VITE_INTRO_ASSET_BASE`, 비우면 `VITE_API_BASE_URL` + `/intro-assets/`
 - 흡수가 끝나면 임시 참고 디렉터리(`career-intro-react-v001-source/`)는 지운다. 로컬 개발용 에셋 사본만 `frontend/public/intro-assets/` (git 제외) 에 남긴다
 
 ### 근거
