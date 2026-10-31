@@ -290,6 +290,7 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 항목 | 규칙 |
 |------|------|
 | 내용 | `intro.json` + `models/PAN-001.glb` ~ `PAN-071.glb` (71개, 약 238MB). Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 그대로 쓴다 |
+| Unity WebGL 빌드와 다름 | **3D 체험 빌드(`/srv/builds/`, `Build/*.data`)로 대신할 수 없다.** 같은 71개 공간이지만 빌드 안에서는 Unity 전용 형식으로 묶여 있어 인트로(Three.js)가 읽지 못한다. 인트로는 공간마다 GLB 파일이 따로 있어야 한다. 크기의 대부분(233MB)은 GLB 마다 들어간 같은 팔레트 이미지(3.3MB)이다 |
 | 저장 위치 | 백엔드 서버 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
 | Git | **넣지 않는다** (3D 빌드와 같은 이유). 로컬 개발용 사본은 `frontend/public/intro-assets/` 에 두며 git 에서 제외되어 있다 |
 | 올리는 방법 | VPN 을 켠 PC 에서 `scp -r intro-assets/ ncloud@10.1.1.14:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
