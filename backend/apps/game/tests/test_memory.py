@@ -141,3 +141,38 @@ class MemoryTests(TestCase):
         self.assertEqual(resumed["scene"]["speakerNpcId"], "a")
         self.assertEqual(resumed["lastTurnId"], first.json()["data"]["turnId"])
         self.assertNotIn("legacyState", resumed["state"])
+
+
+class SpeakerTargetTests(TestCase):
+    """#111: 여러 NPC 이름이 나와도 실제로 찾아가거나 말을 거는 인물을 고른다"""
+
+    def setUp(self):
+        self.play = Play.objects.create(
+            player=Player.objects.create(),
+            state=initial_state({"name": "플레이어", "age": 15, "situation": "중학생"}),
+            progress={"scene": {"id": "room", "npcIds": [], "speakerNpcId": None}},
+        )
+        # 승언이 먼저 등록된 상태 (이슈 재현 조건)
+        NPC.objects.create(play=self.play, key="seungeon", name="승언")
+        NPC.objects.create(play=self.play, key="seongjun", name="성준")
+
+    def speaker(self, message):
+        return current_scene(self.play, message)["speakerNpcId"]
+
+    def test_issue_reproduction_picks_the_person_being_visited(self):
+        self.assertEqual(
+            self.speaker("성준한테 만나러 갈게. 승언에게 말했던 표식은 몰라도 돼."), "seongjun"
+        )
+
+    def test_order_of_mentions_does_not_matter(self):
+        self.assertEqual(
+            self.speaker("승언에게 말했던 표식은 몰라도 돼. 성준한테 만나러 갈게."), "seongjun"
+        )
+        self.assertEqual(self.speaker("승언 얘기는 됐고 성준을 만나러 가자"), "seongjun")
+
+    def test_addressing_without_movement_still_switches(self):
+        self.assertEqual(self.speaker("승언에게 고맙다고 전할게"), "seungeon")
+
+    def test_name_without_target_or_movement_keeps_current_scene(self):
+        self.assertIsNone(self.speaker("승언이 어제 웃겼어"))
+        self.assertIsNone(self.speaker("오늘은 집에서 쉴래"))
