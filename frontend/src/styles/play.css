@@ -1,7 +1,10 @@
 /* 게임 화면 — 색은 global.css 역할 변수 (docs/design/README.md) */
 .play { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-5); max-width: 1200px; margin: 0 auto; padding: var(--space-5); align-items: start; }
-.chat { min-width: 0; display: flex; flex-direction: column; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); min-height: calc(100vh - var(--header-h) - 140px); }
-.chat-log { flex: 1; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); list-style: none; margin: 0; }
+/* 채팅 영역은 화면 높이에 맞추고 대화 목록만 안에서 스크롤한다. 입력칸 · 힌트는 항상 화면 안 (05 화면 2 · 7절, #128) */
+.chat { min-width: 0; display: flex; flex-direction: column; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); height: calc(100vh - var(--header-h) - 2 * var(--space-5)); height: calc(100dvh - var(--header-h) - 2 * var(--space-5)); min-height: 360px; overflow: hidden; }
+.chat-log { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); list-style: none; margin: 0; }
+.chat-log > * { flex: none; }
+.chat-log:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 .msg { max-width: 78%; }
 .msg-narrator { max-width: 100%; align-self: stretch; background: var(--color-surface-2); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); font-family: var(--font-heading); font-size: var(--text-lg); color: var(--color-text); }
 .msg-narrator .msg-speaker { font-family: var(--font-body); }
@@ -23,7 +26,7 @@
 .exp-card p { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--text-sm); }
 .exp-meta { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
 
-.chat-footer { border-top: 1px solid var(--color-border); padding: var(--space-3) var(--space-4) var(--space-4); }
+.chat-footer { flex: none; border-top: 1px solid var(--color-border); padding: var(--space-3) var(--space-4) var(--space-4); }
 .hints { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-3); }
 .hints-label { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 700; }
 .composer { display: flex; gap: var(--space-2); }
@@ -75,12 +78,13 @@
   .status-bar[open] summary .chev { transform: rotate(180deg); }
   .status-bar .status-age-inline { font-family: var(--font-heading); font-size: var(--text-xl); font-weight: 700; }
   .status-bar .status-bar-body { background: var(--color-surface); color: var(--color-text); padding: var(--space-4); border-bottom: 1px solid var(--color-border); }
-  .chat { border-radius: 0; border-left: 0; border-right: 0; min-height: calc(100vh - var(--header-h) - 48px); }
+  /* 접힌 상태 막대(48px) 아래 남은 높이 */
+  .chat { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; height: calc(100vh - var(--header-h) - 48px); height: calc(100dvh - var(--header-h) - 48px); min-height: 320px; }
   .chat-log { padding: var(--space-4); }
   .msg { max-width: 90%; }
   .exp-card { grid-template-columns: 1fr; }
   .exp-card-art { display: none; }
-  .chat-footer { position: sticky; bottom: 0; background: var(--color-surface); }
+  .chat-footer { background: var(--color-surface); }
 }
 
 

@@ -1,7 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { Badge, Button, TypingIndicator } from '../../components'
 import type { ExperienceOffer } from '../../types/api'
 import { avatarLetter, type TimelineItem } from './timeline'
+
+/** 맨 아래에서 이 거리 안이면 '맨 아래를 보는 중'으로 본다 */
+const FOLLOW_THRESHOLD_PX = 80
 
 interface ChatLogProps {
   items: TimelineItem[]
@@ -11,14 +14,27 @@ interface ChatLogProps {
 }
 
 export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience }: ChatLogProps) {
-  const endRef = useRef<HTMLLIElement>(null)
+  const logRef = useRef<HTMLOListElement>(null)
+  // 사용자가 맨 아래 근처에 있을 때만 새 메시지를 따라 내려간다 (위쪽 대화를 읽는 중이면 그대로, 05 화면 2)
+  const followRef = useRef(true)
+  const last = items[items.length - 1]
+  const sentByMe = last?.kind === 'message' && last.message.role === 'user'
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView?.({ block: 'end' })
-  }, [items.length, waiting])
+  useLayoutEffect(() => {
+    const log = logRef.current
+    if (!log || !(followRef.current || sentByMe)) return
+    // 페이지 전체가 아니라 대화 목록 안에서만 스크롤한다
+    log.scrollTop = log.scrollHeight
+    followRef.current = true
+  }, [items.length, waiting, sentByMe])
+
+  function trackPosition() {
+    const log = logRef.current
+    if (log) followRef.current = log.scrollHeight - log.scrollTop - log.clientHeight < FOLLOW_THRESHOLD_PX
+  }
 
   return (
-    <ol className="chat-log" aria-live="polite" aria-relevant="additions" aria-label="대화">
+    <ol ref={logRef} className="chat-log" aria-live="polite" aria-relevant="additions" aria-label="대화" tabIndex={0} onScroll={trackPosition}>
       {items.map((item) => {
         if (item.kind === 'system')
           return (
@@ -61,7 +77,6 @@ export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience
           </div>
         </li>
       )}
-      <li ref={endRef} aria-hidden="true" style={{ height: 0 }} />
     </ol>
   )
 }
