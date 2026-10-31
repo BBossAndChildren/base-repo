@@ -18,6 +18,7 @@
 | ORM · 마이그레이션 | Django ORM · Django Migrations | Django와 동일 | DB 조회 · 저장과 스키마 변경 관리 |
 | API 문서 | drf-spectacular | 0.29.0 | OpenAPI 명세와 Swagger UI 생성. 기준 계약은 [03-api.md](03-api.md) 이며 생성 문서와 다르면 03 을 고친다 |
 | 앱 서버 | Gunicorn (WSGI) | 23.0.0 | 배포 환경에서 Django 실행 |
+| 컨테이너 | Docker · Docker Compose | Compose v2 | 기존 Python · Django · PostgreSQL 스택을 동일한 이미지와 실행 설정으로 재현 |
 | 프론트 연동 | django-cors-headers | 4.9.0 | 프론트가 다른 주소에서 호출하므로 CORS 허용 출처 지정 |
 | 직업 데이터 | 기존 JSON 파일 (직업 552개) | — | 직업 정보 로딩 · 조회 |
 
@@ -61,7 +62,9 @@ backend/
 ├─ manage.py
 ├─ pyproject.toml / uv.lock / .python-version
 ├─ .env.example                # 변수 이름만 공유, 실제 .env는 Git 제외
-├─ compose.yaml                # 개발용 PostgreSQL (선택)
+├─ Dockerfile                  # uv.lock 기반 런타임 이미지, 일반 사용자 실행
+├─ compose.yaml                # Gunicorn WSGI + PostgreSQL
+├─ compose.dev.yaml            # 개발용 자동 새로고침 · 소스 연결 · DB 호스트 포트
 ├─ gunicorn.conf.py            # WSGI 실행 설정
 ├─ config/
 │  ├─ settings.py              # 환경변수 · DB · DRF · CORS
@@ -70,7 +73,8 @@ backend/
 ├─ apps/
 │  └─ core/                   # 상태 확인 API · 기반 테스트
 └─ scripts/
-   └─ init_local_env.py        # 비밀값을 생성해 로컬 .env에만 저장
+   ├─ init_local_env.py        # 비밀값을 생성해 로컬 .env에만 저장
+   └─ start_container.sh       # migration · 정적 파일 수집 후 서버 실행
 docs/
 ├─ development/                # 설계 · API 계약 · 실행 안내
 └─ game/                       # 시나리오 작가 담당 마크다운
@@ -82,7 +86,9 @@ docs/
 | `backend/config/` | 환경과 진입점. 설정은 `.env` 또는 서버 환경변수로 주입하며 서버 환경변수가 우선한다 |
 | `backend/apps/core/` | `GET /api/health`: DB `SELECT 1` 성공 시 200, 연결 실패 시 503. 인증 없이 호출하며 접속 정보는 노출하지 않는다 |
 | `backend/scripts/` | 로컬 설정 준비. 기존 `.env`가 있으면 덮어쓰지 않는다 |
-| `backend/compose.yaml` | 로컬 DB만 컨테이너로 실행. 데이터는 named volume에 보관 |
+| `backend/Dockerfile` · 루트 `.dockerignore` | Python 3.12.13과 기존 uv.lock으로 이미지를 빌드. `.env` · 로컬 DB · 가상환경 · Unity 빌드는 제외하고 `docs/game/`은 포함 |
+| `backend/compose.yaml` | Gunicorn WSGI와 PostgreSQL. DB 준비 후 migration · 정적 파일 수집, API healthcheck. DB와 정적 파일은 named volume에 보관 |
+| `backend/compose.dev.yaml` | Django 개발 서버로 변경하고 소스를 연결. migration 생성용 `apps/`는 쓰기를 허용하고 설정 · 스크립트 · 게임 문서는 읽기 전용. DB 호스트 접속은 기본 5433 |
 | `backend/apps/` | 후속 작업에서 플레이 · AI 연동 앱을 추가. 현재는 게임 모델 · 인증 · AI 요청을 구현하지 않는다 |
 
 Swagger는 `/api/docs/`, OpenAPI는 `/api/schema/`에서 제공한다. 현재 실행 가능한 API는 상태 확인뿐이며, [03-api.md 1부](03-api.md#1부-프론트--백엔드)의 게임 API는 후속 구현 대상이다. 게스트 방식이므로 이번 세팅에서는 Django 사용자 · 세션 · 관리자 앱과 사용자 테이블을 만들지 않는다.

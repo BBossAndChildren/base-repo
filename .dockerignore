@@ -1,0 +1,17 @@
+**
+!backend/
+!backend/**
+!docs/
+!docs/game/
+!docs/game/**
+**/.env
+**/.env.*
+!backend/.env.example
+backend/.venv/
+backend/.local/
+backend/.ruff_cache/
+backend/staticfiles/
+backend/dist/
+backend/*.egg-info/
+**/__pycache__/
+**/*.py[cod]
