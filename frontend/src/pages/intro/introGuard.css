@@ -1,0 +1,7 @@
+/* 앱 전역 스타일 차단 — global.css 의 body · h1 · h2 · p · .brand 규칙이 원본 인트로 모습을 바꾸지 않게 한다.
+   CareerIntro.css(생성 파일) 다음에 불러온다 */
+.career-intro{line-height:normal;word-break:normal;overflow-wrap:normal}
+.career-intro h1,.career-intro h2{font-family:inherit;color:inherit;line-height:normal}
+.career-intro h1{line-height:var(--ci-component-hero-title-line-height)}
+.career-intro p{margin:1em 0}
+.career-intro .brand{display:inline;gap:normal;font-family:inherit;color:inherit;text-decoration:none}

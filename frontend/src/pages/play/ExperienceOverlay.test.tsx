@@ -129,6 +129,12 @@ describe('ExperienceOverlay', () => {
     expect(screen.getByText('3D 체험을 불러오고 있어요')).toBeInTheDocument()
   })
 
+  it('Unity 배경색을 페이지 배경(디자인 토큰)과 같은 #101e24 로 맞춘다', async () => {
+    const { client } = renderOverlay()
+    await screen.findByTitle('직업 3D 체험')
+    await waitFor(() => expect(client.setPresentation).toHaveBeenCalledWith({ backgroundColor: '#101e24' }))
+  })
+
   it('준비되면 [체험 시작하기] 를 눌러 시작하고, 체험 중에는 [체험 종료하기] 와 효과음 안내', async () => {
     const { ready, client, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')

@@ -5,7 +5,7 @@ import { env } from '../lib/env'
 const INTERESTS = ['과학', '기술·IT', '예술·디자인', '음악', '운동', '책·글쓰기', '요리', '사람 돕기', '사업·경제', '자연·동물'] as const
 const SITUATIONS = ['초등학생', '중학생', '고등학생', '대학생', '직장인', '구직 중', '기타'] as const
 
-/** 공통 컴포넌트 확인용 임시 화면 (docs/design/06-components.html 과 비교). 4단계에서 라우팅으로 대체한다 */
+/** 공통 컴포넌트 확인용 임시 화면 (docs/design/README.md 의 역할 변수 확인용). 4단계에서 라우팅으로 대체한다 */
 export function ComponentsPreviewPage() {
   const toast = useToast()
   const [modalOpen, setModalOpen] = useState(false)
@@ -16,7 +16,7 @@ export function ComponentsPreviewPage() {
   return (
     <main className="page-narrow stack">
       <h1>공통 컴포넌트</h1>
-      <p className="muted small">API 모드: {env.useMock ? 'mock' : '실제 서버'} · 시안: docs/design/06-components.html</p>
+      <p className="muted small">API 모드: {env.useMock ? 'mock' : '실제 서버'} · 디자인: docs/design/README.md</p>
 
       <h2 className="section-title">버튼</h2>
       <div className="row">

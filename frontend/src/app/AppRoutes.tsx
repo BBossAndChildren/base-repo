@@ -14,7 +14,7 @@ import { AppLayout } from './AppLayout'
 // 인트로는 Three.js 를 포함해 무거우므로 따로 나눠 불러온다 (05-ui-ux.md 화면 0)
 const IntroPage = lazy(() => import('../pages/intro/IntroPage'))
 // 인트로 CSS 가 오기 전 잠깐 보이는 화면 (원본 인트로 배경색)
-const INTRO_FALLBACK = { position: 'fixed', inset: 0, background: '#101e24' } as const
+const INTRO_FALLBACK = { position: 'fixed', inset: 0, background: 'var(--color-bg)' } as const
 
 /** 첫 방문이면 시작 화면 대신 인트로로 보낸다 (FE11) */
 function StartOrIntro() {

@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run tokens && tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "lint": "oxlint --deny-warnings",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "tokens": "node scripts/build-tokens.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

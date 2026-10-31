@@ -136,10 +136,10 @@ function ResultLoading() {
 function Stars() {
   return (
     <svg className="stars" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
-      <circle cx="30" cy="30" r="2" fill="#E9B949" />
-      <circle cx="90" cy="150" r="1.5" fill="#E9B949" />
-      <circle cx="350" cy="40" r="2.5" fill="#E9B949" />
-      <circle cx="300" cy="160" r="1.5" fill="#E9B949" />
+      <circle cx="30" cy="30" r="2" fill="currentColor" />
+      <circle cx="90" cy="150" r="1.5" fill="currentColor" />
+      <circle cx="350" cy="40" r="2.5" fill="currentColor" />
+      <circle cx="300" cy="160" r="1.5" fill="currentColor" />
       <circle cx="200" cy="20" r="1.2" fill="#fff" />
       <circle cx="380" cy="110" r="1.2" fill="#fff" />
     </svg>

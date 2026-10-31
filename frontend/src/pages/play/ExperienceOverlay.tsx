@@ -12,6 +12,8 @@ const READY_TIMEOUT_MS = 60_000
 const HEARTBEAT_MS = 30_000
 const FLUSH_MS = 2_000
 const FINAL_FLUSH_WAIT_MS = 5_000
+/** Unity 배경색 — 불투명 6자리만 허용. 페이지 배경(--color-bg, 디자인 토큰 semantic.surface.film)과 같은 값 (05-ui-ux.md 4-1) */
+export const EXPERIENCE_BACKGROUND = '#101e24'
 
 
 type Phase = 'loading' | 'ready' | 'starting' | 'running' | 'ending' | 'error'
@@ -119,6 +121,7 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
       },
     })
     clientRef.current = client
+    client.setPresentation({ backgroundColor: EXPERIENCE_BACKGROUND })
     const flushTimer = setInterval(() => void outbox.flush(), FLUSH_MS)
     // Unity 가 정해진 시간 안에 준비되지 않으면 불러오기 실패로 본다
     const readyTimer = setTimeout(() => {
