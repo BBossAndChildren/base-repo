@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D 체험 — 어른왕자 (시안)</title>
+  <meta name="description" content="어른왕자 3D 직업 체험 전체 화면 디자인 시안">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <header class="site-header">
+    <a class="brand" href="01-start.html">
+      <svg class="brand-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z" fill="#E9B949" stroke="#2B3A67" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      어른왕자
+    </a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="02-play.html">게임 화면으로</a>
+      <a href="05-history.html">지난 기록</a>
+    </nav>
+  </header>
+
+  <main id="main" class="page">
+    <h1 style="font-size:var(--text-2xl)">3D 체험 화면 (게임 화면 위 전체 화면)</h1>
+    <p class="design-note">실제 화면은 게임 화면을 <strong>가리는 전체 화면 오버레이</strong>(<code>.exp-overlay.is-fullscreen</code>)다. 시안에서는 상태별로 상자 안에 나란히 보여 준다. 오버레이 배경과 Unity <code>backgroundColor</code> 는 같은 <code>--color-bg</code>(#FBF6EC)로 맞춘다. 모바일(1024px 미만)은 가로 전체 화면.</p>
+
+    <h2 class="section-title">① 불러오는 중</h2>
+    <section class="exp-overlay" aria-labelledby="t1" aria-busy="true">
+      <div class="exp-topbar">
+        <span class="exp-title" id="t1">연구실에서 하루 일해 보기</span>
+        <button class="btn btn-secondary btn-sm" type="button">체험 종료하기</button>
+      </div>
+      <div class="exp-stage">
+        <span class="iframe-label">Unity WebGL (iframe)</span>
+        <div class="exp-loading" role="status">
+          <div class="spinner" style="margin:0 auto" aria-hidden="true"></div>
+          <p style="margin:var(--space-3) 0 0;font-weight:700">3D 체험을 불러오고 있어요</p>
+          <div class="progress" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="불러오기 진행률"><span style="width:62%"></span></div>
+          <p class="small muted" style="margin:0">62% · 처음에는 조금 오래 걸릴 수 있어요</p>
+        </div>
+      </div>
+    </section>
+    <p class="design-note">진행률 숫자는 Unity 로더가 진행률을 줄 때만 보여 준다. 주지 않으면 스피너 + 문구만.</p>
+
+    <h2 class="section-title">② 준비 완료 — 사용자가 눌러서 시작</h2>
+    <section class="exp-overlay" aria-labelledby="t2">
+      <div class="exp-topbar">
+        <span class="exp-title" id="t2">연구실에서 하루 일해 보기</span>
+        <button class="btn btn-secondary btn-sm" type="button">체험 종료하기</button>
+      </div>
+      <div class="exp-stage">
+        <span class="iframe-label">Unity WebGL (iframe)</span>
+        <div>
+          <h3 style="font-size:var(--text-xl)">준비됐어요!</h3>
+          <p class="muted">연구실 안의 물건 3개를 하나씩 살펴보고 다뤄 보세요.</p>
+          <button class="btn btn-primary btn-lg" type="button">체험 시작하기</button>
+        </div>
+      </div>
+      <div class="sound-note" role="note">
+        <span class="icon" aria-hidden="true">🔊</span>
+        <span><strong>효과음을 들으려면</strong> 체험이 시작된 뒤 게임 화면 안의 <strong>“효과음 켜기”</strong> 버튼을 한 번 눌러 주세요. 브라우저 정책 때문에 화면 안을 눌러야 소리가 나요.</span>
+      </div>
+    </section>
+    <p class="design-note">Unity 가 <code>ready</code> 를 준 뒤 <strong>사용자 클릭</strong>으로 <code>client.start()</code> 해야 한다(05 4-1). 그래서 채팅의 [체험 시작] 과 별개로 이 [체험 시작하기] 버튼이 한 번 더 필요하다고 가정했다.</p>
+
+    <h2 class="section-title">③ 체험 중</h2>
+    <section class="exp-overlay" aria-labelledby="t3">
+      <div class="exp-topbar">
+        <span class="exp-title" id="t3">연구실에서 하루 일해 보기</span>
+        <button class="btn btn-secondary btn-sm" type="button">체험 종료하기</button>
+      </div>
+      <div class="exp-stage" style="background:linear-gradient(180deg,#F4ECDD,#FBF6EC)">
+        <span class="iframe-label">Unity WebGL (iframe)</span>
+        <span class="fake-sound-btn" aria-hidden="true">🔊 효과음 켜기 (게임 안 버튼)</span>
+        <p class="muted" style="margin:0">[ Unity 3D 장면 — 물건 3개와 상호작용 ]</p>
+      </div>
+      <div class="sound-note" role="note">
+        <span class="icon" aria-hidden="true">🔊</span>
+        <span>소리가 안 들리면 게임 화면 오른쪽 위 <strong>“효과음 켜기”</strong>를 눌러 주세요.</span>
+      </div>
+    </section>
+
+    <h2 class="section-title">④ 종료 중 — 저장 확인 대기</h2>
+    <section class="exp-overlay" aria-labelledby="t4" style="min-height:360px">
+      <div class="exp-topbar">
+        <span class="exp-title" id="t4">연구실에서 하루 일해 보기</span>
+        <button class="btn btn-sm" type="button" disabled>종료하는 중…</button>
+      </div>
+      <div class="exp-stage" style="min-height:220px">
+        <span class="iframe-label">Unity WebGL (iframe)</span>
+        <div role="status">
+          <div class="spinner" style="margin:0 auto" aria-hidden="true"></div>
+          <p style="margin:var(--space-3) 0 0;font-weight:700">체험 기록을 저장하고 있어요</p>
+          <p class="small muted" style="margin:0">저장이 끝나면 이야기로 돌아가요.</p>
+        </div>
+      </div>
+    </section>
+    <p class="design-note">종료 응답 + 저장 확인(<code>stored: true</code>)을 받은 뒤 iframe 을 지운다. 5초 안에 응답이 없을 때 사용자에게 무엇을 보여 줄지(계속 대기 / 바로 복귀)는 정해지지 않았다.</p>
+
+    <h2 class="section-title">⑤ 체험 중 오류 — 모달</h2>
+    <section class="exp-overlay" aria-labelledby="t5">
+      <div class="exp-topbar">
+        <span class="exp-title" id="t5">연구실에서 하루 일해 보기</span>
+        <button class="btn btn-secondary btn-sm" type="button" disabled>체험 종료하기</button>
+      </div>
+      <div class="exp-stage">
+        <span class="iframe-label">Unity WebGL (iframe)</span>
+      </div>
+      <div class="modal-backdrop is-inline">
+        <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="err-title" aria-describedby="err-desc">
+          <div class="modal-icon" aria-hidden="true">!</div>
+          <h2 id="err-title">3D 체험을 종료했어요</h2>
+          <p id="err-desc">체험 중 문제가 생겨 3D 체험을 종료했어요. 지금까지 한 체험은 저장되었어요. 텍스트 모드로 이어서 진행해 주세요.</p>
+          <div class="modal-actions">
+            <a class="btn btn-primary" href="02-play.html">텍스트로 계속하기</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title">⑥ 시작 전 건너뜀 — 토스트 (게임 화면 위)</h2>
+    <div class="demo-box" style="min-height:200px">
+      <div class="toast-region is-inline" style="left:var(--space-3);max-width:none">
+        <div class="toast toast-error" role="status">
+          <span class="toast-icon" aria-hidden="true">!</span>
+          <div class="toast-body">3D 체험을 불러오지 못했어요. 이번 체험은 건너뛰고 텍스트로 이어갈게요.</div>
+          <button class="toast-close" type="button" aria-label="알림 닫기">✕</button>
+        </div>
+        <div class="toast" role="status">
+          <span class="toast-icon" aria-hidden="true">i</span>
+          <div class="toast-body">종료 응답을 받지 못해 이전 체험을 중단 처리했습니다.</div>
+          <button class="toast-close" type="button" aria-label="알림 닫기">✕</button>
+        </div>
+      </div>
+    </div>
+    <p class="design-note">문구는 <code>10-prompt-assembly.md</code> 4-4 그대로. 진행을 막지 않으면 토스트, 진행이 끊기면 모달. 토스트는 약 5초 뒤 자동으로 사라지고 ✕ 로 닫을 수 있다. 정산 토스트만 "~했습니다" 체로 다른 문구와 어미가 다르다.</p>
+  </main>
+
+  <footer class="site-footer">
+    게임 속 사건과 인물은 가상이며, 직업 정보는 직업백과를 근거로 합니다. 결과는 실제 진로 · 취업을 보장하지 않습니다.
+  </footer>
+</body>
+</html>

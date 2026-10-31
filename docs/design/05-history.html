@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>지난 기록 — 어른왕자 (시안)</title>
+  <meta name="description" content="어른왕자 지난 플레이 기록 화면 디자인 시안 (선택 기능)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <header class="site-header">
+    <a class="brand" href="01-start.html">
+      <svg class="brand-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z" fill="#E9B949" stroke="#2B3A67" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      어른왕자
+    </a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="05-history.html" aria-current="page">지난 기록</a>
+    </nav>
+  </header>
+
+  <main id="main" class="page-narrow">
+    <h1 style="font-size:var(--text-2xl)">지난 기록</h1>
+    <p class="muted">지금까지 살아 본 인생들이에요. 이 브라우저에서 플레이한 기록만 보여요.</p>
+
+    <ul class="history-list" style="margin-top:var(--space-5)">
+      <li class="card history-item">
+        <div>
+          <span class="badge badge-progress">진행 중</span>
+          <h3 style="margin-top:var(--space-2)">민준 · 16세까지</h3>
+          <div class="history-meta"><span>시작 2026.10.30</span><span>중학생으로 시작</span></div>
+        </div>
+        <a class="btn btn-primary btn-sm" href="02-play.html">이어하기</a>
+      </li>
+      <li class="card history-item">
+        <div>
+          <span class="badge badge-muted">끝난 인생</span>
+          <h3 style="margin-top:var(--space-2)">민준 · 15세 → 32세</h3>
+          <div class="history-meta"><span>시작 2026.10.28</span><span>중학생으로 시작</span></div>
+          <p class="small" style="margin:var(--space-2) 0">실험을 좋아하던 민준은 연구실에서 하루를 보내고 과학 축제에서 실험 원리를 소개했어요.</p>
+          <div class="chips"><span class="chip chip-static">자연과학연구원</span><span class="chip chip-static">게임프로그래머</span><span class="chip chip-static">학예사(큐레이터) ★</span></div>
+        </div>
+        <a class="btn btn-secondary btn-sm" href="04-result.html">결과 보기</a>
+      </li>
+      <li class="card history-item">
+        <div>
+          <span class="badge badge-muted">끝난 인생</span>
+          <h3 style="margin-top:var(--space-2)">하늘 · 24세 → 40세</h3>
+          <div class="history-meta"><span>시작 2026.10.21</span><span>구직 중으로 시작</span></div>
+          <p class="small" style="margin:var(--space-2) 0">작은 빵집을 열었다가 첫 고객의 큰 주문에 밤을 새우며, 가게를 꾸리는 일의 무게를 알게 되었어요.</p>
+          <div class="chips"><span class="chip chip-static">제과제빵사</span><span class="chip chip-static">상품기획자</span><span class="chip chip-static">사회복지사 ★</span></div>
+        </div>
+        <a class="btn btn-secondary btn-sm" href="04-result.html">결과 보기</a>
+      </li>
+    </ul>
+
+    <h2 class="section-title">기록이 없을 때</h2>
+    <div class="card error-screen">
+      <div class="error-art" aria-hidden="true">🌱</div>
+      <h3>아직 살아 본 인생이 없어요</h3>
+      <p class="muted">첫 인생을 시작해 볼까요?</p>
+      <a class="btn btn-primary" href="01-start.html">인생 시작하기</a>
+    </div>
+
+    <p class="design-note">선택 기능(FE10). 목록 API 는 아직 03-api.md 에 없다. ★ 는 "새로운 일"(isNew) 표시.</p>
+  </main>
+
+  <footer class="site-footer">
+    게임 속 사건과 인물은 가상이며, 직업 정보는 직업백과를 근거로 합니다. 결과는 실제 진로 · 취업을 보장하지 않습니다.
+  </footer>
+</body>
+</html>

@@ -51,6 +51,7 @@
 | 401 | `UNKNOWN_PLAYER` | `X-Player-Id` 가 없거나 모르는 ID | 플레이 정보를 찾을 수 없어요. 처음부터 다시 시작해 주세요. |
 | 404 | `NOT_FOUND` | 없는 플레이 · 체험 | 요청한 정보를 찾을 수 없어요. |
 | 409 | `ALREADY_ENDED` | 이미 끝난 플레이 · 체험에 요청 | 이미 끝난 진행이에요. |
+| 409 | `NOT_ENDED` | 아직 끝나지 않은 플레이의 결말 요청 | 아직 이야기가 끝나지 않았어요. |
 | 502 | `AI_UNAVAILABLE` | AI 서버 실패 (재요청 1회 후에도 실패) | 잠시 후 다시 시도해 주세요. |
 | 504 | `TIMEOUT` | 응답 시간 초과 | 응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요. |
 
@@ -116,18 +117,19 @@
 | 필드 | 필수 | 설명 |
 |------|:---:|------|
 | `name` | ✅ | 게임 안에서 불릴 이름 (닉네임 가능) |
-| `age` | ✅ | 현재 나이. 이 나이부터 게임이 시작된다 |
-| `situation` | ✅ | 현재 상황 (학생 · 직장인 · 구직 중 등) |
+| `age` | ✅ | 현재 나이 (정수 **7~99**). 이 나이부터 게임이 시작된다 |
+| `situation` | ✅ | 현재 상황. 보기 중 하나: `초등학생` · `중학생` · `고등학생` · `대학생` · `직장인` · `구직 중` · `기타` |
 | `hasDreamJob` | ✅ | 희망 직업 유무 |
 | `dreamJob` | `hasDreamJob` 이 `true` 일 때 | 희망 직업명 |
 | `gender` | | 성별. 선택 안 함 허용 |
-| `interests` | | 관심사 (여러 개) |
+| `interests` | | 관심사 (여러 개, 최대 5). 보기: 과학 · 기술·IT · 예술·디자인 · 음악 · 운동 · 책·글쓰기 · 요리 · 사람 돕기 · 사업·경제 · 자연·동물 + 직접 입력 |
 | `majorOrGrade` | | 전공 또는 학년 |
-| `strengths` | | 잘하는 것 · 좋아하는 과목 (여러 개) |
-| `values` | | 가치관 (보기 중 선택. 예: 안정 · 성장 · 돈 · 사회 기여 · 자유) |
+| `strengths` | | 잘하는 것 · 좋아하는 과목 (여러 개, 최대 5, 직접 입력) |
+| `values` | | 가치관 (보기 중 최대 3: 안정 · 성장 · 돈 · 사회 기여 · 자유 · 인정 · 관계) |
 | `roleModel` | | 롤모델 |
 | `mbti` | | MBTI |
 
+- 진행 중인 플레이가 있어도 새 플레이를 시작할 수 있다. 이전 플레이는 끝내지 않고 그대로 두며, 지난 기록([1-6](#1-6-지난-플레이-기록))에서 이어 할 수 있다
 - **선택 항목은 프론트가 7개 중 랜덤 2개만 화면에 보여 준다.** 사용자가 건너뛴 항목과 보여 주지 않은 항목은 보내지 않는다 (필드 생략)
 - 비어 있는 선택 항목은 게임 중 NPC 가 대화로 하나씩 묻고, 답하면 [1-3](#1-3-채팅-한-턴) 의 `stateChanges` 로 `profile.<필드>` 가 채워진다
 - 받지 않는 정보: 건강 · 질병 (개인정보보호법상 민감정보. AI 가 묻거나 유도하지도 않는다), 가족관계 · 반려동물 (주변 인물은 게임이 랜덤으로 구성 — [00-idea.md 7장](../00-idea.md#7-주변-인물과-랜덤성))
@@ -177,6 +179,7 @@
 }
 ```
 - `stateChanges` 는 백엔드가 확인을 마치고 실제 반영한 변경만 담는다. 대화 중 사용자가 선택 항목에 답하면 `{ "field": "profile.mbti", "from": null, "to": "INTP" }` 처럼 담긴다
+- `title` 은 Unity 허용 목록(`production-supported-manifest.json`)의 `title`, `jobs` 는 카탈로그의 `jobs`, `reason` 은 AI 응답 `branch.reason`. 3D 안내 카드에 "무슨 체험인지 · 왜 지금인지"를 보여 주는 용도
 - `buildUrl` 은 백엔드가 요청이 들어온 주소(현재 터널 주소) 기준으로 만든다 ([06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달))
 - `experience` 는 3D 분기일 때만 채운다. 맞는 빌드가 없으면 `null` 과 함께 `notice` 를 준다
 ```json
@@ -185,7 +188,10 @@
   "buildUrl": "https://<현재 터널 주소>/builds/career-suite-integration-v005/",
   "roomId": "PAN-002",
   "scenarioId": "career-net-951-experience",
-  "scenarioVersion": "v002"
+  "scenarioVersion": "v002",
+  "title": "주민 문화행사 준비",
+  "jobs": ["행사기획자"],
+  "reason": "친구가 행사 준비를 함께 하자고 제안함"
 }
 ```
 ```json
@@ -236,18 +242,19 @@
   "data": {
     "ending": "이번 인생 요약 …",
     "recommendedJobs": [
-      { "job": "행사기획자", "isNew": false, "reason": "동아리 행사 준비 체험을 끝까지 해냈고 …", "work": "하는 일 …", "nextSteps": ["…", "…"] },
-      { "job": "사서", "isNew": true, "reason": "책 이야기에 관심을 보였지만 아직 경험하지 않은 일 …", "work": "…", "nextSteps": ["…"] }
+      { "job": "행사기획자", "isNew": false, "basis": ["experience", "conversation"], "reason": "동아리 행사 준비 체험을 끝까지 해냈고 …", "work": "하는 일 …", "nextSteps": ["…", "…"] },
+      { "job": "사서", "isNew": true, "basis": ["interest"], "reason": "책 이야기에 관심을 보였지만 아직 경험하지 않은 일 …", "work": "…", "nextSteps": ["…"] }
     ]
   }
 }
 ```
 - `isNew: true` 는 아직 경험하지 않은 새 직업 (다음 플레이 권유)
+- `basis` 는 추천 근거 종류: `experience`(3D 체험) · `conversation`(대화) · `interest`(흥미 기록) · `dreamJob`(희망 직업). 백엔드가 [10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5) 점수 근거에서 채운다. 화면의 "3D 체험함" 같은 표시에 쓴다
 
 실패
 | code | 조건 |
 |------|------|
-| 409 | 아직 끝나지 않은 플레이 |
+| 409 `NOT_ENDED` | 아직 끝나지 않은 플레이 |
 | 502 · 504 | AI 서버 실패 · 시간 초과 |
 
 ### 1-6. 지난 플레이 기록
@@ -416,7 +423,7 @@
 
 응답 (성공)
 ```json
-{ "code": 200, "data": { "ending": "…", "recommendedJobs": [ { "job": "…", "isNew": false, "reason": "…", "work": "…", "nextSteps": ["…"] } ] } }
+{ "code": 200, "data": { "ending": "…", "recommendedJobs": [ { "job": "…", "isNew": false, "basis": ["experience"], "reason": "…", "work": "…", "nextSteps": ["…"] } ] } }
 ```
 - 추천은 3개, 그중 1개 이상 `isNew: true`. 직업 정보는 RAG 근거
 
