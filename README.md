@@ -47,7 +47,7 @@ cd frontend
 npm install
 cp .env.example .env.local   # 기본값은 mock 모드 (백엔드 없이 실행)
 npm run dev                  # http://localhost:5173
-# 인트로까지 보려면 인트로 에셋(intro.json + models/)을 frontend/public/intro-assets/ 에 둔다 (git 제외)
+# 인트로까지 보려면 .env.local 에 VITE_INTRO_ASSET_BASE=https://<터널 주소>/intro-assets/ (백엔드 BE15)
 ```
 
 **백엔드** — 상세: [backend/README.md](backend/README.md) <!-- TODO: 백엔드 담당이 실행 방법 확정 후 정리 -->
@@ -60,7 +60,7 @@ npm run dev                  # http://localhost:5173
 | `CORS_ALLOWED_ORIGINS` · `ALLOWED_HOSTS` | 백엔드 접근 허용 |
 | `VITE_API_BASE_URL` | 프론트의 백엔드 주소 (현재 터널 주소) |
 | `VITE_USE_MOCK` | 프론트 mock 사용 여부 (`true` 기본, 백엔드 연결 때 `false`) |
-| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 주소 (선택, 비우면 `VITE_API_BASE_URL` + `/intro-assets/`) |
+| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 주소 (선택, 비우면 `VITE_API_BASE_URL` + `/intro-assets/`, 둘 다 없으면 인트로 생략) |
 
 ## 7. 민감정보 관리
 API 키 · 비밀번호 · VPN 계정 · 토큰은 코드 · 문서 · 커밋에 쓰지 않는다. `.env` 로만 관리하고 저장소에는 `.env.example` 만 둔다. 건강 · 질병 정보는 받지도 저장하지도 않는다.

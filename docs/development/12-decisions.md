@@ -573,11 +573,15 @@
 - 인트로 CSS 는 원본 v001 을 복사한 파일 대신, 토큰 판(v002) 템플릿에서 `npm run tokens` 로 만든 생성 파일(`src/pages/intro/CareerIntro.css`)을 쓴다. 앱 전역 스타일 차단 규칙은 `introGuard.css` 로 옮겼다. 화면 모습은 같다
 - 인트로 스타일은 이제 앱 전체 디자인의 기준이다 (위 마지막 항목은 결정 26 으로 대체)
 
+### 변경 (2026-11-01, #92)
+- 프론트 로컬 에셋 사본(`frontend/public/intro-assets/`)과 이를 가리키던 대체 주소 규칙을 없앴다. 에셋은 백엔드 BE15(#83) `/intro-assets/` 에서만 받고, 에셋 주소가 설정되지 않은 배포에서는 인트로를 띄우지 않는다 (실패 토스트 없이 시작 화면). 위 "로컬 개발용 에셋 사본만 남긴다" 항목은 이 변경으로 대체
+- `docs/design/` 에는 토큰(`tokens.json`)과 안내만 남기고 전달물 부속 파일은 지웠다
+
 ## 26. 인트로 디자인 토큰으로 전체 디자인 교체 (2026-11-01)
 
 ### 결정
 - Unity 담당이 인트로에서 뽑은 `career-intro-component-tokens-v001` (`tokens.json`, 242개) 을 웹 프론트 전체 디자인으로 쓴다. 기존 "그림책" 시안(크림 · 남색 · 주황, 고운바탕 · Noto Sans KR)과 `docs/design/` 의 HTML 시안 · `tokens.md` · `styles.css` 는 폐기한다
-- 토큰 원본은 `frontend/src/design/tokens/tokens.json` (전달물 `docs/design/src/tokens/tokens.json` 과 같은 파일). 전달물의 생성 스크립트로 `--ci-*` 변수와 인트로 CSS 를 만들고, 생성 파일은 직접 고치지 않는다
+- 토큰 원본은 `frontend/src/design/tokens/tokens.json` (전달물 `docs/design/tokens.json` 과 같은 파일). 전달물의 생성 스크립트로 `--ci-*` 변수와 인트로 CSS 를 만들고, 생성 파일은 직접 고치지 않는다
 - 앱 화면은 역할 변수(`--color-*`)를 쓰고, 역할 변수가 토큰을 가리킨다. 토큰에 없는 역할(카드 면 · 보조 면 · 선택 칩)은 토큰의 반투명 색을 배경 위에 섞어 불투명 값으로 만들고, 상태색(오류 `#ff8a80` · 주의 `#f2c879`) · 비활성 글자 · 모달 뒤 어둡게만 새로 정했다. 모두 AA 이상 ([docs/design/README.md](../design/README.md#명도-대비-wcag-21-계산값))
 - 글꼴은 토큰의 Pretendard 를 jsDelivr CDN 고정 버전으로 불러온다
 - 인트로는 토큰 버전(v002, `tokens` prop) 으로 바꾼다. 화면 모습은 v001 과 같다

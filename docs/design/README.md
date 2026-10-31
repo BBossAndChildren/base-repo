@@ -14,17 +14,16 @@
 
 | 파일 | 내용 |
 |------|------|
-| [src/tokens/tokens.json](src/tokens/tokens.json) | **토큰 원본** (242개: primitive · semantic · component · responsive · breakpoint). 전달받은 그대로 둔다 |
-| [src/tokens/README.md](src/tokens/README.md) | 전달물 설명 (토큰 계층, `tokens` prop, 생성 규칙) |
-| [APPLY.md](APPLY.md) · [manifest.json](manifest.json) | 전달물 적용 방법 · 파일 해시 |
-| `src/tokens/CareerIntro.template.css` · `scripts/build-tokens.mjs` | 인트로 CSS 템플릿 · 생성 스크립트 (전달물) |
-| `src/tokens/tokens.css` · `tokenVariables.js` · `index.js` · `src/CareerIntro.css` | 생성 결과 (전달물 기준, 직접 수정하지 않음) |
-| `src/CareerIntro.jsx` | 토큰을 쓰는 인트로 v002 컴포넌트 (참고용) |
+| [tokens.json](tokens.json) | **디자인 토큰** (242개: primitive · semantic · component · responsive · breakpoint). Unity 담당 전달물 `career-intro-component-tokens-v001` 그대로 |
+| `README.md` | 이 문서 — 콘셉트 · 앱 역할 변수 연결표 · 명도 대비 · 글꼴 |
+
+- 이 폴더에는 **디자인 토큰과 디자인 안내만** 둔다. 전달물에 함께 왔던 인트로 v002 컴포넌트 · 생성 스크립트 · 템플릿 · 적용 안내 · 해시 목록은 코드로 옮긴 뒤 지웠다 (2026-11-01). 코드에서 쓰는 사본: `frontend/src/design/tokens/` (토큰 · 인트로 CSS 템플릿) · `frontend/scripts/build-tokens.mjs`
+- 토큰 계층: primitive(원래 값) → semantic(글자 · 배경 · 버튼 · 포커스의 의미) → component(인트로 화면 부품) · responsive.compact(700px 이하). `{semantic.text.primary}` 처럼 서로 참조한다
 
 ## 코드에서 쓰는 방법
 
 - 웹 프론트는 이 폴더를 직접 불러오지 않는다 (Vercel Root Directory 가 `frontend/`). **`frontend/src/design/tokens/tokens.json` 에 같은 파일을 두고** `npm run tokens` 로 CSS 변수(`--ci-*`)와 인트로 CSS 를 만든다 (`npm run build` 가 함께 실행)
-- 토큰이 새로 오면: 이 폴더를 새 전달물로 바꾸고 → 같은 `tokens.json` 을 `frontend/src/design/tokens/` 에 복사 → `npm run tokens` → 화면 확인
+- 토큰이 새로 오면: 이 폴더의 `tokens.json` 을 바꾸고 → 같은 파일을 `frontend/src/design/tokens/` 에 복사 → `npm run tokens` → 화면 확인. 인트로 CSS 템플릿이 함께 바뀌었으면 `frontend/src/design/tokens/CareerIntro.template.css` 도 바꾼다
 - 앱 화면은 `--ci-*` 를 직접 쓰지 않고 `frontend/src/styles/global.css` 의 역할 변수(`--color-*` · `--font-*`)를 쓴다. 역할 변수가 아래 표처럼 토큰을 가리킨다
 
 ## 앱 역할 변수 ↔ 토큰
