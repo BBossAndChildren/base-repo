@@ -19,5 +19,5 @@
 - 브라우저 `alert` 를 쓰지 않는다 (토스트 · 모달)
 - 백엔드 주소는 환경변수로만 둔다
 - 색 · 글꼴은 `src/styles/global.css` 의 역할 변수만 쓴다 (하드코딩 색 금지). 토큰 원본은 `src/design/tokens/tokens.json`, 생성 파일(`tokens.css` · `tokenVariables.ts` · `pages/intro/CareerIntro.css`)은 직접 고치지 않고 `npm run tokens` 로 만든다 (docs/design/README.md)
-- 인트로(`src/pages/intro/`)의 `CareerIntro` · `introEngine` · CSS 는 Unity 담당 원본을 옮긴 것이다. 연출을 바꾸지 말고, 인트로 에셋(모델)은 커밋하지 않는다 (`public/intro-assets/` 는 git 제외)
+- 인트로(`src/pages/intro/`)의 `CareerIntro` · `introEngine` · CSS 는 Unity 담당 원본을 옮긴 것이다. 연출을 바꾸지 말고, 인트로 에셋(모델)은 백엔드 `/intro-assets/`(BE15)에서만 받고 프론트에 두지 않는다
 - 머지 전 lint · build 를 실행해 통과를 확인한다

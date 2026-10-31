@@ -13,6 +13,9 @@ import { PlayerGate } from './PlayerGate'
 
 // 인트로 화면은 따로 테스트한다 (pages/intro). 여기서는 주소 이동만 확인한다
 vi.mock('../pages/intro/IntroPage', () => ({ default: () => <h1>인트로 화면</h1> }))
+// 인트로 에셋 주소는 테스트마다 바꿀 수 있게 env 를 가짜로 둔다 (백엔드 BE15 주소가 있는 배포 / 없는 배포)
+const fakeEnv = vi.hoisted(() => ({ apiBaseUrl: '', useMock: true, introAssetBase: 'https://backend.example/intro-assets/' as string | null }))
+vi.mock('../lib/env', () => ({ env: fakeEnv }))
 
 const START = { name: '민준', age: 15, situation: '중학생', hasDreamJob: false }
 
@@ -44,6 +47,15 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
     localStorage.clear()
     sessionStorage.clear()
     markIntroSeen()
+    fakeEnv.introAssetBase = 'https://backend.example/intro-assets/'
+  })
+
+  it('인트로 에셋 주소가 설정되지 않은 배포에서는 처음 방문이어도 인트로 없이 시작 화면, 헤더 링크도 없다', async () => {
+    localStorage.clear()
+    fakeEnv.introAssetBase = null
+    renderApp()
+    expect(await screen.findByRole('heading', { name: '어른왕자', level: 1 })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: '인트로 다시 보기' })).not.toBeInTheDocument()
   })
 
   it('서버가 모르는 게스트로 시작하면 안내 후 게스트 ID 를 새로 발급한다 (05 5절 UNKNOWN_PLAYER)', async () => {

@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react'
-import { useNavigate } from 'react-router'
+import { Navigate, useNavigate } from 'react-router'
 import { useToast } from '../../components'
 import { env } from '../../lib/env'
 import { markIntroSeen, skipIntroThisVisit } from '../../lib/introSeen'
@@ -30,6 +30,9 @@ export default function IntroPage() {
     toast.show({ type: 'info', message: INTRO_FAILED_MESSAGE })
     leave('failed')
   }, [leave, toast])
+
+  // 에셋 주소가 없는 배포에서는 인트로를 띄우지 않는다 (06-deployment.md 5-2-1)
+  if (env.introAssetBase === null) return <Navigate to="/" replace />
 
   return (
     <div className="intro-page">

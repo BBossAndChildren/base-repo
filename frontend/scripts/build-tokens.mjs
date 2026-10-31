@@ -1,5 +1,5 @@
 // 디자인 토큰 생성 (docs/design/README.md · 12-decisions.md 결정 26)
-// 원본: Unity 담당 전달물 docs/design/scripts/build-tokens.mjs. 검증 규칙(누락 · 순환 참조 · 이름 충돌)은 그대로 두고
+// 원본: Unity 담당 토큰 전달물(career-intro-component-tokens-v001)의 생성 스크립트. 검증 규칙(누락 · 순환 참조 · 이름 충돌)은 그대로 두고
 // 출력 위치와 범위만 앱에 맞췄다:
 //  - tokens.css 를 :root 와 .career-intro 에 함께 선언 (앱 화면도 쓰고, 인트로의 tokens prop 덮어쓰기도 그대로 동작)
 //  - 인트로 CSS 는 src/pages/intro/CareerIntro.css 로, 덮어쓰기 표는 TypeScript(tokenVariables.ts)로 만든다

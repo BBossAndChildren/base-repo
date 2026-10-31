@@ -5,6 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ToastProvider } from '../../components'
 import { shouldShowIntro } from '../../lib/introSeen'
 
+// 인트로 에셋 주소는 테스트마다 바꿀 수 있게 env 를 가짜로 둔다 (백엔드 BE15 주소가 있는 배포 / 없는 배포)
+const fakeEnv = vi.hoisted(() => ({ apiBaseUrl: '', useMock: true, introAssetBase: 'https://backend.example/intro-assets/' as string | null }))
+vi.mock('../../lib/env', () => ({ env: fakeEnv }))
+
 // 3D 컴포넌트는 가짜로 바꾸고 화면 흐름(완료 · 건너뛰기 · 실패)만 확인한다
 vi.mock('./CareerIntro', () => ({
   CareerIntro: ({ assetBase, onComplete, onError }: { assetBase: string; onComplete: () => void; onError: (m: string) => void }) => (
@@ -34,11 +38,19 @@ describe('인트로 화면 (FE11)', () => {
   beforeEach(() => {
     localStorage.clear()
     sessionStorage.clear()
+    fakeEnv.introAssetBase = 'https://backend.example/intro-assets/'
+  })
+
+  it('에셋 주소가 없으면 인트로를 띄우지 않고 시작 화면으로 보낸다', async () => {
+    fakeEnv.introAssetBase = null
+    renderIntro()
+    expect(await screen.findByRole('heading', { name: '시작 화면' })).toBeInTheDocument()
+    expect(screen.queryByTestId('career-intro')).not.toBeInTheDocument()
   })
 
   it('에셋 주소를 넘기고, 끝까지 보면 시작 화면으로 가며 다음 방문부터 생략한다', async () => {
     renderIntro()
-    expect(screen.getByTestId('career-intro')).toHaveAttribute('data-asset-base', '/intro-assets/')
+    expect(screen.getByTestId('career-intro')).toHaveAttribute('data-asset-base', 'https://backend.example/intro-assets/')
     expect(shouldShowIntro()).toBe(true)
     await userEvent.click(screen.getByRole('button', { name: '가짜 재생 끝' }))
     expect(await screen.findByRole('heading', { name: '시작 화면' })).toBeInTheDocument()
