@@ -6,7 +6,7 @@
 ## 코드를 쓰기 전에 읽을 문서
 | 문서 | 내용 |
 |------|------|
-| [docs/development/features.md](../docs/development/features.md) | 기능 번호 BE1~BE14 |
+| [docs/development/features.md](../docs/development/features.md) | 기능 번호 BE1~BE15 |
 | [docs/development/03-api.md](../docs/development/03-api.md) | API 계약 (1부 프론트 ↔ 백엔드, 2부 백엔드 ↔ AI 서버). 3D 연동 API 는 응답을 감싸지 않는 예외 |
 | [docs/development/04-database.md](../docs/development/04-database.md) | 테이블 |
 | [docs/development/10-prompt-assembly.md](../docs/development/10-prompt-assembly.md) | 프롬프트 조립 순서 · AI 응답 처리 · 3D 후보 선정 · 이벤트 저장 · 정산(v003) |
