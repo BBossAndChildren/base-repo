@@ -30,17 +30,28 @@ export type ApiErrorType =
   | 'UNKNOWN'
 
 /**
- * 게임 상태. 키 이름은 작가 초안(docs/game/03-rules.md) 기준이며 아직 백엔드 · AI 와 합의 전이다.
- * 화면에는 우선 age 만 표시한다 (05-ui-ux.md 화면 2).
+ * 게임 상태 — 백엔드가 확정한 값 (03 게임 상태와 턴 확장, backend state.py initial_state).
+ * 화면은 age · funds · debt · health · energy · stress · housing · development 를 쓴다 (05 화면 2)
  */
 export interface PlayState {
   age: number
   elapsedDays?: number
+  /** 게임 날짜 (ISO) */
+  gameDate?: string
+  /** 원화 자금 (0 이상) */
   funds?: number
+  /** 원화 총부채 (0 이상) */
+  debt?: number
+  /** 0~100 */
+  health?: number
   energy?: number
-  ability?: number
+  stress?: number
+  housing?: { type: string; deposit?: number; depositPaid?: boolean; monthlyRent?: number; livingCost?: number }
+  development?: { kind: string; value: number | null; previousGrades?: unknown }
+  occupation?: Record<string, unknown>
   relationship?: Record<string, number>
-  interests?: Record<string, number>
+  /** 분야별 흥미 1~5, 미확인은 null */
+  interests?: Record<string, number | null>
   [key: string]: unknown
 }
 

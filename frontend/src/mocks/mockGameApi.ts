@@ -105,8 +105,20 @@ export const mockGameApi: GameApi = {
       playerId,
       sessionId: uuid(),
       profile: body,
-      // 시작값은 docs/game/03-rules.md (자금 50 · 에너지 70)
-      state: { age: body.age, elapsedDays: 0, funds: 50, energy: 70 },
+      // 시작값은 백엔드 initial_state 와 같은 모양 (03 게임 상태와 턴 확장): 미배정 자산 0원 · 건강 80 · 에너지 70 · 스트레스 20
+      state: {
+        age: body.age,
+        elapsedDays: 0,
+        funds: 0,
+        debt: 0,
+        health: 80,
+        energy: 70,
+        stress: 20,
+        housing: { type: 'unknown', deposit: 0, depositPaid: false, monthlyRent: 0, livingCost: 0 },
+        development: { kind: ['초등학생', '중학생', '고등학생', '대학생'].includes(body.situation) ? 'grades' : 'selfDevelopment', value: null, previousGrades: null },
+        relationship: {},
+        interests: Object.fromEntries((body.interests ?? []).map((field) => [field, null])),
+      },
       messages: [
         {
           role: 'narrator',
