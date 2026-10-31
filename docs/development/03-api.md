@@ -488,10 +488,11 @@ AI 요청의 `player`에는 확정 상태와 현재 장면, 발화 NPC 식별자
 
 | 객체 | 필드·검증 |
 |---|---|
-| `state` | `schemaVersion:2`, `gameDate`(게임 날짜 ISO), 기존 공통 필드. 시작 시 자산/부채 미배정 값은 0, 건강80·에너지70·스트레스20. 미확정 현실 급여·성적은 추정하지 않는다 |
+| `state` | `schemaVersion:2`, `gameDate`(게임 날짜 ISO), 기존 공통 필드. 시작 자금 · 주거 · 생활비 · 가족 지원은 상황별 밸런스 기준값([12 결정 29](12-decisions.md)), 부채 0, 건강80·에너지70·스트레스20. 성적은 추정하지 않는다 |
 | `housing` | `type`: `unknown/monthlyRent/jeonse/owned/family`, `deposit`, `depositPaid`, `monthlyRent`, `livingCost`. 미배정 비용은 0; 보증금은 수락한 제안 ID로 1회 차감 |
 | `development` | `kind`: `grades/selfDevelopment`, `value`: 미확인 null 또는 가상 진행값0~100, `previousGrades`. 취업 시 성적 값을 보존하고 자기계발 값으로 이어 사용 |
-| `occupation` | `status`: `student/employed/searching/preparing/undecided`, `currentJob`, `preparation`, `monthlySalary`, `salarySource`. 급여 출처는 `{url,checkedAt,fact}`; 직업 사실의 실제 RAG 근거 검증은 AI 서버 연동 범위 |
+| `occupation` | `status`: `student/employed/searching/preparing/undecided`, `currentJob`, `preparation`, `monthlySalary`, `salarySource`. 급여 출처는 `{url,checkedAt,fact}`; 직업 사실의 실제 RAG 근거 검증은 AI 서버 연동 범위. `직장인` 으로 시작하면 직업을 모르므로 2026년 최저임금 월 환산액(2,156,880원, 출처 최저임금위원회)으로 시작하고, 직업이 정해지면 `jobOffer` 의 급여로 바뀐다 |
+| `support` | 가족 지원 `{monthlyAmount, source:"family"}`. 매달 정산에서 생활비 · 주거비보다 먼저 원장(`familySupport`)에 넣는다. 바뀔 때는 `supportChange` 로 미리 알리고 다음 달부터 적용 |
 | `interests` | 분야별 1~5, 기록이 없거나 단계 미확인이면 null/키 없음. 시작 입력 분야도 단계는 임의로 평가하지 않고 null로 보관 |
 | `relationship` | NPC 식별자별 가상 관계 값0~100. 해당 장면의 인물·입력 인용/사건 출처가 있어야 변경 |
 | `debts/arrears` | 부채 `{id,creditor,balance,sourceAction}`, 미납 `{id,creditor,amount,gameDate}`. `debt`는 부채 잔액 합계, 미납은 별도. 자동 대출 없음 |
@@ -524,6 +525,7 @@ PATCH 요청은 `{"paused":true}`/`{"paused":false}`, 응답은 `{code:200,data:
 | `settleArrear` | `arrearId`. 가용 자금으로 미납 상환 |
 | `development` | `value`0~100, 이번 학습·훈련 입력 근거 필요. 아르바이트 자체로 성적 차감 없음 |
 | `stressFactors` | `factors[]`. 가상 사건의 서로 다른 스트레스 요인을 기록 |
+| `supportChange` | `monthlyAmount`(0 이상). 가족 지원이 줄거나 끊기는 것을 대화로 알리는 행동. 알린 날부터 한 달 뒤 정산부터 적용 (`supportNotice` → `supportChanged` 사건) |
 
 AI `player`에는 `playId,currentScene,speakingNpcId,npcs,memoryScope,memories,visibleEvents,pendingChoices`를 확정 상태와 함께 보낸다. `memories`는 DB에서 현재 플레이와 NPC로 먼저 제한하며 사실·획득 경로·감정·해석을 분리한다. 현재 NPC에게 공개된 입력/응답만 최근20턴 범위에서 `history`에 넣는다. 플레이어의 재개 대화는 본인 기록 전체이므로 이 NPC 필터와 구분한다.
 

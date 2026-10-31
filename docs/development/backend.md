@@ -223,3 +223,4 @@ docker compose build backend
 - 테스트 DB와 운영 DB를 구분하며 비밀값·사용자 실데이터는 문서·테스트·PR에 기록하지 않는다.
 
 | 55 | BE12 사망 시 인생 회고 · AI 결말 없을 때 백엔드 생성 (#127) | `python manage.py test --verbosity 1` (Docker) · check · makemigrations/migrate check · spectacular `--fail-on-warn` · Ruff · Docker build | PostgreSQL·모의 AI 152개 통과; AI 502·503·504 시 기록 기반 회고·추천 3개(새 직업 1개 이상) 저장, 다음 조회 때 AI 결말로 교체. 실제 AI 결말 API 미검증 | 결말 화면 AI 없이 동작 |
+| 56 | 상황별 시작 자금 · 생활비 · 가족 지원 · 직장인 최저임금 · 노화 (#132) | `python manage.py test apps.game.tests.test_rules apps.game.tests.test_start` → 전체 `python manage.py test` (Docker) | 1차 33개 중 2개 실패(테스트가 1년 진행 확인 · 과로 쓰러짐 중단을 고려하지 않음) → 테스트 수정 후 33개 통과. 전체 1차 160개 중 1개 실패(롤백 테스트가 시작 자금 0 을 고정) → 수정 후 160개 통과 | 시작부터 월별 정산 · 노화로 결말 도달 가능 |
