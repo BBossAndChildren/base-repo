@@ -14,7 +14,6 @@ if not SECRET_KEY:
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-# 게스트 인증과 게임 모델은 API 계약에 맞춰 후속 작업에서 추가한다.
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
@@ -22,6 +21,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "apps.core",
+    "apps.game",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
