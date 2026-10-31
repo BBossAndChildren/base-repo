@@ -19,6 +19,7 @@ interface MockPlay {
   /** requestId → 저장한 응답 (같은 ID · 같은 입력이면 그대로 돌려준다) */
   requests: Map<string, { message: string; response: TurnResponse }>
   stateVersion: number
+  paused: boolean
   playId: string
   playerId: string
   sessionId: string
@@ -101,6 +102,7 @@ export const mockGameApi: GameApi = {
     const play: MockPlay = {
       requests: new Map(),
       stateVersion: 1,
+      paused: false,
       playId: uuid(),
       playerId,
       sessionId: uuid(),
@@ -144,13 +146,25 @@ export const mockGameApi: GameApi = {
       state: { ...play.state },
       messages: [...play.messages],
       ended: play.ended,
-      paused: false,
+      paused: play.paused,
       stateVersion: play.stateVersion,
       activePlaySeconds: 0,
       scene: null,
       pendingChoices: [],
       lastTurnId: null,
     }
+  },
+
+  async setPaused(playId, paused) {
+    await wait()
+    const play = ownPlay(playId)
+    if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
+    // 같은 값을 다시 보내면 버전을 올리지 않는다 (03)
+    if (play.paused !== paused) {
+      play.paused = paused
+      play.stateVersion += 1
+    }
+    return { state: { ...play.state }, paused: play.paused, stateVersion: play.stateVersion, activePlaySeconds: 0 }
   },
 
   async sendTurn(playId, body) {
@@ -163,6 +177,7 @@ export const mockGameApi: GameApi = {
     if (previous && previous.message !== message) throw new ApiError(409, 'REQUEST_CONFLICT')
     if (previous) return previous.response
     if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
+    if (play.paused) throw new ApiError(409, 'PLAY_PAUSED')
     if (message.includes('오류')) throw new ApiError(502, 'AI_UNAVAILABLE')
     if (message.includes('느려')) throw new ApiError(504, 'TIMEOUT')
     if (message.includes('충돌')) throw new ApiError(409, 'STATE_CONFLICT')

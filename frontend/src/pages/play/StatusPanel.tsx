@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { cx } from '../../lib/cx'
 import type { StatusField, StatusValues } from './statusModel'
 
@@ -102,10 +103,12 @@ interface StatusProps {
   values: StatusValues
   /** 방금 바뀐 항목. 잠깐 강조한다 */
   changed: ReadonlySet<StatusField>
+  /** 상태 아래에 둘 조작 (일시정지 버튼, 05 화면 2) */
+  actions?: ReactNode
 }
 
 /** 좁은 화면(1024px 미만)의 접이식 상태 막대. 게임 영역 위에 둔다 */
-export function StatusBar({ values, changed }: StatusProps) {
+export function StatusBar({ values, changed, actions }: StatusProps) {
   return (
     <details className="status-bar">
       <summary>
@@ -120,13 +123,14 @@ export function StatusBar({ values, changed }: StatusProps) {
       </summary>
       <div className="status-bar-body">
         <StatusDetails values={values} changed={changed} />
+        {actions && <div className="status-actions">{actions}</div>}
       </div>
     </details>
   )
 }
 
 /** 넓은 화면의 상태 패널 (05 화면 2). 나이 + 자금 · 빚 · 주거 + 건강 · 에너지 · 스트레스 · 성적/자기계발 */
-export function StatusPanel({ values, changed }: StatusProps) {
+export function StatusPanel({ values, changed, actions }: StatusProps) {
   return (
     <aside className="status-panel" aria-label="내 상태">
       <div className="status-head">
@@ -137,6 +141,7 @@ export function StatusPanel({ values, changed }: StatusProps) {
       </div>
       <div className="status-body">
         <StatusDetails values={values} changed={changed} />
+        {actions && <div className="status-actions">{actions}</div>}
       </div>
     </aside>
   )

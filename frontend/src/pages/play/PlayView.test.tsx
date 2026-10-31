@@ -12,11 +12,12 @@ import type { PlayResume } from '../../types/api'
 import { PlayView } from './PlayView'
 import { avatarLetter, declineOpenOffers, type TimelineItem } from './timeline'
 
-async function setup(options: { onStartExperience?: () => void; mapState?: (state: PlayResume['state']) => PlayResume['state'] } = {}) {
+async function setup(options: { onStartExperience?: () => void; mapState?: (state: PlayResume['state']) => PlayResume['state']; mapPlay?: (play: PlayResume) => PlayResume } = {}) {
   await ensurePlayerId(mockGameApi)
   const started = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
   const resumed: PlayResume = await mockGameApi.getPlay(started.playId)
-  const play: PlayResume = options.mapState ? { ...resumed, state: options.mapState(resumed.state) } : resumed
+  const mapped: PlayResume = options.mapState ? { ...resumed, state: options.mapState(resumed.state) } : resumed
+  const play: PlayResume = options.mapPlay ? options.mapPlay(mapped) : mapped
   const user = userEvent.setup()
   render(
     <PlayerContext.Provider value={{ playerId: 'p', resetPlayer: vi.fn() }}>
@@ -30,7 +31,8 @@ async function setup(options: { onStartExperience?: () => void; mapState?: (stat
       </ToastProvider>
     </PlayerContext.Provider>,
   )
-  const input = screen.getByLabelText('하고 싶은 말이나 행동')
+  // 일시정지로 시작하면 입력칸이 없다
+  const input = screen.queryByLabelText('하고 싶은 말이나 행동') as HTMLElement
   const say = async (text: string) => {
     await user.clear(input)
     await user.type(input, text)
@@ -225,6 +227,35 @@ describe('PlayView', () => {
     await waitFor(() => expect(getPlay).toHaveBeenCalledTimes(1))
     expect(input).toHaveValue('충돌')
     getPlay.mockRestore()
+  })
+
+  it('[일시정지] 하면 입력을 잠그고, [이어 하기] 로 다시 입력할 수 있다 (05 화면 2 · 07 B17)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'setPaused')
+    const { user, play } = await setup()
+    await user.click(screen.getAllByRole('button', { name: '일시정지' })[0])
+    expect(await screen.findByText('일시정지 중이에요. 이어 하려면 아래 버튼을 눌러 주세요.')).toBeInTheDocument()
+    expect(screen.queryByLabelText('하고 싶은 말이나 행동')).not.toBeInTheDocument()
+    expect(spy).toHaveBeenLastCalledWith(play.playId, true)
+    expect((await mockGameApi.getPlay(play.playId)).paused).toBe(true)
+    await user.click(screen.getByRole('button', { name: '이어 하기' }))
+    expect(await screen.findByLabelText('하고 싶은 말이나 행동')).toBeInTheDocument()
+    expect(spy).toHaveBeenLastCalledWith(play.playId, false)
+    spy.mockRestore()
+  })
+
+  it('다시 접속했을 때 재개 응답이 일시정지면 일시정지 화면으로 시작한다', async () => {
+    await setup({ mapPlay: (play) => ({ ...play, paused: true }) })
+    expect(screen.getByRole('button', { name: '이어 하기' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '일시정지' })).not.toBeInTheDocument()
+  })
+
+  it('보냈는데 PLAY_PAUSED 면 안내하고 일시정지 화면으로 바꾼다 (입력 문장은 유지)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(409, 'PLAY_PAUSED'))
+    const { say } = await setup()
+    await say('안녕')
+    expect(await screen.findByText('일시정지를 해제해 주세요.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '이어 하기' })).toBeInTheDocument()
+    spy.mockRestore()
   })
 
   it('이미 끝난 플레이에 보내면 결말 화면으로 간다', async () => {
