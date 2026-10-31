@@ -54,7 +54,17 @@
 API 키 · 비밀번호 · VPN 계정 · 토큰은 코드 · 문서 · 커밋에 쓰지 않는다. `.env` 로만 관리하고 저장소에는 `.env.example` 만 둔다. 건강 · 질병 정보는 받지도 저장하지도 않는다.
 
 ## 8. 팀 구성 · 역할
-[09-team.md](docs/development/09-team.md) · 협업 규칙: [CONTRIBUTING.md](docs/CONTRIBUTING.md)
+팀 **뽀스와아이들** (5명)
+
+| 이름 | 역할 |
+|------|------|
+| 김정현 (팀장) | Unity 3D 체험 개발 |
+| 변승언 | AI 서버 |
+| 윤수현 | 백엔드 API |
+| 이성준 | 프론트엔드 · 문서 총괄 |
+| 이지혜 | 시나리오 작가 |
+
+상세: [09-team.md](docs/development/09-team.md) · 협업 규칙: [CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
 ## 9. 문서
 | 문서 | 내용 |
