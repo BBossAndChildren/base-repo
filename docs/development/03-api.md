@@ -15,7 +15,7 @@
 | ID | 문자열 UUID (Unity 명세의 ID 는 Unity 형식 그대로) |
 | 문자 인코딩 | UTF-8 JSON |
 
-실행 기반 확인용 `GET /api/health`는 인증 없이 PostgreSQL `SELECT 1`을 실행한다. 성공 시 HTTP 200과 `{"code":200,"data":{"status":"ok","database":"ok"}}`, DB 오류 시 HTTP 503과 `{"code":503,"data":{"status":"unavailable","database":"unavailable"}}`를 반환한다. AI 연결은 검사하지 않는다. 실제 구현된 API의 OpenAPI는 `/api/schema/`, Swagger는 `/api/docs/`에서 확인한다. 아래 게임 API는 1차 설계안이며 이번 초기 세팅에서 구현하지 않는다.
+실행 기반 확인용 `GET /api/health`는 인증 없이 PostgreSQL `SELECT 1`을 실행한다. 성공 시 HTTP 200과 `{"code":200,"data":{"status":"ok","database":"ok"}}`, DB 오류 시 HTTP 503과 `{"code":503,"data":{"status":"unavailable","database":"unavailable"}}`를 반환한다. AI 연결은 검사하지 않는다. 실제 구현된 API의 OpenAPI는 `/api/schema/`, Swagger는 `/api/docs/`에서 확인한다. 게임 API 구현·검증 상태는 [backend.md](backend.md)를 따른다. 실제 AI 추론과 정적 에셋 운영 배치는 모의 테스트와 구분한다.
 
 ### Base URL
 | 서버 | 환경 | 주소 |
@@ -62,6 +62,10 @@
 | 401 | `UNKNOWN_PLAYER` | `X-Player-Id` 가 없거나 모르는 ID | 플레이 정보를 찾을 수 없어요. 처음부터 다시 시작해 주세요. |
 | 404 | `NOT_FOUND` | 없는 플레이 · 체험 | 요청한 정보를 찾을 수 없어요. |
 | 409 | `ALREADY_ENDED` | 이미 끝난 플레이 · 체험에 요청 | 이미 끝난 진행이에요. |
+| 409 | `REQUEST_CONFLICT` | 같은 턴 요청 ID에 다른 입력 | 같은 요청 ID의 입력이 다릅니다. |
+| 409 | `STATE_CONFLICT` | 생성 중 확정 상태/일시정지 버전 변경 | 최신 상태를 조회한 뒤 다시 시도해 주세요. |
+| 409 | `PLAY_PAUSED` | 일시정지 상태에서 새 턴 요청 | 일시정지를 해제해 주세요. |
+| 409 | `TURN_IN_PROGRESS` | 이전 턴 처리 중 | 같은 요청 ID를 유지하고 잠시 후 다시 시도해 주세요. |
 | 409 | `NOT_ENDED` | 아직 끝나지 않은 플레이의 결말 요청 | 아직 이야기가 끝나지 않았어요. |
 | 502 | `AI_UNAVAILABLE` | AI 서버 실패 (재요청 1회 후에도 실패) | 잠시 후 다시 시도해 주세요. |
 | 504 | `TIMEOUT` | 응답 시간 초과 | 응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요. |
@@ -84,6 +88,7 @@
 | POST | `/api/v1/players` | 게스트 플레이어 발급 | |
 | POST | `/api/v1/plays` | 게임 시작 (플레이어 정보 입력) | |
 | GET | `/api/v1/plays/{playId}` | 플레이 재개 (현재 상태 · 최근 대화) | |
+| PATCH | `/api/v1/plays/{playId}` | 일시정지·해제 | |
 | POST | `/api/v1/plays/{playId}/turns` | 채팅 한 턴 | |
 | POST | `/api/v1/plays/{playId}/experience-events` | 3D 체험 이벤트 전달 (응답 감싸지 않음) | |
 | POST | `/api/v1/plays/{playId}/experience-reconcile` | 종료 응답 없는 체험 정산 (응답 감싸지 않음) | |
@@ -475,3 +480,49 @@
 AI 요청의 `player`에는 확정 상태와 현재 장면, 발화 NPC 식별자, 허용된 기억 요약을 제공한다. 검색 대상을 현재 `playId`와 해당 NPC가 알 수 있는 사건으로 제한한다. AI의 기억 추가·전달 제안도 백엔드가 출처와 참여자를 검증한 뒤 저장한다. 정확한 기억 객체는 [DB 저장 범위](04-database.md#인생-진행-저장-범위-2026-10-31)를 따른다.
 
 일시정지/재개는 기존 플레이 리소스에 `PATCH /api/v1/plays/{playId}`로 `{"paused": true}` 또는 `{"paused": false}`를 보내는 설계로 한다. 재개 응답에는 확정된 상태와 `paused`를 포함한다. 닫힌 화면의 통지가 도착한다고 가정하지 않으며 비활성 구간을 자동으로 플레이 시간에 더하지 않는다. 명시적 일시정지 중에는 새 턴을 받지 않고, 이미 제출한 턴은 상태 버전과 요청 ID로 일관되게 정산한다. 재개 조회는 자체적으로 게임 날짜를 진행시키지 않는다.
+
+
+구현에서 확정한 객체와 후속 AI 제안 필드(2026-11-01, BE2·BE4·BE5·BE11):
+
+| 객체 | 필드·검증 |
+|---|---|
+| `state` | `schemaVersion:2`, `gameDate`(게임 날짜 ISO), 기존 공통 필드. 시작 시 자산/부채 미배정 값은 0, 건강80·에너지70·스트레스20. 미확정 현실 급여·성적은 추정하지 않는다 |
+| `housing` | `type`: `unknown/monthlyRent/jeonse/owned/family`, `deposit`, `depositPaid`, `monthlyRent`, `livingCost`. 미배정 비용은 0; 보증금은 수락한 제안 ID로 1회 차감 |
+| `development` | `kind`: `grades/selfDevelopment`, `value`: 미확인 null 또는 가상 진행값0~100, `previousGrades`. 취업 시 성적 값을 보존하고 자기계발 값으로 이어 사용 |
+| `occupation` | `status`: `student/employed/searching/preparing/undecided`, `currentJob`, `preparation`, `monthlySalary`, `salarySource`. 급여 출처는 `{url,checkedAt,fact}`; 직업 사실의 실제 RAG 근거 검증은 AI 서버 연동 범위 |
+| `interests` | 분야별 1~5, 기록이 없거나 단계 미확인이면 null/키 없음. 시작 입력 분야도 단계는 임의로 평가하지 않고 null로 보관 |
+| `relationship` | NPC 식별자별 가상 관계 값0~100. 해당 장면의 인물·입력 인용/사건 출처가 있어야 변경 |
+| `debts/arrears` | 부채 `{id,creditor,balance,sourceAction}`, 미납 `{id,creditor,amount,gameDate}`. `debt`는 부채 잔액 합계, 미납은 별도. 자동 대출 없음 |
+| 턴 응답 | 기존 필드 + `state`, `stateVersion`, `pendingChoices`, 공개 `events`. 성공 응답 전체를 `(playId,requestId)`로 저장해 재전송에 그대로 반환 |
+| 재개 응답 | 기존 필드 + `paused`, `stateVersion`, `activePlaySeconds`, `scene`, `pendingChoices`, `lastTurnId` |
+
+PATCH 요청은 `{"paused":true}`/`{"paused":false}`, 응답은 `{code:200,data:{state,paused,stateVersion,activePlaySeconds}}`다. 같은 paused 값의 재전송은 버전을 증가시키지 않는다. 생성 중 정지하면 해당 생성은 `STATE_CONFLICT`로 저장을 취소하고 기존 확정 상태를 유지한다. 이미 완료된 requestId의 조회성 재전송은 정지·종료 상태에서도 저장 응답을 반환한다.
+
+`activePlaySeconds`는 서버에서 확인 가능한 요청 처리 구간(AI 대기 포함)의 누적값이다. 요청 사이 화면 활성 여부는 서버가 알 수 없으므로 비활성·닫힌 구간을 추정해서 더하지 않는다. 화면에서 읽고 입력하는 전체 활성 시간의 정확한 계측은 프론트 활성 구간 전달 연동이 추가로 필요하다.
+
+2-1 AI 대화 응답에는 다음 선택 필드를 추가한다. 생략하면 빈 제안으로 처리한다. 최종 대화·상태·사건·기억·재정은 동일 트랜잭션에 저장하며 검증 실패 시 전체 30초 안에서 총 1회 재요청한다.
+
+| 선택 필드 | 형식 |
+|---|---|
+| `actions[]` | 아래 행동 객체 목록. 각각 `kind`, 이번 입력에 실제 있는 `evidenceQuote` 필수. 직접 `stateChanges.funds/health/occupation` 조작은 거부 |
+| `scene` | `{id,npcIds,speakerNpcId,npcs:[{id,name}]}`. 발화자는 참여자여야 하고 기존 NPC를 장면에 추가하려면 사용자 입력 근거가 필요 |
+| `memoryUpdates[]` | `{npcId,eventId,emotion?,interpretation?}`. 그 NPC가 아는 사건만 허용; 확정 사실은 변경 불가 |
+| `transfers[]` | `{fromNpcId,toNpcId,eventId,trigger}`. 전달자가 이미 아는 현재 플레이 사건만, `trigger:timePassed/importantEvent`의 서버 확정 근거가 있어야 수신자 기억에 추가 |
+
+| `actions[].kind` | 추가 필드·확정 방식 |
+|---|---|
+| `advance` | `days`, `activity`: `work/overtime/holiday/vacation/study/jobSearch/prepare/idle`. 날짜별 상태·달별 재정을 계산하고 중요한 선택에서 중단. 1년 이상은 앞선 제안과 별도 확인 필요 |
+| `confirmAdvance` | 이전 `pendingChoices.confirmAdvance`에 대한 명시적 확인. 확인 뒤 같은 턴에 일치하는 `advance`를 제안할 수 있음 |
+| `jobOffer` | `job,monthlySalary,source:{url,checkedAt,fact}`. 조건만 제시하며 바로 취업하지 않음 |
+| `housingOffer` | `type,deposit,monthlyRent,livingCost`. 조건만 제시 |
+| `loanOffer` | `amount,creditor`. 조건만 제시 |
+| `acceptJob/acceptHousing/loan` | 앞선 `offerId`와 명시적 수락 필요. 기존 직업 마무리·가용 잔액·출처 검증 |
+| `quitJob` | 현재 직업과 명시적 사용자 선택 필요. 이전 직업을 사건으로 보존 |
+| `repay` | `debtId,amount`. 가용 자금 내 상환만 반영 |
+| `settleArrear` | `arrearId`. 가용 자금으로 미납 상환 |
+| `development` | `value`0~100, 이번 학습·훈련 입력 근거 필요. 아르바이트 자체로 성적 차감 없음 |
+| `stressFactors` | `factors[]`. 가상 사건의 서로 다른 스트레스 요인을 기록 |
+
+AI `player`에는 `playId,currentScene,speakingNpcId,npcs,memoryScope,memories,visibleEvents,pendingChoices`를 확정 상태와 함께 보낸다. `memories`는 DB에서 현재 플레이와 NPC로 먼저 제한하며 사실·획득 경로·감정·해석을 분리한다. 현재 NPC에게 공개된 입력/응답만 최근20턴 범위에서 `history`에 넣는다. 플레이어의 재개 대화는 본인 기록 전체이므로 이 NPC 필터와 구분한다.
+
+`/ai/v1/experience-recommendation`과 `/ai/v1/ending`의 필수 요청·응답은 위 2부 계약을 유지한다. 세 경로 모두 별도 AI 서버 호출이며 Django에서 `/ai/` 라우트를 제공하지 않는다.

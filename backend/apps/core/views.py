@@ -17,6 +17,8 @@ class HealthResponseSerializer(serializers.Serializer):
 
 class HealthView(APIView):
     @extend_schema(
+        tags=["운영"],
+        summary="DB 상태 확인",
         auth=[],
         responses={200: HealthResponseSerializer, 503: HealthResponseSerializer},
         description="PostgreSQL SELECT 1로 API 및 DB 연결 확인. AI 연결은 검사하지 않습니다.",

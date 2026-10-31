@@ -143,3 +143,8 @@ python manage.py dbshell
 논리 저장 항목은 우선 기존 JSONB와 관련 사건 기록으로 수용할 수 있다. 물리 테이블·인덱스는 백엔드 모델 구현에서 확정하되, 플레이·요청 ID의 고유성 및 NPC별 접근 범위는 유지한다. BGE-M3로 기억 후보를 찾기 전에 `playId`와 NPC 공개 범위를 제한하며, 검색 후 프롬프트에 넣을 때도 범위를 재확인한다. 다른 플레이나 다른 NPC의 비공개 기억은 유사도가 높아도 반환하지 않는다.
 
 상태 버전을 대조하고 턴 대화·사건·재정·상태를 같은 트랜잭션으로 확정한다. 초기 보증금과 같은 이미 지급한 금액, 월급·지출, 과로 사건과 3D 결과는 원인 기록을 이용해 중복 반영하지 않는다.
+
+
+2026-11-01 구현: `plays`에 `state_version`, `paused`, `active_seconds`, `turn_started_at`, 비공개 `progress` JSONB를 추가한다. `progress`는 월별 원장·지속 기간·선택 대기·장면을 보관한다. 이전 추상 수치는 새 원화/흥미 값으로 오인하지 않고 `progress.legacyState`에 보존하며 다음 유효 턴에서 새 상태 형식으로 전환한다.
+
+`game_turnrequest`는 플레이·request_id 고유 제약과 입력·생성 버전·pending/failed/completed·응답을 저장한다. `game_gameevent`는 플레이·key 고유 사건과 참여자·사실·게임 날짜·원인 행동을 저장한다. `game_npc`는 플레이·key 고유 인물, `game_npcmemory`는 인물·사건 고유 기억(획득 경로·감정·해석), `game_informationtransfer`는 전달자·수신자·사건 고유 전달 근거를 저장한다. 모든 공개·기억 조회는 현재 플레이 범위로 제한한다. `Turn.context`에 입력/응답의 NPC 공개 범위를 분리해 보관한다. 관련 migration은 0018~0021이다.

@@ -14,7 +14,6 @@ if not SECRET_KEY:
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-# 게스트 인증과 게임 모델은 API 계약에 맞춰 후속 작업에서 추가한다.
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
@@ -22,6 +21,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "apps.core",
+    "apps.game",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -65,15 +65,18 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
 }
 SPECTACULAR_SETTINGS = {
+    "COMPONENT_SPLIT_PATCH": False,
     "TITLE": "어른왕자 Backend API",
-    "DESCRIPTION": "초기 실행 기반. 게임 API와 AI 서버 계약은 별도 구현 예정입니다.",
+    "DESCRIPTION": (
+        "게스트 플레이·대화·3D 이벤트·정산·결말 API. AI 서버는 별도 HTTP 호출 계약입니다."
+    ),
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {"HealthStateEnum": ["ok", "unavailable"]},
 }
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_HEADERS = (*default_headers, "x-player-id")
-CORS_ALLOW_METHODS = ["GET", "POST", "OPTIONS"]
+CORS_ALLOW_METHODS = ["GET", "POST", "PATCH", "OPTIONS"]
 CORS_ALLOW_CREDENTIALS = False
 CORS_URLS_REGEX = r"^/api/.*$"
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
@@ -91,6 +94,14 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# 실제 요청·재시도 로직은 AI API 계약 구현 시 추가한다.
 AI_API_BASE_URL = env("AI_API_BASE_URL", default="")
 AI_SERVER_KEY = env("AI_SERVER_KEY", default="")
+GAME_CONTENT_DIR = env("GAME_CONTENT_DIR", default=str(BASE_DIR.parent / "docs/game"))
+GAME_GUIDELINES_PATH = env(
+    "GAME_GUIDELINES_PATH", default=str(Path(GAME_CONTENT_DIR) / "00-guidelines.md")
+)
+GAME_SCENARIO_PATH = env(
+    "GAME_SCENARIO_PATH", default=str(Path(GAME_CONTENT_DIR) / "02-game-scenario.md")
+)
+GAME_BUILD_CATALOG_PATH = env("GAME_BUILD_CATALOG_PATH", default="")
+MOCK_AI_ENABLED = env.bool("MOCK_AI_ENABLED", default=False)

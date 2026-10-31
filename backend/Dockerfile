@@ -22,6 +22,9 @@ WORKDIR /app/backend
 COPY --from=dependencies /opt/venv /opt/venv
 COPY --chown=app:app backend/ ./
 COPY --chown=app:app docs/game/ /app/docs/game/
+COPY --chown=app:app docs/unity/contracts/realtime-v002/realtime-contract.json /app/docs/unity/contracts/realtime-v002/
+COPY --chown=app:app docs/unity/contracts/reconciliation-v003/resolution-response.schema.json docs/unity/contracts/reconciliation-v003/acceptance-cases.json /app/docs/unity/contracts/reconciliation-v003/
+COPY --chown=app:app docs/unity/builds/production-ai-build-catalog.json docs/unity/builds/production-supported-manifest.json /app/docs/unity/builds/
 USER app
 EXPOSE 8000
 CMD ["sh", "scripts/start_container.sh", "gunicorn", "-c", "gunicorn.conf.py", "config.wsgi:application"]
