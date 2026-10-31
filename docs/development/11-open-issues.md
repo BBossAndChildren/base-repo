@@ -17,12 +17,13 @@
 | 빌드 카탈로그 · 플레이어 기록 형식 | 카탈로그 JSON 항목과 플레이어 기록 항목 | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-json-형식) · [10 5](10-prompt-assembly.md#5-플레이어-기록-항목) |
 | 백엔드 기술 스택 · DB | Python · Django + DRF · HTTPX · **PostgreSQL** · Gunicorn, 네이버 클라우드 배포 (백엔드 담당 결정) | [02 1](02-architecture.md#1-기술-스택) · [06](06-deployment.md) |
 | 게임 시작 입력 항목 | 필수 4개 + 선택 7개 (시작 때 랜덤 2개, 나머지는 게임 중 대화로 하나씩). 건강 · 질병은 받지도 유도하지도 않음, 가족관계 · 반려동물은 받지 않음 | [00 게임 시작 입력](../00-idea.md#게임-시작-입력-회의-결정) · [03 1-2](03-api.md#1-2-게임-시작) · [10 3](10-prompt-assembly.md#3-ai-응답-처리) |
-| 3D 빌드 파일 위치 | 백엔드 서버 폴더(`/srv/builds/`) + Nginx 가 내려줌. Git 저장소에는 넣지 않음 | [06 5-1](06-deployment.md#5-1-백엔드-game-마크다운--3d-빌드--빌드-카탈로그-json-포함) |
-| 웹 프론트 배포 | Vercel (SSL 자동). 백엔드는 네이버 클라우드에서 Nginx + Let's Encrypt 로 SSL | [06 5-1 · 5-3](06-deployment.md#5-3-웹-프론트--vercel) |
+| 3D 빌드 파일 위치 | 백엔드 서버 폴더(`/srv/builds/`) + Nginx 가 내려줌. Git 저장소에는 넣지 않음 | [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달) |
+| 웹 프론트 배포 | Vercel (SSL 자동) | [06 5-4](06-deployment.md#5-4-웹-프론트--vercel) |
+| 백엔드 외부 공개 | 제공 서버는 사설 IP · VPN 전용이라 도메인 없이 **Cloudflare Tunnel** 로 공개 (SSL 은 Cloudflare). 서버 바깥 연결 확인 완료. AI 서버는 비공개 | [06 0절](06-deployment.md#0-배포-환경-한눈에) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
 | CORS 담당 | 백엔드(Django · django-cors-headers)가 붙이고 프론트는 설정하지 않음. 빌드 iframe 은 `frame-ancestors` 로 허용 | [06 CORS](06-deployment.md#cors--django-가-담당) · [05 4](05-ui-ux.md#4-api-호출-공통-모듈) |
 | 실제 방 · 시나리오 목록 | `PAN-NNN` 방 ID, 실행 가능한 체험 10개 (buildId `career-pilot-v007`) | [docs/unity/README.md](../unity/README.md) |
 | 실시간 이벤트 형식 | Unity 명세 `tx/realtime-contract.json` (실시간 전달 필수) | [10 4-2](10-prompt-assembly.md#4-2-체험-결과값-형식-unity--프론트) |
-| 빌드 압축 방식 | 현재 테스트 빌드는 비압축 | [06 Nginx](06-deployment.md#nginx-설정-예시) |
+| 빌드 압축 방식 | 현재 테스트 빌드는 비압축 | [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
 | 이벤트 저장 확인 · 재전송 | 백엔드는 저장 후 `{stored, sessionId, eventId}`, 프론트 전송 큐는 확인까지 2초마다 재전송 | [03 1-4](03-api.md#1-4-3d-체험-이벤트-전달) |
 | 종료 응답 없는 체험 정산 | Unity 명세 v003 을 따름: 새 체험 시작 때 정산, heartbeat 30초 · lease 120초 (기존 "재개 시 처리"를 대체) | [10 4-5](10-prompt-assembly.md#4-5-종료-응답이-오지-않은-체험-정산-v003) · [03 1-8 · 1-9](03-api.md#1-8-종료-응답-없는-체험-정산) |
 
@@ -49,5 +50,6 @@
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |
 |---|------|----|
-| F4 | 백엔드 · 프론트 도메인은? (SSL · CORS · frame-ancestors 설정에 필요) | |
+| F6 | 제공받은 서버를 Cloudflare Tunnel 로 외부 공개해도 규정상 괜찮은가? (제공처에 문의 불가 — 해커톤 안내 자료로 확인 필요) | |
+| F7 | 백엔드 저장소 주소 · AI 서버 사설 IP · 서버 배포판 (06 의 TODO) | |
 | F5 | 빌드 카탈로그의 `concept` · `description`(AI 가 고를 근거)은 누가 쓰나? 체험 10개 내용 요약이 필요 | |

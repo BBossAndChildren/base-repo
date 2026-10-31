@@ -42,7 +42,7 @@
 
 1. 3D 가 필요한 분기에 도달하면 백엔드가 빌드 카탈로그 JSON(4-1)을 정리해 AI 서버에 추천을 요청한다 ([03-api.md 2-2](03-api.md#2-2-3d-체험-추천))
 2. AI 서버는 빌드 · 방 · 시나리오를 추천한다
-3. 백엔드는 추천이 카탈로그에 있는지 확인하고, **빌드 주소**와 `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 을 프론트에 보낸다 (빌드는 여러 파일 · 수십 MB 라 API 응답에 직접 담지 않는다. 배포 방식은 [06 5-1](06-deployment.md#5-1-백엔드-game-마크다운--3d-빌드--빌드-카탈로그-json-포함))
+3. 백엔드는 추천이 카탈로그에 있는지 확인하고, **빌드 주소**와 `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 을 프론트에 보낸다 (빌드는 여러 파일 · 수십 MB 라 API 응답에 직접 담지 않는다. 배포 방식은 [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달))
 4. 맞는 빌드가 없거나 카탈로그에 없는 추천이면 3D 를 건너뛰고 텍스트로 계속한다 (4-4)
 5. 프론트가 빌드 주소를 iframe 으로 열고 Unity 에 체험 시작을 호출한다 (Unity 담당 연결 코드 `integration/frontend/` 사용 — [docs/unity/README.md](../unity/README.md))
 6. Unity 는 물건 상태가 바뀔 때마다 이벤트를 실시간으로 보내고, 프론트는 받을 때마다 즉시 백엔드로 보낸다 (4-3)
@@ -51,14 +51,14 @@
 
 ### 4-1. 빌드 카탈로그 JSON 형식
 
-> 백엔드가 갖고 있는 빌드 목록이며 **이 목록에 있는 체험만 AI 가 추천할 수 있다** (실행 허용 목록). `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 네 값은 Unity 와 **대소문자까지 정확히** 같아야 한다. 지금 실행되는 10개 체험은 [docs/unity/README.md](../unity/README.md#지금-실행되는-체험-buildid-career-pilot-v007-버전-모두-v002) 에 있다. `tx/career-integration-registry-v001.json` 의 552개는 참고용 ID 목록이며 실행 허용 목록이 아니다.
+> 백엔드가 갖고 있는 빌드 목록이며 **이 목록에 있는 체험만 AI 가 추천할 수 있다** (실행 허용 목록). `buildId` · `roomId` · `scenarioId` · `scenarioVersion` 네 값은 Unity 와 **대소문자까지 정확히** 같아야 한다. 지금 실행되는 10개 체험은 [docs/unity/README.md](../unity/README.md) 에 있다. `tx/career-integration-registry-v001.json` 의 552개는 참고용 ID 목록이며 실행 허용 목록이 아니다.
 
 ```json
 {
   "builds": [
     {
       "buildId": "career-pilot-v007",
-      "buildUrl": "/builds/career-pilot-v007/",
+      "buildPath": "/builds/career-pilot-v007/",
       "rooms": [
         {
           "roomId": "PAN-002",
@@ -81,7 +81,7 @@
 | 필드 | 설명 |
 |------|------|
 | `buildId` | 빌드 고유 ID (버전 포함). 한 빌드에 여러 방이 들어 있다 |
-| `buildUrl` | 프론트가 빌드를 불러올 주소 |
+| `buildPath` | 빌드 경로. 백엔드가 현재 터널 주소를 붙여 프론트에 `buildUrl` 로 준다 |
 | `rooms[].roomId` | Unity 방 ID (`PAN-NNN`) |
 | `rooms[].concept` | 환경 콘셉트 (AI 가 읽는 설명) |
 | `rooms[].scenarios[]` | 이 방에서 할 수 있는 직업별 체험. `jobs` 와 `description` 은 AI 가 고를 근거 |

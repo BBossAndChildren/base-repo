@@ -19,9 +19,9 @@
 | 서버 | 환경 | 주소 |
 |------|------|------|
 | 백엔드 | 로컬 | <!-- TODO --> |
-| 백엔드 | 배포 | <!-- TODO --> |
+| 백엔드 | 배포 | `https://<현재 터널 주소>` (Cloudflare Tunnel, 바뀔 수 있음 — [06 0절](06-deployment.md#0-배포-환경-한눈에)) |
 | AI 서버 | 로컬 | <!-- TODO --> |
-| AI 서버 | 배포 | <!-- TODO --> |
+| AI 서버 | 배포 | 사설 IP (외부 비공개, 백엔드만 호출) |
 
 ### 인증 방식
 | 구간 | 방식 |
@@ -170,11 +170,12 @@
 }
 ```
 - `stateChanges` 는 백엔드가 확인을 마치고 실제 반영한 변경만 담는다. 대화 중 사용자가 선택 항목에 답하면 `{ "field": "profile.mbti", "from": null, "to": "INTP" }` 처럼 담긴다
+- `buildUrl` 은 백엔드가 요청이 들어온 주소(현재 터널 주소) 기준으로 만든다 ([06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달))
 - `experience` 는 3D 분기일 때만 채운다. 맞는 빌드가 없으면 `null` 과 함께 `notice` 를 준다
 ```json
 "experience": {
   "buildId": "career-pilot-v007",
-  "buildUrl": "https://<백엔드 도메인>/builds/career-pilot-v007/",
+  "buildUrl": "https://<현재 터널 주소>/builds/career-pilot-v007/",
   "roomId": "PAN-002",
   "scenarioId": "career-net-951-experience",
   "scenarioVersion": "v002"
