@@ -20,6 +20,18 @@
 - 백엔드와 AI API를 같은 머신에서 연결하는 구체적 네트워크 방식과 포트는 기존 환경과 승인된 설정을 확인한 뒤 정한다. 이 문서는 새로운 포트 개방을 지시하지 않는다.
 
 
+**현재 적용 (GPU 단일 서버, [12 결정 27](12-decisions.md))**
+
+| 구성 | 어디에 | 외부 공개 방법 | SSL |
+|------|--------|----------------|-----|
+| 웹 프론트 | **Vercel** | Vercel 주소 (`https://base-repo-zeta.vercel.app`) | Vercel 자동 |
+| 게임 백엔드 (게이트웨이 · Django · PostgreSQL · 3D 빌드 · 인트로 에셋 · game/ 문서) | **GPU 서버** | **Cloudflare Tunnel** → 게이트웨이(`backend/deploy/`) | Cloudflare 자동 |
+| AI API (Qwen, 추후 RAG) | **같은 GPU 서버** | **공개하지 않음** — Django 가 서버 내부 주소로 호출 (`AI_API_BASE_URL`). 별도 AI 터널 · 사설망 확인 불필요 | — |
+
+- 서버 접속 방법 · 내부 포트 · 터널 도메인은 이식 때 확정한다 ([11 F7](11-open-issues.md#f-확인이-필요한-질문)). 아래 "이전 배포안" 의 명령 중 서버 공통 절차(Docker · 게이트웨이 · `/srv/builds` · `/srv/intro-assets` · 터널)는 같은 방식으로 GPU 서버에서 쓴다
+
+**이전 배포안 (두 서버, 참고용)**
+
 | 구성 | 어디에 | 외부 공개 방법 | SSL |
 |------|--------|----------------|-----|
 | 웹 프론트 | **Vercel** | Vercel 주소 (`https://base-repo-zeta.vercel.app`) | Vercel 자동 |
@@ -98,8 +110,8 @@ npm run lint && npm run typecheck && npm test && npm run build   # PR 전 확인
 | `DB_HOST` · `DB_PORT` | 백엔드 | ✅ | PostgreSQL 주소와 포트 |
 | `DB_NAME` · `DB_USER` · `DB_PASSWORD` | 백엔드 | ✅ | DB 이름 · 접속 계정 · 비밀번호 |
 | `DB_SSLMODE` | 백엔드 | | 기본 prefer. 운영 DB의 TLS 구성에 맞춰 설정 |
-| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI 서버 주소 — 사설 IP (`http://<GPU 사설 IP>:<포트>`) 또는 AI 터널 주소 ([5-3](#5-3-ai-서버-gpu-서버)). 아직 호출 로직 없음 |
-| `AI_SERVER_KEY` | 백엔드 · AI 서버 | ✅ | 백엔드 → AI 서버 내부 호출 키 (헤더 `X-Internal-Key`). 두 서버에 같은 값 |
+| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI API 주소 — **같은 GPU 서버의 내부 주소** (`http://<내부 호스트>:<포트>`, 이식 때 확정). 로컬 검증은 `compose.mock.yaml` 의 모의 AI |
+| `AI_SERVER_KEY` | 백엔드 · AI API | ✅ | 백엔드 → AI API 내부 호출 키 (헤더 `X-Internal-Key`). 같은 서버의 두 프로세스에 같은 값, 브라우저에 넣지 않음 |
 | `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | Vercel 프론트 주소 (쉼표 구분) |
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | `.trycloudflare.com,localhost,127.0.0.1` (터널 주소가 바뀌어도 되도록 앞에 점) |
 | `CSRF_TRUSTED_ORIGINS` | 백엔드 | | 신뢰하는 프론트 출처 (쉼표 구분) |
@@ -295,9 +307,9 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 
 | 항목 | 규칙 |
 |------|------|
-| 저장 위치 | 백엔드 서버 폴더 `/srv/builds/<buildId>/`. Unity 가 준 `site/` 폴더 내용을 그대로 둔다 (`index.html` · `Build/` 등) |
+| 저장 위치 | 서버(GPU 서버) 폴더 `/srv/builds/<buildId>/`. Unity 가 준 `site/` 폴더 내용을 그대로 둔다 (`index.html` · `Build/` 등) |
 | Git | **빌드 파일은 Git 저장소에 넣지 않는다.** 수십 MB 바이너리라 GitHub 제한(50MB 경고 · 100MB 차단)에 걸리고 저장소가 계속 커진다. 저장소에는 빌드 카탈로그 JSON 만 둔다 |
-| 올리는 방법 | VPN 을 켠 PC 에서 `scp -r site/ ncloud@10.1.1.14:/tmp/<buildId>/` 로 보낸 뒤 서버에서 `sudo mkdir -p /srv/builds && sudo mv /tmp/<buildId> /srv/builds/`. 새 `buildId` 는 새 폴더에 두고 기존 폴더는 덮어쓰지 않는다 |
+| 올리는 방법 | `scp -r site/ <GPU 서버 접속 주소>:/tmp/<buildId>/` 로 보낸 뒤 (접속 방법은 이식 때 확정) 서버에서 `sudo mkdir -p /srv/builds && sudo mv /tmp/<buildId> /srv/builds/`. 새 `buildId` 는 새 폴더에 두고 기존 폴더는 덮어쓰지 않는다 |
 | 카탈로그 반영 | 빌드를 올린 뒤 Unity 가 준 카탈로그 · 허용 목록(`docs/unity/builds/production-*`)을 백엔드에 반영한다 ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공)) |
 | 프론트 전달 | 채팅 응답의 `experience.buildUrl` 로 준다. 터널 주소가 바뀌므로 백엔드는 **요청이 들어온 주소(Host) 기준으로** `https://<현재 터널 주소>/builds/<buildId>/` 를 만든다. 카탈로그에는 `/builds/<buildId>/` 경로만 둔다 |
 | 지우기 | 카탈로그에서 뺀 빌드는 진행 중인 체험이 없을 때 폴더를 지운다 |
@@ -308,9 +320,9 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 |------|------|
 | 내용 | `intro.json` + `models/PAN-001.glb` ~ `PAN-071.glb` (71개, 약 238MB). Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 그대로 쓴다 |
 | Unity WebGL 빌드와 다름 | **3D 체험 빌드(`/srv/builds/`, `Build/*.data`)로 대신할 수 없다.** 같은 71개 공간이지만 빌드 안에서는 Unity 전용 형식으로 묶여 있어 인트로(Three.js)가 읽지 못한다. 인트로는 공간마다 GLB 파일이 따로 있어야 한다. 크기의 대부분(233MB)은 GLB 마다 들어간 같은 팔레트 이미지(3.3MB)이다 |
-| 저장 위치 | 백엔드 서버 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
+| 저장 위치 | 서버(GPU 서버) 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
 | Git | **넣지 않는다** (3D 빌드와 같은 이유). 프론트 저장소에도 사본을 두지 않는다 — 로컬 개발도 백엔드 `/intro-assets/` 를 쓴다 |
-| 올리는 방법 | VPN 을 켠 PC 에서 `scp -r intro-assets/ ncloud@10.1.1.14:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
+| 올리는 방법 | `scp -r intro-assets/ <GPU 서버 접속 주소>:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
 | 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. `VITE_API_BASE_URL` 을 쓰는 경우 터널 주소가 바뀌어도 따로 바꿀 것이 없다. **mock 배포처럼 `VITE_API_BASE_URL` 이 비어 있으면 `VITE_INTRO_ASSET_BASE` 에 `https://<터널 주소>/intro-assets/` 를 넣고 재배포한다** (안 넣으면 Vercel 의 `/intro-assets/` 를 찾다가 실패) |
 | 없을 때 | 에셋을 못 받으면 프론트는 인트로를 건너뛰고 시작 화면으로 간다. 게임 진행에는 영향 없음 |
 | 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (기능 BE15, #67 · #83), 에셋 전달은 프론트 담당 |
@@ -318,6 +330,8 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 배치 확인 | 서버에서 `python3 backend/scripts/check_intro_assets.py /srv/intro-assets` → "인트로 에셋 71개 확인" |
 
 ### 5-3. AI 서버 (GPU 서버)
+> **GPU 단일 서버에서는** AI API 가 Django 와 같은 서버에서 돈다. 아래 "사설망으로 닿는가" 확인과 AI 전용 터널은 **이전 배포안(두 서버)** 의 절차라 쓰지 않는다. `AI_API_BASE_URL` 은 같은 서버의 내부 주소다. 단일 GPU 는 한 번에 한 추론만 처리해 겹친 요청은 503 이 될 수 있다 ([02](02-architecture.md#1-기술-스택))
+
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
 - 백엔드 → AI 서버 호출에는 항상 `X-Internal-Key` 를 붙이고, AI 서버는 키가 없거나 틀리면 401 로 거부한다 (값은 `AI_SERVER_KEY`)
 - **Nginx 는 필요 없다.** API 하나만 있으므로 앱 포트로 바로 연결한다

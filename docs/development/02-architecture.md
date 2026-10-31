@@ -53,7 +53,7 @@ GPU 서버: 게이트웨이 → Django 게임 API → PostgreSQL
 ### AI 서버
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
-| 실행 환경 | 네이버 클라우드 GPU 서버 | — | 별도 AI 모델 서버 운영 · 추론 |
+| 실행 환경 | 네이버 클라우드 GPU 서버 | — | Django 게임 백엔드 · PostgreSQL 과 같은 서버에서 추론 (GPU 단일 서버, 결정 27) |
 | 모델 | 오픈소스 Qwen | TODO | 자체 GPU 서버에서 추론 |
 | 직업 지식 | RAG · BGE-M3 임베딩 | 벡터 DB와 배포 버전은 구현 시 고정 | CareerNet 기본 프로필 552개와 근거·한계가 표시된 조사 요약을 검색해 프롬프트에 붙임 ([조사 자료](../game/occupation-research/README.md), [10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)) |
 | | | | |
@@ -81,9 +81,9 @@ GPU 서버: 게이트웨이 → Django 게임 API → PostgreSQL
 | 서비스 | 용도 | 비고 |
 |--------|------|------|
 | Vercel | 웹 프론트 배포 | SSL 자동 |
-| Cloudflare Tunnel (`cloudflared`) | 사설 IP 백엔드 서버를 외부 https 주소로 공개 | 무료 임시 주소, 재실행 때 바뀜 ([06 0절](06-deployment.md#0-배포-환경-한눈에)) |
+| Cloudflare Tunnel (`cloudflared`) | GPU 서버의 게이트웨이를 외부 https 주소로 공개 (AI API · DB 는 비공개) | 무료 임시 주소, 재실행 때 바뀜 ([06 0절](06-deployment.md#0-배포-환경-한눈에)) |
 
-> 인트로 3D 모델(71개, 약 238MB)은 저장소 · Vercel 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 정적 파일로 제공한다 (백엔드 기능 BE15, [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋), [12 결정 25](12-decisions.md)).
+> 인트로 3D 모델(71개, 약 238MB)은 저장소 · Vercel 에 넣지 않고 GPU 서버 게이트웨이 `/intro-assets/` 에서 정적 파일로 제공한다 (백엔드 기능 BE15, [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋), [12 결정 25](12-decisions.md)).
 
 ## 2. 아키텍처
 <!-- 구성 요소와 통신 방향 다이어그램 -->
