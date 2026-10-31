@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { ComponentsPreviewPage } from '../pages/ComponentsPreviewPage'
 import { DevPlayPreviewPage } from '../pages/DevPlayPreviewPage'
+import { DevResultPreviewPage } from '../pages/DevResultPreviewPage'
 import { HistoryPage } from '../pages/HistoryPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PlayPage } from '../pages/PlayPage'
@@ -19,6 +20,7 @@ export function AppRoutes() {
         <Route path="history" element={<HistoryPage />} />
         {import.meta.env.DEV && <Route path="dev/components" element={<ComponentsPreviewPage />} />}
         {import.meta.env.DEV && <Route path="dev/play" element={<DevPlayPreviewPage />} />}
+        {import.meta.env.DEV && <Route path="dev/result" element={<DevResultPreviewPage />} />}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
