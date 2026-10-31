@@ -33,7 +33,10 @@
 ### 웹 프론트
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
-| | | | |
+| UI | React | TODO | Unity 연결 코드(`Experience.jsx`)가 React 기준 |
+| 빌드 | Vite | TODO | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
+| 언어 | TypeScript | TODO | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
+| API mock | TODO | — | 백엔드 게임 API 구현 전 개발용 |
 
 ### 3D 체험 (Unity WebGL)
 | 구분 | 기술 | 버전 | 선택 이유 |
