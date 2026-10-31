@@ -25,6 +25,17 @@
 | AI 서버 | 로컬 | <!-- TODO --> |
 | AI 서버 | 배포 | 사설 IP (외부 비공개, 백엔드만 호출) |
 
+### 메시지 형식
+1-2 · 1-3 · 1-7 의 `messages[]` 는 모두 같은 모양이다.
+
+| 필드 | 설명 |
+|------|------|
+| `role` | `user`(사용자) · `npc`(등장인물) · `narrator`(나레이션). 화면에서 말풍선 위치 · 모양을 정한다 (DB `messages.role`) |
+| `speaker` | 화면에 보일 이름. `npc` 는 인물 이름(예: "친구 민수"), `user` 는 플레이어 이름, `narrator` 는 "나레이션" |
+| `text` | 내용 |
+
+- 1-7 재개 응답의 `messages` 에는 사용자가 보낸 말(`role: user`)도 순서대로 들어간다. 1-3 응답의 `messages` 에는 이번 턴의 **AI 쪽 응답만** 들어간다 (사용자 말은 프론트가 이미 알고 있음)
+
 ### 인증 방식
 | 구간 | 방식 |
 |------|------|
@@ -142,7 +153,7 @@
     "playId": "uuid",
     "sessionId": "uuid",
     "state": { },
-    "messages": [ { "speaker": "narrator", "text": "..." } ]
+    "messages": [ { "role": "narrator", "speaker": "나레이션", "text": "..." } ]
   }
 }
 ```
@@ -170,7 +181,7 @@
   "code": 200,
   "data": {
     "turnId": "uuid",
-    "messages": [ { "speaker": "친구 민수", "text": "뭔 소리야, 너 학생이잖아." } ],
+    "messages": [ { "role": "npc", "speaker": "친구 민수", "text": "뭔 소리야, 너 학생이잖아." } ],
     "stateChanges": [ { "field": "relationship.민수", "from": 50, "to": 52 } ],
     "hints": [ "과학 동아리에 대해 물어본다" ],
     "experience": null,
@@ -350,7 +361,7 @@
 {
   "code": 200,
   "data": {
-    "messages": [ { "speaker": "친구 민수", "text": "뭔 소리야, 너 학생이잖아." } ],
+    "messages": [ { "role": "npc", "speaker": "친구 민수", "text": "뭔 소리야, 너 학생이잖아." } ],
     "stateChanges": [ { "field": "relationship.민수", "to": 52, "reason": "..." } ],
     "hints": [ "..." ],
     "branch": null,
