@@ -73,7 +73,8 @@ describe('mockGameApi', () => {
   it('"체험" 이면 3D 체험 분기를 준다', async () => {
     const play = await startGame()
     const turn = await api.sendTurn(play.playId, { message: '축제 체험 해 볼래' })
-    expect(turn.experience).toMatchObject({ roomId: 'PAN-002', scenarioId: 'career-net-951-experience' })
+    expect(turn.experience).toMatchObject({ roomId: 'PAN-002', scenarioId: 'career-net-951-experience', jobs: ['행사기획자'] })
+    expect(turn.experience?.title).toBeTruthy()
   })
 
   it('"없는체험" 이면 체험 없이 notice 를 준다', async () => {
@@ -92,13 +93,14 @@ describe('mockGameApi', () => {
 
   it('"끝" 이면 인생이 끝나고, 이후 채팅은 ALREADY_ENDED, 결말을 받을 수 있다', async () => {
     const play = await startGame()
-    await expect(api.getResult(play.playId)).rejects.toMatchObject({ type: 'ALREADY_ENDED' })
+    await expect(api.getResult(play.playId)).rejects.toMatchObject({ type: 'NOT_ENDED', message: '아직 이야기가 끝나지 않았어요.' })
     const last = await api.sendTurn(play.playId, { message: '이제 끝' })
     expect(last.ended).toBe(true)
     await expect(api.sendTurn(play.playId, { message: '더' })).rejects.toMatchObject({ type: 'ALREADY_ENDED' })
     const result = await api.getResult(play.playId)
     expect(result.recommendedJobs).toHaveLength(3)
     expect(result.recommendedJobs.some((job) => job.isNew)).toBe(true)
+    expect(result.recommendedJobs.every((job) => job.basis.length > 0)).toBe(true)
   })
 
   it('지난 기록은 내 플레이만 보여 준다', async () => {

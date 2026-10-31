@@ -4,7 +4,7 @@
 // 채팅 입력에 아래 단어가 들어 있으면 해당 상황을 흉내 낸다:
 //   "체험"   → 3D 체험 분기 (experience)
 //   "없는체험" → 맞는 체험이 없음 (experience: null + notice)
-//   "끝"     → 인생 종료 (ended: true)
+//   "끝"     → 인생 종료 (ended: true). 끝나기 전 결말 요청은 409 NOT_ENDED
 //   "오류"   → AI 서버 실패 (502 AI_UNAVAILABLE)
 //   "느려"   → 시간 초과 (504 TIMEOUT)
 import { ApiError } from '../api/errors'
@@ -144,6 +144,9 @@ export const mockGameApi: GameApi = {
         roomId: 'PAN-002',
         scenarioId: 'career-net-951-experience',
         scenarioVersion: 'v002',
+        title: '주민 문화행사 준비',
+        jobs: ['행사기획자'],
+        reason: '선배가 축제 준비를 함께 하자고 제안했어요.',
       }
     } else {
       response.messages.push({ speaker: '친구 민수', text: `"${message}"? 좋아, 그럼 같이 가 보자!` })
@@ -164,13 +167,14 @@ export const mockGameApi: GameApi = {
   async getResult(playId) {
     await wait()
     const play = ownPlay(playId)
-    if (!play.ended) throw new ApiError(409, 'ALREADY_ENDED', '아직 끝나지 않은 인생이에요.')
+    if (!play.ended) throw new ApiError(409, 'NOT_ENDED')
     return {
       ending: `${play.profile.name}은(는) 여러 사람을 만나며 무언가를 함께 준비하는 일에 즐거움을 느꼈어요.`,
       recommendedJobs: [
         {
           job: '행사기획자',
           isNew: false,
+          basis: ['experience', 'conversation'],
           reason: '축제 준비 체험을 끝까지 해냈고, 일정 짜는 일이 재밌다고 말했어요.',
           work: '행사의 목적에 맞게 일정 · 장소 · 인원을 계획하고 진행을 관리해요.',
           nextSteps: ['학교 행사 준비 동아리에 참여해 보기', '작은 모임의 일정표를 직접 짜 보기'],
@@ -178,6 +182,7 @@ export const mockGameApi: GameApi = {
         {
           job: '사서',
           isNew: true,
+          basis: ['interest'],
           reason: '책 이야기에 관심을 보였지만 아직 경험하지 않은 일이에요.',
           work: '자료를 수집 · 정리하고 이용자가 필요한 정보를 찾도록 도와요.',
           nextSteps: ['도서관 봉사활동 알아보기'],
@@ -185,6 +190,7 @@ export const mockGameApi: GameApi = {
         {
           job: '광고디자이너',
           isNew: true,
+          basis: ['conversation'],
           reason: '포스터를 꾸미는 일에 흥미를 보였어요.',
           work: '상품이나 행사를 알리는 시각 자료를 기획하고 디자인해요.',
           nextSteps: ['간단한 포스터 디자인해 보기', '디자인 도구 기초 익히기'],

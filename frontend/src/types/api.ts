@@ -18,6 +18,7 @@ export type ApiErrorType =
   | 'UNKNOWN_PLAYER'
   | 'NOT_FOUND'
   | 'ALREADY_ENDED'
+  | 'NOT_ENDED'
   | 'AI_UNAVAILABLE'
   | 'TIMEOUT'
   | 'NETWORK'
@@ -57,6 +58,12 @@ export interface ExperienceOffer {
   roomId: string
   scenarioId: string
   scenarioVersion: string
+  /** 체험 제목 (Unity 허용 목록의 title) */
+  title: string
+  /** 관련 직업 */
+  jobs: string[]
+  /** 지금 분기인 이유 (AI branch.reason) */
+  reason: string
 }
 
 export interface Notice {
@@ -108,9 +115,13 @@ export interface TurnResponse {
 }
 
 // 1-5
+/** 추천 근거 종류 (03 1-5) */
+export type RecommendationBasis = 'experience' | 'conversation' | 'interest' | 'dreamJob'
+
 export interface RecommendedJob {
   job: string
   isNew: boolean
+  basis: RecommendationBasis[]
   reason: string
   work: string
   nextSteps: string[]
