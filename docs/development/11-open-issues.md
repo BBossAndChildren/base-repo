@@ -50,6 +50,8 @@
 | 재개 응답의 `sessionId` | 플레이 재개(1-7) 응답에도 `sessionId` 를 준다 (다른 기기에서 이어 할 때 3D 연동용) | [03 1-7](03-api.md#1-7-플레이-재개) |
 | 메시지 `role` | 메시지에 `role`(user · npc · narrator) 추가. 재개 때 내 말과 NPC 말을 구분 | [03 메시지 형식](03-api.md#메시지-형식) |
 | Unity 연결 코드 사용 | 빌드의 `frontend/client.js` 를 실행 시 불러옴, 빌드 서버 `/builds/` CORS 허용 | [05 4-1](05-ui-ux.md#4-1-3d-체험-연결-unity) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) · [12 결정 23](12-decisions.md) |
+| Cloudflare 502 · 504 변환 (E3) | 채팅 전송 중 네트워크 오류는 "응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요." 로 안내 (프론트에서 처리, 진짜 인터넷 끊김과는 구분 못 함). 2026-11-01 | [05 5절](05-ui-ux.md#5-결과-코드별-사용자-메시지) · #121 |
+| Vercel 프로젝트 (F11) | `base-repo`(https://base-repo-zeta.vercel.app) 하나만 사용, 허용 출처(CORS · 게이트웨이)도 zeta 만. 2026-11-01 | [06 5-4](06-deployment.md#5-4-웹-프론트--vercel) · #122 |
 | 서버 배치 | **GPU 서버 한 대**에 게이트웨이 · Django · PostgreSQL · AI API · 터널 (기존 일반 서버 + GPU 서버 두 대 구성 대체). 이식 · 연동 미검증 | [02](02-architecture.md#1-기술-스택) · [06 0절](06-deployment.md#0-배포-환경-한눈에) · [12 결정 27](12-decisions.md) |
 | 디자인 | 인트로 디자인 토큰을 앱 전체에 적용, 기존 그림책 시안 폐기, Pretendard | [docs/design/](../design/README.md) · [05 1절](05-ui-ux.md#1-디자인-시스템) · [12 결정 26](12-decisions.md) |
 | 인트로 (FE11) | Unity 담당 인트로를 원본 그대로 흡수, 첫 방문만 + 건너뛰기, 에셋은 서버 `/intro-assets/` | [05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택) · [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋) · [12 결정 25](12-decisions.md) |
@@ -86,13 +88,11 @@
 | # | 문서 | 코드 | 처리 |
 |---|------|------|------|
 | E1 | 03·04·05·10의 최신 상세 기획 반영 설계 | 백엔드: 게임 상태 · NPC 기억 · 멱등 턴 · 일시정지 구현 · 자동 테스트 통과 (backend.md 4절). 프론트: `requestId` · 원화 상태 패널 · 일시정지 구현 (#99 · #101 · #102) | 남은 차이: 프론트의 `pendingChoices` · 자금 부족 선택 · 경과 요약 · 활성 시간 전달은 미구현 (05 9절). 실제 AI 로 확인 전 |
-| E2 | 06 5-1 ⑤ 는 호스트 Nginx 설정 예시 | 백엔드(#83)는 Docker 게이트웨이 `backend/deploy/nginx.conf` + `compose.gateway.yaml`(기본 `127.0.0.1:8080`), 허용 출처 두 Vercel 주소(#104), 에셋은 `backend/deploy/assets/`(#107) | 실제 설정의 기준은 `backend/deploy/`. 06 5-1 ⑤ 는 이전 배포안 참고용 |
-| E3 | 03 결과 코드: AI 실패 502 `AI_UNAVAILABLE` · 시간 초과 504 `TIMEOUT` 을 `{code,error}` JSON 으로 받아 화면 문구를 보여 줌 | Cloudflare(Tunnel)가 서버의 **502 · 504 응답을 자체 오류 페이지로 바꿔** CORS 헤더 · JSON 이 사라진다 → 브라우저는 네트워크 오류로 보고 "연결이 끊겼어요" 안내 (2026-11-01 배포에서 확인) | 미결정. 후보: 백엔드가 AI 실패에 Cloudflare 가 바꾸지 않는 코드(예: 503)를 쓰고 03 · 05 를 고침 / 게이트웨이에서 502 · 504 를 다른 코드로 바꿈 / 프론트가 채팅 중 네트워크 오류를 "응답이 늦어지고 있어요" 로 안내 |
+| E2 | 06 5-1 ⑤ 는 호스트 Nginx 설정 예시 | 백엔드(#83)는 Docker 게이트웨이 `backend/deploy/nginx.conf` + `compose.gateway.yaml`(기본 `127.0.0.1:8080`), 허용 출처는 zeta 하나(#104 → #122), 에셋은 `backend/deploy/assets/`(#107) | 실제 설정의 기준은 `backend/deploy/`. 06 5-1 ⑤ 는 이전 배포안 참고용 |
 
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |
 |---|------|----|
-| F11 | **Vercel 프로젝트가 두 개다** — `base-repo` (https://base-repo-zeta.vercel.app, 2026-11-01 배포 주소로 사용) · `base-repo-ck83` (이전 주소). 하나만 남길지, 둘 다 쓸지? 둘 다 쓰면 CORS · Nginx 허용 출처를 둘 다 넣어야 한다 ([06 5-4](06-deployment.md#5-4-웹-프론트--vercel)) | 결정 전까지 **둘 다 허용**한다 (#86: 게이트웨이 `map $http_origin` · Django `CORS_ALLOWED_ORIGINS` 에 두 주소). 하나로 정하면 나머지를 뺀다 |
 | F10 | 최신 상태 계약 구현 | 기획은 `06-life-career-design.md`, API·DB 반영 설계는 03·04 참조. 원화 자금·빚·건강·스트레스·주거·성장 및 기억/턴 원자성 구현은 후속 작업. 현재 프론트의 기존 상태 표시와 구분 |
 | F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | **해당 없음** — GPU 단일 서버로 Django 와 AI API 가 같은 서버 (결정 27, 2026-11-01) |
 | F7 | GPU 서버 접속 방법 · OS · Docker 가능 여부 · Django 와 AI API 내부 포트 · 터널 도메인 (06 의 TODO) | 2026-11-01: 서버 `inno-gpu-009`(Ubuntu 24.04) 에 Docker 설치 후 게이트웨이 127.0.0.1:8080 으로 실행. 터널은 quick tunnel(`*.trycloudflare.com`, 재실행 때 주소 바뀜), UDP 막힘 → `--protocol http2`. AI API 는 AI 담당이 호스트 Python 으로 `127.0.0.1:8010` 에 실행 → 중계기 `ai-relay`(`172.17.0.1:18010`)를 거쳐 백엔드가 `host.docker.internal:18010` 으로 호출 (#113, 06 5-3). 고정 도메인은 미정 |
