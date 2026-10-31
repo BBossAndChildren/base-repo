@@ -35,8 +35,8 @@
 |------|------|------|-----------|
 | UI | React | 19.3 | Unity 연결 코드(`Experience.jsx`)가 React 기준 |
 | 라우팅 | React Router | 8.5 | 인트로 · 시작 · 게임 · 결말 · 지난 기록 화면 주소 |
-| 3D 인트로 | Three.js (`three`) + GLTFLoader | 0.180 | Unity 담당이 준 인트로(`career-intro-react-v001`)가 r180 기준. 인트로 화면에서만 따로 나눠 불러온다 ([05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택)) |
-| 빌드 | Vite | 8.3 | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
+| 3D 인트로 | Three.js (`three`) + GLTFLoader | 0.180 | Unity 담당이 준 인트로(`career-intro-react-v001`)가 r180 기준. 인트로 화면에서만 따로 나눠 불러오고, `vite.config.ts` 에서 `three-renderer` · `three-core` · `three-addons` 청크로 나눈다 (500KB 경고 방지, 시작 화면에는 포함되지 않음) ([05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택)) |
+| 빌드 | Vite | 8.3 | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준. 실행 환경 Node.js 20.11 이상 |
 | 언어 | TypeScript | 7.0 (strict) | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
 | 스타일 | 일반 CSS (CSS 변수) + 디자인 토큰 | — | 인트로에서 뽑은 토큰(`src/design/tokens/tokens.json`)을 `npm run tokens` 로 CSS 변수로 만들어 씀, 별도 라이브러리 없음 ([docs/design/](../design/README.md)) |
 | 글꼴 | Pretendard (jsDelivr CDN) | 고정 버전 | 토큰의 글꼴. Google Fonts 에 없음 |

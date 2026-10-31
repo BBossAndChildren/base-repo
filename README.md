@@ -16,7 +16,7 @@
 ## 2. 기술 스택
 | 구분 | 기술 |
 |------|------|
-| 웹 프론트 | React · Vite · TypeScript · Three.js(인트로), Vercel 배포 (https://base-repo-ck83.vercel.app/) |
+| 웹 프론트 | React · Vite · TypeScript · Three.js(인트로), Vercel 배포 (https://base-repo-zeta.vercel.app/) |
 | 백엔드 | Python · Django + DRF · PostgreSQL · HTTPX · Gunicorn · Nginx |
 | AI 서버 (별도 저장소) | 오픈소스 Qwen + 직업 데이터 RAG |
 | 3D 체험 | Unity WebGL (Unity 담당 전달, [docs/unity/USAGE.md](docs/unity/USAGE.md)) |
@@ -41,7 +41,7 @@
 
 ## 6. 실행 방법
 ### 로컬
-**웹 프론트** — 상세: [frontend/README.md](frontend/README.md)
+**웹 프론트** (Node.js 20.11 이상) — 상세: [frontend/README.md](frontend/README.md)
 ```bash
 cd frontend
 npm install
