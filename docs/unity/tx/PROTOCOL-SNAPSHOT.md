@@ -1,10 +1,3 @@
-# 공통 규격 출처 스냅샷
-
-원본: Unity-MeshyAI/AGENTS.md. 생성 시각: 2026-10-31T05:15:35.126087+09:00
-원본 SHA-256: d7e21a113fff0ca4575a7d5f4e8498348178e176a0679102351917693d28755c
-
-이 파일은 전달용 고정 스냅샷입니다. 규칙을 여기서 독립 변경하지 말고 원본 AGENTS.md를 수정한 뒤 새 패키지 버전으로 재발행합니다. 통신 구현·실행 검증 완료를 뜻하지 않습니다.
-
 ### Unity ↔ React 공통 응답·과정·결과·해석 컨텍스트 규격 v001
 
 #### 적용 범위와 구현 상태
@@ -15,7 +8,7 @@
 
 #### 프론트 방별 호출·체험 종료 응답 프로필
 
-- 프론트의 기본 연동은 `start_experience`로 방별 체험을 시작하고 `end_experience`를 호출하면 `experience.ended`로 그동안의 과정·결과·해석 컨텍스트를 묶어 받는 방식이다. 개별 행동 이벤트는 Unity 내부 원장에 보존하며 프론트가 실시간으로 모든 행동을 구독해야만 종료 응답을 받을 수 있게 만들지 않는다. 실시간 이벤트 전달은 선택 기능이다.
+- 프론트의 기본 연동은 `start_experience`로 방별 체험을 시작하고 `end_experience`를 호출하면 `experience.ended`로 그동안의 과정·결과·해석 컨텍스트를 묶어 받는 방식이다. 개별 행동 이벤트는 Unity 내부 원장에 보존하며 프론트가 실시간으로 모든 행동을 구독해야만 종료 응답을 받을 수 있게 만들지 않는다. 신규·수정 구현에서는 아래 실시간 전달 프로필 v002를 필수로 적용한다. 수신자가 실시간 구독을 하지 않아도 종료 요약은 독립적으로 받을 수 있어야 한다.
 - 호출 JSON의 공통 필수 필드는 `schemaVersion:1`, `protocol:career-experience`, `requestId`, `action`, `sessionId`, `experienceId`, `roomId`다. 시작 호출에는 `scenarioId`, `scenarioVersion`, 종료 호출에는 `reason:USER_REQUESTED_END`를 추가한다. reason은 사용자의 종료 요청 의도이며 완료/중단 판정을 프론트가 강제로 지정하는 값이 아니다.
 - `roomId`는 프론트가 구별하는 논리 방 ID이며 기존 sceneId와의 고정 매핑을 명세한다. 한 방에 여러 시나리오가 있으면 시작 요청의 scenarioId/version으로 선택하며 임의로 첫 시나리오를 실행하지 않는다. 알 수 없는 방·시나리오 또는 실제 실행과 다른 roomId/experienceId의 요청은 명시적인 제어 오류로 처리하고 다른 체험에 적용하지 않는다.
 - `experienceId`는 방을 새로 열어 체험을 시작할 때마다 프론트가 생성하는 고유 실행 묶음 ID다. sessionId는 통합 플레이 동안 유지한다. 같은 방을 다시 시작하면 새 experienceId를 사용한다. 내부 전체 초기화는 같은 experienceId 안에서 새 scenarioRunId로 구별하며 이전 run 이력을 보존한다.
@@ -24,6 +17,18 @@
 - 하나의 experience는 선택한 시나리오의 현재 run 종료 요약을 기본 process/result/context로 반환한다. 같은 experience에서 초기화한 과거 run은 선택 확장 `data.previousRuns`에 분리해 보존하며 최종 run과 횟수를 합산하지 않는다. 해당 범위의 근거 원본 이벤트를 부모 응답 자신을 제외한 `data.events` 배열로 함께 전달할 수 있다. events는 시간순 원장의 조회 결과이며 새 행동으로 다시 집계하지 않는다. 전량 전달 여부는 `data.eventsComplete`로 명시하고, 근거 이벤트가 생략되면 실제 구현한 보존/조회 경로를 전달 문서에 적는다. 종료 응답만 있어도 카운트·결과·해석은 읽을 수 있어야 한다.
 - 같은 requestId의 전달 재시도는 같은 응답과 eventId로 처리한다. 종료 확정은 experienceId당 한 번이며 새 requestId로 이미 끝난 experience를 다시 종료하려 하면 `ALREADY_ENDED` 제어 오류와 원본 종료 eventId를 안내하고 새 업무 결과·카운트를 만들지 않는다. React는 roomId/experienceId/requestId를 확인해 해당 호출에 연결하고 eventId로 중복을 제거한다. 종료 응답을 수신·보존한 다음 Unity 화면을 제거한다. 수신 전 제거·타임아웃·강제 종료는 정상 응답을 받은 것처럼 꾸미지 않는다.
 - 프론트 전달 ZIP은 실행 WebGL ZIP과 구별한 명세·타입·가상 예시 패키지로 만들 수 있다. 규칙의 원본은 이 AGENTS.md이며 전달 문서는 해당 절에서 생성한 버전 고정 스냅샷임을 명시한다. 기준 출처와 해시·미구현 상태를 남기고 독립 규칙 원장으로 수정하지 않는다. 스냅샷을 갱신할 때 새 패키지 버전을 사용한다. 명세 전달만으로 Unity 브리지·React 연동·종료 결과 수신의 실행 pass를 등록하지 않는다.
+
+#### 실시간 전달·고정 ID 레지스트리 프로필 v002
+
+- 신규·수정 시나리오는 상태 확정 시 공통 봉투 그대로 실시간 발행한다. 선택/열기/닫기/뒤로가기, 제출/오류/재시도, 요청 변경, 도움, 실제 완료, 일시정지/복귀/초기화/중단을 기존 고정 type으로 전송한다. 종료 응답도 유지한다. 프레임·키 입력마다 업무 이벤트를 만들지 않는다.
+- process는 해당 범위의 현재 누적 스냅샷이다. 백엔드와 React는 이를 더하지 않고 범위(sessionId, experienceId, scenarioRunId, process.scope, interaction이면 stepId/objectId/workItemId)별 최신 sequence로 갱신한다. 원본 이벤트는 별도로 보존한다.
+- 진행 중 result는 pending, success/completionCode는 null이며 context는 pending이다. interaction 완료는 해당 작업만 평가할 수 있으나 scenario 전체 평가는 scenario terminal 상태에서만 확정한다. 정상 진행을 TASK_INCOMPLETE로 표시하지 않는다. 종료·중단 자체는 실수에 가산하지 않는다.
+- 상태 전이 이벤트는 전이 확정 직후 발행하고 지연된 네트워크 저장과 구별한다. interaction.progress는 변경된 진행률/상태만 최대 초당 5회로 합칠 수 있다. 오류·완료·중단·revision 변경 이벤트는 합치거나 버리지 않는다. 밀리초 단위 도착 보장은 하지 않는다.
+- 프론트는 시작 호출 전에 career-experience:event 리스너를 등록한다. 이벤트에 대응 호출이 없으면 requestId:null이다. 동일 페이지 CustomEvent와 iframe의 origin/source 검증 규칙은 기존 규격을 따른다. 백엔드 전송 성공은 별도 저장 ACK이며 Unity 이벤트 발생 자체를 서버 저장 완료로 간주하지 않는다.
+- 재전송은 원본 eventId/sequence/occurredAt/내용을 유지한다. 수신자는 (sessionId,eventId)로 중복 제거하며 같은 ID의 다른 내용은 충돌 오류로 보존한다. 순서 역전 이벤트도 원장에 저장하되 오래된 스냅샷으로 최신 상태를 덮지 않는다. 누락은 누락으로 기록하고 종료 data.events와 대조한다. 미구현 replay/ACK API를 지원한다고 명세하지 않는다.
+- 고정 식별자는 docs/machine/catalog/career-integration-registry-v001.json의 버전 고정 참조를 따른다. roomId/scenarioId/scenarioVersion/occupationId를 정확히 대조한다. experienceId는 프론트가 생성하는 실행 ID이므로 고정 직업 목록에 넣거나 재사용하지 않는다. 예시 office를 실제 PAN-001 별칭으로 자동 수용하지 않는다.
+- 레지스트리의 공간 존재·설계 시나리오·소스 실행 설정·특정 빌드 실행 검증은 별개다. 배포는 검증한 buildId+roomId+scenarioId+scenarioVersion 허용 목록으로 선택한다. 알 수 없는 ID/버전, 선택 미정 대안, 미지원 빌드는 명시적 오류로 거부한다. 최신 파일명만으로 모든 시나리오가 한 빌드에서 지원된다고 추정하지 않는다.
+- 전달물은 JSON 규격·ID 목록·가상 예시와 사람용 안내를 함께 갱신하고 새 ZIP 버전으로 보존한다. 이번 명세 변경만으로 기존 Unity 코드·빌드·실시간 통신 실행 상태를 승격하지 않는다.
 
 #### 공통 이벤트 봉투
 
@@ -133,6 +138,19 @@
   }
 }
 ```
+
+#### 종료 응답 미수신 정산 프로필 v003 — 백엔드 판정
+
+- 명시적 종료 요청 후 응답 대기 시간 초과, 탭 닫힘, 연결 단절은 먼저 미확정(pending_reconciliation)으로 보존한다. USER_ABORTED·업무 실패·TASK_INCOMPLETE로 추정하지 않는다. end_experience 재전송은 동일 requestId/내용으로 하며 실제 experience.ended만 Unity 종료 원장에 넣는다.
+- 다음 플레이를 새로 시작하려는 명시적 요청에서 인증된 동일 소유자의 이전 체험을 서버가 대조한다. 단순 로그인·새 탭·기존 체험 재연결만으로 종료하지 않는다. 기존 체험이 살아 있으면 deferred_active, 생존 여부를 확인할 수 없으면 pending_reconciliation을 유지한다. 클라이언트가 보낸 대상 ID만으로 다른 사용자의 체험을 변경하지 않는다.
+- 배포 기본값은 종료 응답 대기 5초(사용자 대기 UI), 소유권 lease heartbeat 30초, 만료 120초다. 이 기능들은 구현 요구이며 현재 제공되는 API가 아니다. heartbeat가 멈췄다는 이유만으로 종료하지 않는다. 명시적 새 시작 요청과 서버 lease 만료가 함께 확인된 경우에만 이전 소유권을 원자적으로 fence한 뒤 중단 정산한다. 일시정지·숨겨진 탭의 timer throttling은 사용자 포기 근거가 아니다. 기존 살아 있는 탭은 lease 상실 시 쓰기를 중지하고 재연결/새 시작 선택을 안내해야 한다. 서버는 갱신·정산 경합을 직렬화한다.
+- 최종 종료 응답이 없고 위 조건을 만족하면 운영 상태를 interrupted로 확정한다. 코드는 END_RESPONSE_MISSING_ON_RESTART, 화면 문구는 '종료 응답을 받지 못해 이전 체험을 중단 처리했습니다'다. 사용자 포기라는 해석은 금지한다. 시작 요청만 있고 실제 시작 근거가 없으면 not_started로 정산하며 실제 체험 시작을 꾸미지 않는다.
+- 서버 정산은 protocol:career-experience-resolution, type:experience.reconciled의 별도 응답이다. Unity experience.ended나 Unity eventId/sequence/occurredAt을 생성하지 않는다. schemaVersion:1은 별도 서버 봉투 버전이다. resolutionId/revision/resolvedAt/producer:backend/policyVersion:v003/source/evidence로 출처를 명시한다. 동일 reconcileRequestId/내용은 동일 응답, 같은 ID 다른 내용은 충돌 오류다. 클라이언트는 종료 Unity 이벤트와 서버 정산 두 종류를 모두 처리한다.
+- lifecycleStatus와 업무 result를 분리한다. 종료 미수신 상태 자체로 result.outcome:aborted를 만들지 않는다. 마지막 검증된 scenario terminal 근거가 없으면 result:null, context.assessmentStatus:unavailable, assessmentCode:null이다. 기존 scenario.completed/failed/aborted 근거가 있으면 해당 범위 결과를 보존하되 experience.ended 수신 여부와 구별한다. 작업 하나의 완료를 시나리오 완료로 승격하지 않는다.
+- 미수신 이후 최종 횟수·시간은 알 수 없으므로 최상위 process는 null이다. 마지막 수신 스냅샷은 lastObserved.process와 observedAt/sourceEventId에 그대로 보존하며 최종 전체 카운트로 사용하지 않는다. lastObserved.partialResults·단계·실행 중 작업도 확인한 항목만 기록하고 불명은 null이다. 카운트 증분은 전부 0이며 기존 실수 기록을 삭제하지 않는다. 정산은 추가 실수·재시도·사용자 중단 행동을 생성하지 않는다.
+- 소유권 fence 전에 실제 발행된 늦은 experience.ended가 도착하면 인증·빌드·방·체험·run 귀속·이벤트 중복/충돌·lease 귀속을 검증한다. 수신 시각이 늦다는 이유만으로 버리지 않는다. 검증된 원본은 보존하고 같은 resolutionId의 revision을 증가시켜 ended로 정정한다. 이전 interrupted revision은 이력으로 남기고 새 체험은 변경하지 않는다. fence 후 무효 소유권의 신규 행동은 격리하며, 발행 시점/귀속을 검증할 수 없으면 검토 대기로 보존한다. 단순 클라이언트 시각만으로 검증 완료 처리하지 않는다.
+- 백엔드 응답의 revision이 오래되면 저장 이력만 추가하고 최신 표시를 덮지 않는다. 정산·종료 이벤트의 이중 집계를 금지한다. 실제 종료 응답 수신 직후에는 ended가 우선하고 정산 중 도착하면 원자적 비교·갱신으로 중단 판정의 덮어쓰기를 막는다. 다시 접속하지 않는 사용자는 자동 사용자 포기로 확정하지 않고 별도 보존 정책 전까지 미확정으로 남는다.
+- 프론트/백엔드 담당자는 v003 JSON 계약·예시·수용 사례를 기준으로 구현한다. 이번 전달은 정책/명세이며 서버 endpoint, lease, 재정산, Unity/React 실제 왕복 구현·실행 pass를 뜻하지 않는다. 기존 일부 브리지 코드 존재와 이번 신규 요구의 미검증을 구별한다.
 
 #### 장면 공통 전달·보존
 

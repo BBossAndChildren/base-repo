@@ -1,0 +1,5287 @@
+{
+  "schema_version": 3,
+  "protocol": "career-experience",
+  "protocolVersion": "v001",
+  "events": [
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-f9ad4c67df3e4929adacc65e36e9c63f",
+      "sequence": 197,
+      "occurredAt": "2026-10-31T15:37:18.2220000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": null,
+      "instanceId": null,
+      "assetId": null,
+      "assetVersion": null,
+      "stepId": null,
+      "workItemId": null,
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "scenario.started",
+      "action": "start_scenario",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {}
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-361de75d399f4c63b5bc61511b649520",
+      "sequence": 198,
+      "occurredAt": "2026-10-31T15:37:18.2320000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": "a6146483-e7ae-47be-8a98-616116c02e94",
+      "objectId": null,
+      "instanceId": null,
+      "assetId": null,
+      "assetVersion": null,
+      "stepId": null,
+      "workItemId": null,
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "experience.started",
+      "action": "start_experience",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "ready": true,
+        "firstSequence": 197
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-ba803d82e0b84660b62091428ad2417e",
+      "sequence": 199,
+      "occurredAt": "2026-10-31T15:37:18.2450000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": null,
+      "instanceId": null,
+      "assetId": null,
+      "assetVersion": null,
+      "stepId": null,
+      "workItemId": null,
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "scene.entered",
+      "action": "enter_room",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "navigationRoomId": "PAN-053"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-91b20792ff59499180d2d140039d87c0",
+      "sequence": 200,
+      "occurredAt": "2026-10-31T15:37:18.6420000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "object.selected",
+      "action": "select_object",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {}
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-ea88846548ec4572bc15718a96dc3313",
+      "sequence": 201,
+      "occurredAt": "2026-10-31T15:37:18.6520000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.opened",
+      "action": "open_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-83c581b54063441fa48e96839187d2c3",
+      "sequence": 202,
+      "occurredAt": "2026-10-31T15:37:19.6800000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 578
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-0",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.33,
+            0.56
+          ],
+          "tileY": [
+            0.35,
+            0.86,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-5de0f5a95392419daa80c378e2fec8c1",
+      "sequence": 203,
+      "occurredAt": "2026-10-31T15:37:20.0500000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 950
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-1",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.56
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-3d8ae1f952b84f80a319f53af92ad357",
+      "sequence": 204,
+      "occurredAt": "2026-10-31T15:37:20.4180000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1331
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-2",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-460fd22b891b4cff96d7552ccfb52c4d",
+      "sequence": 205,
+      "occurredAt": "2026-10-31T15:37:20.6010000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": "attempt-008246b6a2ed4e3cb3f2d76eddd98bf7",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.started",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1502
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "isAttempt": true,
+        "isRetry": false,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-188ce1f462cf440488340d1e6fb9dcc5",
+      "sequence": 206,
+      "occurredAt": "2026-10-31T15:37:20.6120000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": "attempt-008246b6a2ed4e3cb3f2d76eddd98bf7",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.completed",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1502
+      },
+      "result": {
+        "outcome": "completed",
+        "success": true,
+        "completionCode": "WORK_ITEM_COMPLETED",
+        "data": {
+          "result": {
+            "tileX": [
+              0.2,
+              0.5,
+              0.8
+            ],
+            "tileY": [
+              0.35,
+              0.35,
+              0.35
+            ],
+            "settings": [],
+            "fields": [],
+            "observed": [],
+            "validationErrors": [],
+            "elapsed": 0,
+            "completed": true,
+            "running": false,
+            "artifact": null
+          }
+        }
+      },
+      "context": {
+        "assessmentStatus": "evaluated",
+        "assessmentCode": "TASK_SMOOTH",
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [
+          "evt-91b20792ff59499180d2d140039d87c0",
+          "evt-ea88846548ec4572bc15718a96dc3313",
+          "evt-83c581b54063441fa48e96839187d2c3",
+          "evt-5de0f5a95392419daa80c378e2fec8c1",
+          "evt-3d8ae1f952b84f80a319f53af92ad357",
+          "evt-460fd22b891b4cff96d7552ccfb52c4d"
+        ],
+        "interpretation": "가상 업무 1/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "result": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-2ca62de175784364aef08bb2d18b3b27",
+      "sequence": 207,
+      "occurredAt": "2026-10-31T15:37:21.8360000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.closed",
+      "action": "close_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 2674
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-b2191ca9a4694dde944970bbecc8fb7e",
+      "sequence": 208,
+      "occurredAt": "2026-10-31T15:37:21.8460000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-1",
+      "instanceId": "Room_PAN-053/AST-1058-004",
+      "assetId": "AST-1058",
+      "assetVersion": "v001",
+      "stepId": "work-1",
+      "workItemId": "215-item-1",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "navigation.back",
+      "action": "return_to_room",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 1,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 2674
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "reasonCode": "NORMAL_RETURN"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+      "sequence": 209,
+      "occurredAt": "2026-10-31T15:37:22.3790000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "object.selected",
+      "action": "select_object",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {}
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+      "sequence": 210,
+      "occurredAt": "2026-10-31T15:37:22.4010000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.opened",
+      "action": "open_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-3fd75ee13915494ab797192ffdaf5237",
+      "sequence": 211,
+      "occurredAt": "2026-10-31T15:37:23.5610000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 740
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-0",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.33,
+            0.56
+          ],
+          "tileY": [
+            0.45,
+            0.86,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+      "sequence": 212,
+      "occurredAt": "2026-10-31T15:37:23.9250000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1098
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-1",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.56
+          ],
+          "tileY": [
+            0.45,
+            0.45,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-9d3b43f2be8f4a29acea11ee6f808149",
+      "sequence": 213,
+      "occurredAt": "2026-10-31T15:37:24.2920000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1460
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-2",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.45,
+            0.45,
+            0.45
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-f421ef55bd77431cb56cabd10688ed61",
+      "sequence": 214,
+      "occurredAt": "2026-10-31T15:37:24.4740000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": "attempt-74db0c60ac914c158cfbbeae982c1464",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.started",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1655
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "isAttempt": true,
+        "isRetry": false,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.45,
+            0.45,
+            0.45
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-6bf899cae17e4d98ba520b405d7d4ca7",
+      "sequence": 215,
+      "occurredAt": "2026-10-31T15:37:24.4960000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": "attempt-74db0c60ac914c158cfbbeae982c1464",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.completed",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1655
+      },
+      "result": {
+        "outcome": "completed",
+        "success": true,
+        "completionCode": "WORK_ITEM_COMPLETED",
+        "data": {
+          "result": {
+            "tileX": [
+              0.2,
+              0.5,
+              0.8
+            ],
+            "tileY": [
+              0.45,
+              0.45,
+              0.45
+            ],
+            "settings": [],
+            "fields": [],
+            "observed": [],
+            "validationErrors": [],
+            "elapsed": 0,
+            "completed": true,
+            "running": false,
+            "artifact": null
+          }
+        }
+      },
+      "context": {
+        "assessmentStatus": "evaluated",
+        "assessmentCode": "TASK_SMOOTH",
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [
+          "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+          "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+          "evt-3fd75ee13915494ab797192ffdaf5237",
+          "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+          "evt-9d3b43f2be8f4a29acea11ee6f808149",
+          "evt-f421ef55bd77431cb56cabd10688ed61"
+        ],
+        "interpretation": "가상 업무 2/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "result": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.45,
+            0.45,
+            0.45
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-02d30f30f0fd445f9ed7de58563f73ba",
+      "sequence": 216,
+      "occurredAt": "2026-10-31T15:37:25.7090000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.closed",
+      "action": "close_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 2871
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-b1da0862c25249f48d3aa78113994e8a",
+      "sequence": 217,
+      "occurredAt": "2026-10-31T15:37:25.7210000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-2",
+      "instanceId": "Room_PAN-053/AST-1200-007",
+      "assetId": "AST-1200",
+      "assetVersion": "v001",
+      "stepId": "work-2",
+      "workItemId": "215-item-2",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "navigation.back",
+      "action": "return_to_room",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 1,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 2871
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "reasonCode": "NORMAL_RETURN"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+      "sequence": 218,
+      "occurredAt": "2026-10-31T15:37:26.2920000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "object.selected",
+      "action": "select_object",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {}
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-eee950f03b25402a98fa7ff1dde869e1",
+      "sequence": 219,
+      "occurredAt": "2026-10-31T15:37:26.3120000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.opened",
+      "action": "open_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 0
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+      "sequence": 220,
+      "occurredAt": "2026-10-31T15:37:27.3420000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 594
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-0",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.33,
+            0.56
+          ],
+          "tileY": [
+            0.35,
+            0.86,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-69faf32848784e57ba63d438197a7bde",
+      "sequence": 221,
+      "occurredAt": "2026-10-31T15:37:27.8810000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1134
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-1",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.56
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.86
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-e804701db99e4e0e8e4275c43991f9ab",
+      "sequence": 222,
+      "occurredAt": "2026-10-31T15:37:28.2170000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.progress",
+      "action": "move_tile",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1474
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "controlId": "place-key-2",
+        "draft": true,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": false,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-e51b2220bf5e44199f934c56cd52b456",
+      "sequence": 223,
+      "occurredAt": "2026-10-31T15:37:28.3970000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": "attempt-70389182866d41f5b7a9d2ab985319fa",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.started",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1668
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "isAttempt": true,
+        "isRetry": false,
+        "input": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-5aec28908e60426cb7a781e385aa9945",
+      "sequence": 224,
+      "occurredAt": "2026-10-31T15:37:28.4070000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": "attempt-70389182866d41f5b7a9d2ab985319fa",
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.completed",
+      "action": "submit",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1668
+      },
+      "result": {
+        "outcome": "completed",
+        "success": true,
+        "completionCode": "WORK_ITEM_COMPLETED",
+        "data": {
+          "result": {
+            "tileX": [
+              0.2,
+              0.5,
+              0.8
+            ],
+            "tileY": [
+              0.35,
+              0.35,
+              0.35
+            ],
+            "settings": [],
+            "fields": [],
+            "observed": [],
+            "validationErrors": [],
+            "elapsed": 0,
+            "completed": true,
+            "running": false,
+            "artifact": null
+          }
+        }
+      },
+      "context": {
+        "assessmentStatus": "evaluated",
+        "assessmentCode": "TASK_SMOOTH",
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [
+          "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+          "evt-eee950f03b25402a98fa7ff1dde869e1",
+          "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+          "evt-69faf32848784e57ba63d438197a7bde",
+          "evt-e804701db99e4e0e8e4275c43991f9ab",
+          "evt-e51b2220bf5e44199f934c56cd52b456"
+        ],
+        "interpretation": "가상 업무 3/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "result": {
+          "tileX": [
+            0.2,
+            0.5,
+            0.8
+          ],
+          "tileY": [
+            0.35,
+            0.35,
+            0.35
+          ],
+          "settings": [],
+          "fields": [],
+          "observed": [],
+          "validationErrors": [],
+          "elapsed": 0,
+          "completed": true,
+          "running": false,
+          "artifact": null
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-fde729a8b295461886069d7fefbc9f98",
+      "sequence": 225,
+      "occurredAt": "2026-10-31T15:37:28.4180000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": null,
+      "instanceId": null,
+      "assetId": null,
+      "assetVersion": null,
+      "stepId": null,
+      "workItemId": null,
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "scenario.completed",
+      "action": "complete_scenario",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 3,
+        "navigationBackCount": 2,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 10232
+      },
+      "result": {
+        "outcome": "completed",
+        "success": true,
+        "completionCode": "CAREER_TASK_COMPLETED",
+        "data": {
+          "partialResults": [
+            {
+              "stepId": "work-1",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            },
+            {
+              "stepId": "work-2",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.45
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            },
+            {
+              "stepId": "work-3",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          ]
+        }
+      },
+      "context": {
+        "assessmentStatus": "evaluated",
+        "assessmentCode": "TASK_SMOOTH",
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [
+          "evt-f9ad4c67df3e4929adacc65e36e9c63f",
+          "evt-361de75d399f4c63b5bc61511b649520",
+          "evt-ba803d82e0b84660b62091428ad2417e",
+          "evt-91b20792ff59499180d2d140039d87c0",
+          "evt-ea88846548ec4572bc15718a96dc3313",
+          "evt-83c581b54063441fa48e96839187d2c3",
+          "evt-5de0f5a95392419daa80c378e2fec8c1",
+          "evt-3d8ae1f952b84f80a319f53af92ad357",
+          "evt-460fd22b891b4cff96d7552ccfb52c4d",
+          "evt-188ce1f462cf440488340d1e6fb9dcc5",
+          "evt-2ca62de175784364aef08bb2d18b3b27",
+          "evt-b2191ca9a4694dde944970bbecc8fb7e",
+          "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+          "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+          "evt-3fd75ee13915494ab797192ffdaf5237",
+          "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+          "evt-9d3b43f2be8f4a29acea11ee6f808149",
+          "evt-f421ef55bd77431cb56cabd10688ed61",
+          "evt-6bf899cae17e4d98ba520b405d7d4ca7",
+          "evt-02d30f30f0fd445f9ed7de58563f73ba",
+          "evt-b1da0862c25249f48d3aa78113994e8a",
+          "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+          "evt-eee950f03b25402a98fa7ff1dde869e1",
+          "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+          "evt-69faf32848784e57ba63d438197a7bde",
+          "evt-e804701db99e4e0e8e4275c43991f9ab",
+          "evt-e51b2220bf5e44199f934c56cd52b456",
+          "evt-5aec28908e60426cb7a781e385aa9945"
+        ],
+        "interpretation": "가상 업무 3/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "partialResults": [
+          {
+            "stepId": "work-1",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.35,
+                0.35,
+                0.35
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          },
+          {
+            "stepId": "work-2",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.45,
+                0.45,
+                0.45
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          },
+          {
+            "stepId": "work-3",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.35,
+                0.35,
+                0.35
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-e85d2ae9dd5c4849ab14048dbf2d6048",
+      "sequence": 226,
+      "occurredAt": "2026-10-31T15:37:29.6060000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "interaction.closed",
+      "action": "close_work_surface",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1668
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "draftPreserved": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-2417961853b148fa8b627fb7243fff9c",
+      "sequence": 227,
+      "occurredAt": "2026-10-31T15:37:29.6150000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": null,
+      "objectId": "object-3",
+      "instanceId": "Room_PAN-053/AST-1201-009",
+      "assetId": "AST-1201",
+      "assetVersion": "v002",
+      "stepId": "work-3",
+      "workItemId": "215-item-3",
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "navigation.back",
+      "action": "return_to_room",
+      "process": {
+        "scope": "interaction",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 1,
+        "navigationBackCount": 1,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1668
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "reasonCode": "NORMAL_RETURN"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "evt-b6deea049a9b4fc4adf22e2033d62de6",
+      "sequence": 228,
+      "occurredAt": "2026-10-31T15:37:30.0430000+09:00",
+      "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+      "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+      "buildId": "career-pilot-v007",
+      "sceneId": "PAN-053",
+      "roomId": "PAN-053",
+      "scenarioId": "career-net-215-experience",
+      "scenarioVersion": "v002",
+      "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+      "requestId": "bc3b3b52-2340-44b4-a9a3-ac561bc2cfac",
+      "objectId": null,
+      "instanceId": null,
+      "assetId": null,
+      "assetVersion": null,
+      "stepId": null,
+      "workItemId": null,
+      "attemptId": null,
+      "requestRevision": null,
+      "documentRevision": null,
+      "type": "experience.ended",
+      "action": "end_experience",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 3,
+        "navigationBackCount": 3,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 10232
+      },
+      "result": {
+        "outcome": "completed",
+        "success": true,
+        "completionCode": "CAREER_TASK_COMPLETED",
+        "data": {
+          "partialResults": [
+            {
+              "stepId": "work-1",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            },
+            {
+              "stepId": "work-2",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.45
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            },
+            {
+              "stepId": "work-3",
+              "completed": true,
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          ],
+          "scenarioComplete": true
+        }
+      },
+      "context": {
+        "assessmentStatus": "evaluated",
+        "assessmentCode": "TASK_SMOOTH",
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [
+          "evt-f9ad4c67df3e4929adacc65e36e9c63f",
+          "evt-361de75d399f4c63b5bc61511b649520",
+          "evt-ba803d82e0b84660b62091428ad2417e",
+          "evt-91b20792ff59499180d2d140039d87c0",
+          "evt-ea88846548ec4572bc15718a96dc3313",
+          "evt-83c581b54063441fa48e96839187d2c3",
+          "evt-5de0f5a95392419daa80c378e2fec8c1",
+          "evt-3d8ae1f952b84f80a319f53af92ad357",
+          "evt-460fd22b891b4cff96d7552ccfb52c4d",
+          "evt-188ce1f462cf440488340d1e6fb9dcc5",
+          "evt-2ca62de175784364aef08bb2d18b3b27",
+          "evt-b2191ca9a4694dde944970bbecc8fb7e",
+          "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+          "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+          "evt-3fd75ee13915494ab797192ffdaf5237",
+          "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+          "evt-9d3b43f2be8f4a29acea11ee6f808149",
+          "evt-f421ef55bd77431cb56cabd10688ed61",
+          "evt-6bf899cae17e4d98ba520b405d7d4ca7",
+          "evt-02d30f30f0fd445f9ed7de58563f73ba",
+          "evt-b1da0862c25249f48d3aa78113994e8a",
+          "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+          "evt-eee950f03b25402a98fa7ff1dde869e1",
+          "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+          "evt-69faf32848784e57ba63d438197a7bde",
+          "evt-e804701db99e4e0e8e4275c43991f9ab",
+          "evt-e51b2220bf5e44199f934c56cd52b456",
+          "evt-5aec28908e60426cb7a781e385aa9945",
+          "evt-fde729a8b295461886069d7fefbc9f98",
+          "evt-e85d2ae9dd5c4849ab14048dbf2d6048",
+          "evt-2417961853b148fa8b627fb7243fff9c"
+        ],
+        "interpretation": "가상 업무 3/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+        "limitations": [
+          "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+          "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+        ],
+        "termination": null
+      },
+      "data": {
+        "events": [
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-f9ad4c67df3e4929adacc65e36e9c63f",
+            "sequence": 197,
+            "occurredAt": "2026-10-31T15:37:18.2220000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": null,
+            "instanceId": null,
+            "assetId": null,
+            "assetVersion": null,
+            "stepId": null,
+            "workItemId": null,
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "scenario.started",
+            "action": "start_scenario",
+            "process": {
+              "scope": "scenario",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {}
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-361de75d399f4c63b5bc61511b649520",
+            "sequence": 198,
+            "occurredAt": "2026-10-31T15:37:18.2320000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": "a6146483-e7ae-47be-8a98-616116c02e94",
+            "objectId": null,
+            "instanceId": null,
+            "assetId": null,
+            "assetVersion": null,
+            "stepId": null,
+            "workItemId": null,
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "experience.started",
+            "action": "start_experience",
+            "process": {
+              "scope": "scenario",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "ready": true,
+              "firstSequence": 197
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-ba803d82e0b84660b62091428ad2417e",
+            "sequence": 199,
+            "occurredAt": "2026-10-31T15:37:18.2450000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": null,
+            "instanceId": null,
+            "assetId": null,
+            "assetVersion": null,
+            "stepId": null,
+            "workItemId": null,
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "scene.entered",
+            "action": "enter_room",
+            "process": {
+              "scope": "scenario",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "navigationRoomId": "PAN-053"
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-91b20792ff59499180d2d140039d87c0",
+            "sequence": 200,
+            "occurredAt": "2026-10-31T15:37:18.6420000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "object.selected",
+            "action": "select_object",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {}
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-ea88846548ec4572bc15718a96dc3313",
+            "sequence": 201,
+            "occurredAt": "2026-10-31T15:37:18.6520000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.opened",
+            "action": "open_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-83c581b54063441fa48e96839187d2c3",
+            "sequence": 202,
+            "occurredAt": "2026-10-31T15:37:19.6800000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 578
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-0",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.33,
+                  0.56
+                ],
+                "tileY": [
+                  0.35,
+                  0.86,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-5de0f5a95392419daa80c378e2fec8c1",
+            "sequence": 203,
+            "occurredAt": "2026-10-31T15:37:20.0500000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 950
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-1",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.56
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-3d8ae1f952b84f80a319f53af92ad357",
+            "sequence": 204,
+            "occurredAt": "2026-10-31T15:37:20.4180000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1331
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-2",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-460fd22b891b4cff96d7552ccfb52c4d",
+            "sequence": 205,
+            "occurredAt": "2026-10-31T15:37:20.6010000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": "attempt-008246b6a2ed4e3cb3f2d76eddd98bf7",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.started",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1502
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "isAttempt": true,
+              "isRetry": false,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-188ce1f462cf440488340d1e6fb9dcc5",
+            "sequence": 206,
+            "occurredAt": "2026-10-31T15:37:20.6120000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": "attempt-008246b6a2ed4e3cb3f2d76eddd98bf7",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.completed",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1502
+            },
+            "result": {
+              "outcome": "completed",
+              "success": true,
+              "completionCode": "WORK_ITEM_COMPLETED",
+              "data": {
+                "result": {
+                  "tileX": [
+                    0.2,
+                    0.5,
+                    0.8
+                  ],
+                  "tileY": [
+                    0.35,
+                    0.35,
+                    0.35
+                  ],
+                  "settings": [],
+                  "fields": [],
+                  "observed": [],
+                  "validationErrors": [],
+                  "elapsed": 0,
+                  "completed": true,
+                  "running": false,
+                  "artifact": null
+                }
+              }
+            },
+            "context": {
+              "assessmentStatus": "evaluated",
+              "assessmentCode": "TASK_SMOOTH",
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [
+                "evt-91b20792ff59499180d2d140039d87c0",
+                "evt-ea88846548ec4572bc15718a96dc3313",
+                "evt-83c581b54063441fa48e96839187d2c3",
+                "evt-5de0f5a95392419daa80c378e2fec8c1",
+                "evt-3d8ae1f952b84f80a319f53af92ad357",
+                "evt-460fd22b891b4cff96d7552ccfb52c4d"
+              ],
+              "interpretation": "가상 업무 1/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-2ca62de175784364aef08bb2d18b3b27",
+            "sequence": 207,
+            "occurredAt": "2026-10-31T15:37:21.8360000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.closed",
+            "action": "close_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 2674
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-b2191ca9a4694dde944970bbecc8fb7e",
+            "sequence": 208,
+            "occurredAt": "2026-10-31T15:37:21.8460000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-1",
+            "instanceId": "Room_PAN-053/AST-1058-004",
+            "assetId": "AST-1058",
+            "assetVersion": "v001",
+            "stepId": "work-1",
+            "workItemId": "215-item-1",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "navigation.back",
+            "action": "return_to_room",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 1,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 2674
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "reasonCode": "NORMAL_RETURN"
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+            "sequence": 209,
+            "occurredAt": "2026-10-31T15:37:22.3790000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "object.selected",
+            "action": "select_object",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {}
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+            "sequence": 210,
+            "occurredAt": "2026-10-31T15:37:22.4010000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.opened",
+            "action": "open_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-3fd75ee13915494ab797192ffdaf5237",
+            "sequence": 211,
+            "occurredAt": "2026-10-31T15:37:23.5610000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 740
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-0",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.33,
+                  0.56
+                ],
+                "tileY": [
+                  0.45,
+                  0.86,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+            "sequence": 212,
+            "occurredAt": "2026-10-31T15:37:23.9250000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1098
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-1",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.56
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-9d3b43f2be8f4a29acea11ee6f808149",
+            "sequence": 213,
+            "occurredAt": "2026-10-31T15:37:24.2920000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1460
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-2",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.45
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-f421ef55bd77431cb56cabd10688ed61",
+            "sequence": 214,
+            "occurredAt": "2026-10-31T15:37:24.4740000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": "attempt-74db0c60ac914c158cfbbeae982c1464",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.started",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1655
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "isAttempt": true,
+              "isRetry": false,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.45
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-6bf899cae17e4d98ba520b405d7d4ca7",
+            "sequence": 215,
+            "occurredAt": "2026-10-31T15:37:24.4960000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": "attempt-74db0c60ac914c158cfbbeae982c1464",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.completed",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1655
+            },
+            "result": {
+              "outcome": "completed",
+              "success": true,
+              "completionCode": "WORK_ITEM_COMPLETED",
+              "data": {
+                "result": {
+                  "tileX": [
+                    0.2,
+                    0.5,
+                    0.8
+                  ],
+                  "tileY": [
+                    0.45,
+                    0.45,
+                    0.45
+                  ],
+                  "settings": [],
+                  "fields": [],
+                  "observed": [],
+                  "validationErrors": [],
+                  "elapsed": 0,
+                  "completed": true,
+                  "running": false,
+                  "artifact": null
+                }
+              }
+            },
+            "context": {
+              "assessmentStatus": "evaluated",
+              "assessmentCode": "TASK_SMOOTH",
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [
+                "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+                "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+                "evt-3fd75ee13915494ab797192ffdaf5237",
+                "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+                "evt-9d3b43f2be8f4a29acea11ee6f808149",
+                "evt-f421ef55bd77431cb56cabd10688ed61"
+              ],
+              "interpretation": "가상 업무 2/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.45,
+                  0.45,
+                  0.45
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-02d30f30f0fd445f9ed7de58563f73ba",
+            "sequence": 216,
+            "occurredAt": "2026-10-31T15:37:25.7090000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.closed",
+            "action": "close_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 2871
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-b1da0862c25249f48d3aa78113994e8a",
+            "sequence": 217,
+            "occurredAt": "2026-10-31T15:37:25.7210000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-2",
+            "instanceId": "Room_PAN-053/AST-1200-007",
+            "assetId": "AST-1200",
+            "assetVersion": "v001",
+            "stepId": "work-2",
+            "workItemId": "215-item-2",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "navigation.back",
+            "action": "return_to_room",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 1,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 2871
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "reasonCode": "NORMAL_RETURN"
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+            "sequence": 218,
+            "occurredAt": "2026-10-31T15:37:26.2920000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "object.selected",
+            "action": "select_object",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {}
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-eee950f03b25402a98fa7ff1dde869e1",
+            "sequence": 219,
+            "occurredAt": "2026-10-31T15:37:26.3120000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.opened",
+            "action": "open_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 0
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+            "sequence": 220,
+            "occurredAt": "2026-10-31T15:37:27.3420000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 594
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-0",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.33,
+                  0.56
+                ],
+                "tileY": [
+                  0.35,
+                  0.86,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-69faf32848784e57ba63d438197a7bde",
+            "sequence": 221,
+            "occurredAt": "2026-10-31T15:37:27.8810000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1134
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-1",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.56
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.86
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-e804701db99e4e0e8e4275c43991f9ab",
+            "sequence": 222,
+            "occurredAt": "2026-10-31T15:37:28.2170000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.progress",
+            "action": "move_tile",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 0,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1474
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "controlId": "place-key-2",
+              "draft": true,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": false,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-e51b2220bf5e44199f934c56cd52b456",
+            "sequence": 223,
+            "occurredAt": "2026-10-31T15:37:28.3970000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": "attempt-70389182866d41f5b7a9d2ab985319fa",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.started",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1668
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "isAttempt": true,
+              "isRetry": false,
+              "input": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-5aec28908e60426cb7a781e385aa9945",
+            "sequence": 224,
+            "occurredAt": "2026-10-31T15:37:28.4070000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": "attempt-70389182866d41f5b7a9d2ab985319fa",
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.completed",
+            "action": "submit",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1668
+            },
+            "result": {
+              "outcome": "completed",
+              "success": true,
+              "completionCode": "WORK_ITEM_COMPLETED",
+              "data": {
+                "result": {
+                  "tileX": [
+                    0.2,
+                    0.5,
+                    0.8
+                  ],
+                  "tileY": [
+                    0.35,
+                    0.35,
+                    0.35
+                  ],
+                  "settings": [],
+                  "fields": [],
+                  "observed": [],
+                  "validationErrors": [],
+                  "elapsed": 0,
+                  "completed": true,
+                  "running": false,
+                  "artifact": null
+                }
+              }
+            },
+            "context": {
+              "assessmentStatus": "evaluated",
+              "assessmentCode": "TASK_SMOOTH",
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [
+                "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+                "evt-eee950f03b25402a98fa7ff1dde869e1",
+                "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+                "evt-69faf32848784e57ba63d438197a7bde",
+                "evt-e804701db99e4e0e8e4275c43991f9ab",
+                "evt-e51b2220bf5e44199f934c56cd52b456"
+              ],
+              "interpretation": "가상 업무 3/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "result": {
+                "tileX": [
+                  0.2,
+                  0.5,
+                  0.8
+                ],
+                "tileY": [
+                  0.35,
+                  0.35,
+                  0.35
+                ],
+                "settings": [],
+                "fields": [],
+                "observed": [],
+                "validationErrors": [],
+                "elapsed": 0,
+                "completed": true,
+                "running": false,
+                "artifact": null
+              }
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-fde729a8b295461886069d7fefbc9f98",
+            "sequence": 225,
+            "occurredAt": "2026-10-31T15:37:28.4180000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": null,
+            "instanceId": null,
+            "assetId": null,
+            "assetVersion": null,
+            "stepId": null,
+            "workItemId": null,
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "scenario.completed",
+            "action": "complete_scenario",
+            "process": {
+              "scope": "scenario",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 3,
+              "navigationBackCount": 2,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 10232
+            },
+            "result": {
+              "outcome": "completed",
+              "success": true,
+              "completionCode": "CAREER_TASK_COMPLETED",
+              "data": {
+                "partialResults": [
+                  {
+                    "stepId": "work-1",
+                    "completed": true,
+                    "result": {
+                      "tileX": [
+                        0.2,
+                        0.5,
+                        0.8
+                      ],
+                      "tileY": [
+                        0.35,
+                        0.35,
+                        0.35
+                      ],
+                      "settings": [],
+                      "fields": [],
+                      "observed": [],
+                      "validationErrors": [],
+                      "elapsed": 0,
+                      "completed": true,
+                      "running": false,
+                      "artifact": null
+                    }
+                  },
+                  {
+                    "stepId": "work-2",
+                    "completed": true,
+                    "result": {
+                      "tileX": [
+                        0.2,
+                        0.5,
+                        0.8
+                      ],
+                      "tileY": [
+                        0.45,
+                        0.45,
+                        0.45
+                      ],
+                      "settings": [],
+                      "fields": [],
+                      "observed": [],
+                      "validationErrors": [],
+                      "elapsed": 0,
+                      "completed": true,
+                      "running": false,
+                      "artifact": null
+                    }
+                  },
+                  {
+                    "stepId": "work-3",
+                    "completed": true,
+                    "result": {
+                      "tileX": [
+                        0.2,
+                        0.5,
+                        0.8
+                      ],
+                      "tileY": [
+                        0.35,
+                        0.35,
+                        0.35
+                      ],
+                      "settings": [],
+                      "fields": [],
+                      "observed": [],
+                      "validationErrors": [],
+                      "elapsed": 0,
+                      "completed": true,
+                      "running": false,
+                      "artifact": null
+                    }
+                  }
+                ]
+              }
+            },
+            "context": {
+              "assessmentStatus": "evaluated",
+              "assessmentCode": "TASK_SMOOTH",
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [
+                "evt-f9ad4c67df3e4929adacc65e36e9c63f",
+                "evt-361de75d399f4c63b5bc61511b649520",
+                "evt-ba803d82e0b84660b62091428ad2417e",
+                "evt-91b20792ff59499180d2d140039d87c0",
+                "evt-ea88846548ec4572bc15718a96dc3313",
+                "evt-83c581b54063441fa48e96839187d2c3",
+                "evt-5de0f5a95392419daa80c378e2fec8c1",
+                "evt-3d8ae1f952b84f80a319f53af92ad357",
+                "evt-460fd22b891b4cff96d7552ccfb52c4d",
+                "evt-188ce1f462cf440488340d1e6fb9dcc5",
+                "evt-2ca62de175784364aef08bb2d18b3b27",
+                "evt-b2191ca9a4694dde944970bbecc8fb7e",
+                "evt-9dbe95f782cc4d20a7840e62fd9a231e",
+                "evt-63a95ef2a2674b21bbcf6875677fcbc8",
+                "evt-3fd75ee13915494ab797192ffdaf5237",
+                "evt-e54574d6c1fc4e9d93fca0e5b7b8d585",
+                "evt-9d3b43f2be8f4a29acea11ee6f808149",
+                "evt-f421ef55bd77431cb56cabd10688ed61",
+                "evt-6bf899cae17e4d98ba520b405d7d4ca7",
+                "evt-02d30f30f0fd445f9ed7de58563f73ba",
+                "evt-b1da0862c25249f48d3aa78113994e8a",
+                "evt-fe60d24ba1a446e5bd8bdfd8786582d5",
+                "evt-eee950f03b25402a98fa7ff1dde869e1",
+                "evt-ecccf5f9ed274cb7b4b849918a68c0bd",
+                "evt-69faf32848784e57ba63d438197a7bde",
+                "evt-e804701db99e4e0e8e4275c43991f9ab",
+                "evt-e51b2220bf5e44199f934c56cd52b456",
+                "evt-5aec28908e60426cb7a781e385aa9945"
+              ],
+              "interpretation": "가상 업무 3/3단계 완료. 기록된 제출·오류·안내를 기준으로 설명합니다.",
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "partialResults": [
+                {
+                  "stepId": "work-1",
+                  "completed": true,
+                  "result": {
+                    "tileX": [
+                      0.2,
+                      0.5,
+                      0.8
+                    ],
+                    "tileY": [
+                      0.35,
+                      0.35,
+                      0.35
+                    ],
+                    "settings": [],
+                    "fields": [],
+                    "observed": [],
+                    "validationErrors": [],
+                    "elapsed": 0,
+                    "completed": true,
+                    "running": false,
+                    "artifact": null
+                  }
+                },
+                {
+                  "stepId": "work-2",
+                  "completed": true,
+                  "result": {
+                    "tileX": [
+                      0.2,
+                      0.5,
+                      0.8
+                    ],
+                    "tileY": [
+                      0.45,
+                      0.45,
+                      0.45
+                    ],
+                    "settings": [],
+                    "fields": [],
+                    "observed": [],
+                    "validationErrors": [],
+                    "elapsed": 0,
+                    "completed": true,
+                    "running": false,
+                    "artifact": null
+                  }
+                },
+                {
+                  "stepId": "work-3",
+                  "completed": true,
+                  "result": {
+                    "tileX": [
+                      0.2,
+                      0.5,
+                      0.8
+                    ],
+                    "tileY": [
+                      0.35,
+                      0.35,
+                      0.35
+                    ],
+                    "settings": [],
+                    "fields": [],
+                    "observed": [],
+                    "validationErrors": [],
+                    "elapsed": 0,
+                    "completed": true,
+                    "running": false,
+                    "artifact": null
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-e85d2ae9dd5c4849ab14048dbf2d6048",
+            "sequence": 226,
+            "occurredAt": "2026-10-31T15:37:29.6060000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "interaction.closed",
+            "action": "close_work_surface",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 0,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1668
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "draftPreserved": true
+            }
+          },
+          {
+            "schemaVersion": 1,
+            "protocol": "career-experience",
+            "eventId": "evt-2417961853b148fa8b627fb7243fff9c",
+            "sequence": 227,
+            "occurredAt": "2026-10-31T15:37:29.6150000+09:00",
+            "sessionId": "ddc2868f-1575-4be3-b75a-c7309a22d3af",
+            "scenarioRunId": "run-1d925614df924fc7aa3e6149a65ca468",
+            "buildId": "career-pilot-v007",
+            "sceneId": "PAN-053",
+            "roomId": "PAN-053",
+            "scenarioId": "career-net-215-experience",
+            "scenarioVersion": "v002",
+            "experienceId": "5af53121-cffc-456c-af6b-441b5ae8e366",
+            "requestId": null,
+            "objectId": "object-3",
+            "instanceId": "Room_PAN-053/AST-1201-009",
+            "assetId": "AST-1201",
+            "assetVersion": "v002",
+            "stepId": "work-3",
+            "workItemId": "215-item-3",
+            "attemptId": null,
+            "requestRevision": null,
+            "documentRevision": null,
+            "type": "navigation.back",
+            "action": "return_to_room",
+            "process": {
+              "scope": "interaction",
+              "measurementStatus": "complete",
+              "measurementNote": null,
+              "attemptCount": 1,
+              "navigationBackCount": 1,
+              "backtrackCount": 0,
+              "retryCount": 0,
+              "mistakeCount": 0,
+              "repeatedMistakeCount": 0,
+              "helpRequestCount": 0,
+              "guidanceUsed": false,
+              "elapsedActiveMs": 1668
+            },
+            "result": {
+              "outcome": "pending",
+              "success": null,
+              "completionCode": null,
+              "data": {}
+            },
+            "context": {
+              "assessmentStatus": "pending",
+              "assessmentCode": null,
+              "ruleVersion": "v001",
+              "reasonCodes": [],
+              "evidenceEventIds": [],
+              "interpretation": null,
+              "limitations": [
+                "원본 직업 업무를 참고한 가상 교육 사례. 현업 자격·안전 절차·적성을 판정하지 않습니다.",
+                "이 기록은 선택한 가상 시나리오 한 회의 수행이며 직업 적성·전문 자격 평가가 아닙니다."
+              ],
+              "termination": null
+            },
+            "data": {
+              "reasonCode": "NORMAL_RETURN"
+            }
+          }
+        ],
+        "eventsComplete": true,
+        "previousRuns": [],
+        "partialResults": [
+          {
+            "stepId": "work-1",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.35,
+                0.35,
+                0.35
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          },
+          {
+            "stepId": "work-2",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.45,
+                0.45,
+                0.45
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          },
+          {
+            "stepId": "work-3",
+            "completed": true,
+            "result": {
+              "tileX": [
+                0.2,
+                0.5,
+                0.8
+              ],
+              "tileY": [
+                0.35,
+                0.35,
+                0.35
+              ],
+              "settings": [],
+              "fields": [],
+              "observed": [],
+              "validationErrors": [],
+              "elapsed": 0,
+              "completed": true,
+              "running": false,
+              "artifact": null
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

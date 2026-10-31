@@ -1,0 +1,15 @@
+{
+  "schema_version": 3,
+  "fictional": true,
+  "request": {
+    "schemaVersion": 1,
+    "protocol": "career-experience-resolution",
+    "action": "reconcile_experience",
+    "reconcileRequestId": "example-reconcile-001",
+    "sessionId": "example-session-001",
+    "experienceId": "example-experience-001",
+    "roomId": "PAN-001",
+    "trigger": "NEW_PLAY_START",
+    "newExperienceId": "example-experience-002"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 3,
+  "fictional": true,
+  "request": {
+    "schemaVersion": 1,
+    "protocol": "career-experience",
+    "requestId": "example-end-001",
+    "action": "end_experience",
+    "sessionId": "example-session-001",
+    "experienceId": "example-experience-001",
+    "roomId": "PAN-001",
+    "reason": "USER_REQUESTED_END"
+  }
+}
