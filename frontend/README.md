@@ -16,6 +16,7 @@ npm run dev                  # http://localhost:5173
 ```bash
 npm run lint        # oxlint, 경고도 실패로 처리
 npm run typecheck
+npm test            # Vitest
 npm run build
 ```
 
@@ -25,6 +26,20 @@ npm run build
 |----|------|
 | `VITE_API_BASE_URL` | 백엔드 주소 (현재 Cloudflare Tunnel 주소, 끝에 `/` 없이). `VITE_USE_MOCK=false` 일 때 필수 |
 | `VITE_USE_MOCK` | `true`(기본): mock 응답 사용 · `false`: 실제 백엔드 호출 |
+
+## API 와 mock
+
+- 화면은 `src/api` 의 `gameApi` 만 쓴다. `VITE_USE_MOCK` 에 따라 mock(`src/mocks/mockGameApi.ts`) 또는 실제 백엔드(`src/api/httpGameApi.ts`)가 쓰인다
+- 실패는 모두 `ApiError`(`type` · `message`)로 온다. `message` 는 화면에 그대로 보여 줄 수 있는 문구다 (05-ui-ux.md 5절)
+- mock 은 메모리에만 저장한다 (새로고침하면 플레이가 사라짐). 채팅에 아래 단어를 넣으면 상황을 흉내 낸다
+
+| 입력에 포함 | 흉내 내는 상황 |
+|-------------|----------------|
+| `체험` | 3D 체험 분기 (`experience`) |
+| `없는체험` | 맞는 체험 없음 (`notice`) |
+| `끝` | 인생 종료 (`ended: true`) → 결말 조회 가능 |
+| `오류` | AI 서버 실패 (502) |
+| `느려` | 시간 초과 (504) |
 
 ## 폴더
 
