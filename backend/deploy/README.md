@@ -1,6 +1,6 @@
 # 정적 에셋 게이트웨이 (BE14·BE15)
 
-`nginx.conf`는 `/api/`를 Django로 전달하고 `/builds/`, `/intro-assets/`를 읽기 전용으로 제공한다. 프론트 허용 출처는 `map $http_origin $frontend_origin` 목록(현재 `https://base-repo-zeta.vercel.app` · `https://base-repo-ck83.vercel.app`)이며, 목록에 있는 출처만 `Access-Control-Allow-Origin`으로 돌려준다. `frame-ancestors`도 같은 두 주소다. 주소가 바뀌면 이 목록 · `frame-ancestors` · Django `.env`의 `CORS_ALLOWED_ORIGINS`(쉼표 구분)를 함께 갱신한다 (`docs/development/11-open-issues.md` F11).
+`nginx.conf`는 `/api/`를 Django로 전달하고 `/builds/`, `/intro-assets/`를 읽기 전용으로 제공한다. 프론트 허용 출처는 `map $http_origin $frontend_origin` 목록(현재 `https://base-repo-zeta.vercel.app` 하나)이며, 목록에 있는 출처만 `Access-Control-Allow-Origin`으로 돌려준다. `frame-ancestors`도 같은 주소다. 주소가 바뀌면 이 목록 · `frame-ancestors` · Django `.env`의 `CORS_ALLOWED_ORIGINS`(쉼표 구분)를 함께 갱신한다 (`docs/development/11-open-issues.md` F11).
 
 실제 Unity 전달물 `intro.json`과 `models/PAN-001.glb`~`PAN-071.glb`는 `backend/deploy/assets/intro-assets/`에, Unity 빌드(`site/` 내용)는 `backend/deploy/assets/builds/<buildId>/`에 둔다. 이 폴더는 git과 Docker 이미지에서 제외되므로 GPU 서버에는 따로 복사한다. 게이트웨이가 각각 `/srv/intro-assets/` · `/srv/builds/`로 마운트하며, 다른 위치를 쓰려면 `INTRO_ASSET_DIR` · `UNITY_BUILD_DIR`를 지정한다. 원본 파일이 없는 경우 설정 테스트 통과를 실제 배치 완료로 표시하지 않는다.
 

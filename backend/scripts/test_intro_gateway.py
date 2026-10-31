@@ -80,7 +80,8 @@ with tempfile.TemporaryDirectory(prefix="intro-http-test-") as directory:
                 time.sleep(0.1)
         # 허용 목록의 다른 Vercel 주소는 그 출처를, 목록에 없는 출처는 CORS 헤더 없이 응답한다
         for origin, expected_origin in [
-            ("https://base-repo-ck83.vercel.app", "https://base-repo-ck83.vercel.app"),
+            # 이전 Vercel 프로젝트 주소는 더 이상 허용하지 않는다 (11 F11)
+            ("https://base-repo-ck83.vercel.app", None),
             ("https://evil.example", None),
         ]:
             with urllib.request.urlopen(

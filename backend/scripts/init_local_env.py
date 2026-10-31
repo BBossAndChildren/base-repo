@@ -9,8 +9,7 @@ values = {
     "DJANGO_DEBUG": "True",
     "ALLOWED_HOSTS": "localhost,127.0.0.1,[::1]",
     "CORS_ALLOWED_ORIGINS": (
-        "https://base-repo-zeta.vercel.app,https://base-repo-ck83.vercel.app,"
-        "http://localhost:5173,http://127.0.0.1:5173"
+        "https://base-repo-zeta.vercel.app,http://localhost:5173,http://127.0.0.1:5173"
     ),
     "CSRF_TRUSTED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
     "DB_HOST": "127.0.0.1",
