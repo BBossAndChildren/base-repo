@@ -55,7 +55,7 @@
 | Vercel | 웹 프론트 배포 | SSL 자동 |
 | Cloudflare Tunnel (`cloudflared`) | 사설 IP 백엔드 서버를 외부 https 주소로 공개 | 무료 임시 주소, 재실행 때 바뀜 ([06 0절](06-deployment.md#0-배포-환경-한눈에)) |
 
-> 인트로 3D 모델(71개, 약 238MB)은 저장소 · Vercel 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 정적 파일로 제공한다 ([06 5-2-1](06-deployment.md#5-2-1-인트로-에셋), [12 결정 25](12-decisions.md)).
+> 인트로 3D 모델(71개, 약 238MB)은 저장소 · Vercel 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 정적 파일로 제공한다 (백엔드 기능 BE15, [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋), [12 결정 25](12-decisions.md)).
 
 ## 2. 아키텍처
 <!-- 구성 요소와 통신 방향 다이어그램 -->
