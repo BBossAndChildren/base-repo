@@ -5,6 +5,8 @@ import { usePlayer } from '../../app/playerContext'
 import { useToast } from '../../components'
 import type { ExperienceOffer, PlayResume, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
+import { ExperienceOverlay } from './ExperienceOverlay'
+import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
 import { StatusBar, StatusPanel } from './StatusPanel'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
@@ -13,8 +15,17 @@ const AGE_HIGHLIGHT_MS = 1600
 
 interface PlayViewProps {
   play: PlayResume
-  /** 3D 체험 시작 (8단계에서 체험 화면을 연다) */
+  /** 3D 체험 시작. 넘기지 않으면 체험 화면(ExperienceOverlay)을 연다 (테스트에서 바꿔 끼운다) */
   onStartExperience?: (offer: ExperienceOffer) => void
+}
+
+const EXIT_NOTE: Record<ExperienceExit, string | null> = {
+  completed: '체험을 끝까지 마쳤어요. 이야기로 돌아왔어요.',
+  aborted: '체험을 중간에 마쳤어요. 이야기로 돌아왔어요.',
+  failed: '체험을 마쳤어요. 이야기로 돌아왔어요.',
+  pending: '체험을 마쳤어요. 이야기로 돌아왔어요.',
+  error: '3D 체험을 종료하고 이야기로 돌아왔어요.',
+  skipped: null,
 }
 
 /** 화면 2: 게임 (05-ui-ux.md 화면 2) */
@@ -29,6 +40,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [ended, setEnded] = useState(play.ended)
+  const [activeExperience, setActiveExperience] = useState<{ cardId: string; offer: ExperienceOffer } | null>(null)
 
   useEffect(() => {
     if (!ageChanged) return
@@ -85,7 +97,19 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   function startExperience(id: string, offer: ExperienceOffer) {
     setItems((prev) => prev.map((item) => (item.id === id && item.kind === 'experience' ? { ...item, status: 'started' } : item)))
     if (onStartExperience) onStartExperience(offer)
-    else toast.show({ message: '3D 체험 화면을 준비하고 있어요.' })
+    else setActiveExperience({ cardId: id, offer })
+  }
+
+  function closeExperience(exit: ExperienceExit) {
+    const cardId = activeExperience?.cardId
+    setActiveExperience(null)
+    // 체험을 하지 못했으면(불러오기 실패 · 건너뛰기) 카드를 "다음에 하기로 했어요" 로, 했으면 "마쳤어요" 로
+    const status: 'declined' | 'done' = exit === 'skipped' ? 'declined' : 'done'
+    setItems((prev) => {
+      const next = prev.map((item) => (item.id === cardId && item.kind === 'experience' ? { ...item, status } : item))
+      const note = EXIT_NOTE[exit]
+      return note ? [...next, { kind: 'system', id: nextId('s'), text: note }] : next
+    })
   }
 
   function declineExperience(id: string) {
@@ -113,6 +137,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
         </section>
         <StatusPanel age={age} ageChanged={ageChanged} />
       </div>
+      {activeExperience && <ExperienceOverlay playId={play.playId} sessionId={play.sessionId} offer={activeExperience.offer} onClose={closeExperience} />}
     </>
   )
 }

@@ -41,6 +41,20 @@ npm run build
 | `오류` | AI 서버 실패 (502) |
 | `느려` | 시간 초과 (504) |
 
+## 3D 체험 (로컬 개발)
+
+- mock 의 3D 체험은 `/local-builds/career-suite-integration-v005/` 를 빌드 주소로 쓴다. 개발 서버(`npm run dev`)가 이 경로로 `docs/unity/webgl/site` 를 제공한다 (Git 에 없음 — Unity 담당에게 받아 둔다)
+- 다른 위치의 빌드를 쓰려면 `UNITY_BUILD_DIR=<site 폴더 경로> npm run dev`
+- Unity 연결 코드는 빌드의 `frontend/client.js` 를 실행할 때 불러온다 (저장소에 복사하지 않음)
+
+## 개발 전용 경로 (배포 빌드에는 없음)
+
+| 경로 | 내용 |
+|------|------|
+| `/dev/components` | 공통 컴포넌트 |
+| `/dev/play` | mock 대화가 있는 게임 화면. 채팅에 "체험" 을 넣으면 3D 체험까지 확인 |
+| `/dev/result` | 결말 화면 |
+
 ## 폴더
 
 | 폴더 | 내용 |

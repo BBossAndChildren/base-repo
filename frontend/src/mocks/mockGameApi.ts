@@ -141,7 +141,8 @@ export const mockGameApi: GameApi = {
       response.messages.push({ role: 'npc', speaker: '선배 지윤', text: '이번 주 축제 준비를 같이 해 볼래? 행사 일정표를 짜는 일이야.' })
       response.experience = {
         buildId: 'career-suite-integration-v005',
-        buildUrl: '/mock-builds/career-suite-integration-v005/',
+        // 개발 서버가 docs/unity/webgl/site 를 이 경로로 제공한다 (vite.config.ts)
+        buildUrl: '/local-builds/career-suite-integration-v005/',
         roomId: 'PAN-002',
         scenarioId: 'career-net-951-experience',
         scenarioVersion: 'v002',

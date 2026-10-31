@@ -26,6 +26,15 @@ function isSuccess<T>(value: unknown): value is ApiSuccess<T> {
 
 /** 공통 호출: {code, data} 를 풀고, 실패는 ApiError 로 던진다 (03 0절) */
 export async function request<T>(method: 'GET' | 'POST', path: string, options: RequestOptions = {}): Promise<T> {
+  return send<T>(method, path, options, true)
+}
+
+/** 3D 연동 API(1-4 · 1-8 · 1-9 · 1-10) — 응답을 {code, data} 로 감싸지 않는다 (03 공통 응답 형식 예외) */
+export async function requestRaw<T>(method: 'GET' | 'POST', path: string, options: RequestOptions = {}): Promise<T> {
+  return send<T>(method, path, options, false)
+}
+
+async function send<T>(method: 'GET' | 'POST', path: string, options: RequestOptions, enveloped: boolean): Promise<T> {
   const { body, timeoutMs = DEFAULT_TIMEOUT_MS, anonymous = false, fetchImpl = fetch, baseUrl = env.apiBaseUrl } = options
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
@@ -66,6 +75,7 @@ export async function request<T>(method: 'GET' | 'POST', path: string, options: 
     if (isFailure(payload)) throw new ApiError(status, payload.error.type, payload.error.message)
     throw new ApiError(status, typeFromStatus(status))
   }
+  if (!enveloped) return payload as T
   if (!isSuccess<T>(payload)) throw new ApiError(response.status, 'UNKNOWN')
   return payload.data
 }
