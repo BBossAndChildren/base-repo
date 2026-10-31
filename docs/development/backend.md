@@ -3,6 +3,18 @@
 > 모든 백엔드 구현·수정 작업에 적용한다. 사용자 지시(2026-10-31): **기능 목록 추출 → 한 기능 구현 → 해당 테스트 작성·실행 → 통과 확인 → 다음 기능**.
 > 서비스 기준: [00-idea.md](../00-idea.md) · 계약 기준: [03-api.md](03-api.md) · 협업 규칙: [CONTRIBUTING.md](../CONTRIBUTING.md).
 
+## 현재 구현된 API
+
+기능이 구현되고 테스트가 실제 통과했을 때만 이 표에 추가한다. 전체 계획과 미착수 항목은 아래 2절에서 관리한다.
+
+| Method | 경로 | 역할 | 인증 | 검증 |
+|---|---|---|---|---|
+| GET | `/api/health` | PostgreSQL 연결 확인, 정상 200 / 장애 503 | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
+| GET | `/api/schema/` | 구현된 API의 OpenAPI 명세 | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
+| GET | `/api/docs/` | Swagger UI | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
+
+게임 API 9개와 AI 호출 계약 2개는 아직 미착수다. AI 서버의 경로를 백엔드가 직접 제공하는 API로 표시하지 않는다.
+
 ## 1. 필수 작업 순서
 
 1. `AGENTS.md`, `CONTRIBUTING.md`, 이 문서와 최신 API 명세를 먼저 읽는다. 설계 문서를 변경하면 [FILL-GUIDE.md](FILL-GUIDE.md)도 읽는다.
