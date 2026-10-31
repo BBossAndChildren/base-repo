@@ -3,16 +3,23 @@ import { Link, Navigate, useParams } from 'react-router'
 import { ErrorScreen, Spinner } from '../components'
 import { usePlayLoader } from '../hooks/usePlayLoader'
 import { setLastPlayId } from '../lib/lastPlay'
+import { savePlaySession } from '../lib/playSession'
+import '../styles/play.css'
+import { PlayView } from './play/PlayView'
 
-/** 화면 2: 게임 (05-ui-ux.md). 채팅 · 상태 패널은 6단계에서 채운다 */
+/** 화면 2: 게임 (05-ui-ux.md) — 불러오기 · 접근 확인 후 PlayView */
 export function PlayPage() {
   const { playId } = useParams()
   const { state, retry } = usePlayLoader(playId)
   const readyPlayId = state.status === 'ready' && !state.play.ended ? state.play.playId : null
+  const readySessionId = state.status === 'ready' ? state.play.sessionId : null
 
   useEffect(() => {
-    if (readyPlayId) setLastPlayId(readyPlayId)
-  }, [readyPlayId])
+    if (!readyPlayId) return
+    setLastPlayId(readyPlayId)
+    // 다른 기기에서 이어 해도 같은 sessionId 로 3D 체험을 잇는다 (03 1-7)
+    if (readySessionId) savePlaySession(readyPlayId, readySessionId)
+  }, [readyPlayId, readySessionId])
 
   if (state.status === 'loading')
     return (
@@ -39,11 +46,5 @@ export function PlayPage() {
 
   if (state.play.ended) return <Navigate to={`/play/${state.play.playId}/result`} replace />
 
-  return (
-    <div className="page">
-      <p className="muted">
-        {state.play.state.age}세 · 대화 {state.play.messages.length}개 — 게임 화면은 다음 단계에서 채워요.
-      </p>
-    </div>
-  )
+  return <PlayView key={state.play.playId} play={state.play} />
 }

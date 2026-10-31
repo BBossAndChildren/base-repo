@@ -87,10 +87,11 @@ export const mockGameApi: GameApi = {
       state: { age: body.age, elapsedDays: 0 },
       messages: [
         {
-          speaker: 'narrator',
+          role: 'narrator',
+          speaker: '나레이션',
           text: `${body.age}살 ${body.situation} ${body.name}의 하루가 시작됩니다. 창밖으로 봄바람이 불어와요.`,
         },
-        { speaker: '친구 민수', text: `${body.name}, 오늘 방과 후에 뭐 할 거야?` },
+        { role: 'npc', speaker: '친구 민수', text: `${body.name}, 오늘 방과 후에 뭐 할 거야?` },
       ],
       turn: 0,
       ended: false,
@@ -103,7 +104,7 @@ export const mockGameApi: GameApi = {
   async getPlay(playId) {
     await wait()
     const play = ownPlay(playId)
-    return { playId: play.playId, state: { ...play.state }, messages: [...play.messages], ended: play.ended }
+    return { playId: play.playId, sessionId: play.sessionId, state: { ...play.state }, messages: [...play.messages], ended: play.ended }
   },
 
   async sendTurn(playId, body) {
@@ -116,7 +117,7 @@ export const mockGameApi: GameApi = {
     if (message.includes('느려')) throw new ApiError(504, 'TIMEOUT')
 
     play.turn += 1
-    const userMessage: ChatMessage = { speaker: play.profile.name, text: message }
+    const userMessage: ChatMessage = { role: 'user', speaker: play.profile.name, text: message }
     const ended = message.includes('끝')
     const response: TurnResponse = {
       turnId: uuid(),
@@ -128,16 +129,16 @@ export const mockGameApi: GameApi = {
     }
 
     if (ended) {
-      response.messages.push({ speaker: 'narrator', text: '긴 시간이 흘러, 이번 인생의 이야기가 막을 내립니다.' })
+      response.messages.push({ role: 'narrator', speaker: '나레이션', text: '긴 시간이 흘러, 이번 인생의 이야기가 막을 내립니다.' })
       response.hints = []
     } else if (message.includes('없는체험')) {
-      response.messages.push({ speaker: '친구 민수', text: '그건 나중에 해 보자!' })
+      response.messages.push({ role: 'npc', speaker: '친구 민수', text: '그건 나중에 해 보자!' })
       response.notice = {
         type: 'EXPERIENCE_SKIPPED',
         message: '지금 상황에 맞는 3D 체험이 없어 텍스트로 이야기를 이어갈게요.',
       }
     } else if (message.includes('체험')) {
-      response.messages.push({ speaker: '선배 지윤', text: '이번 주 축제 준비를 같이 해 볼래? 행사 일정표를 짜는 일이야.' })
+      response.messages.push({ role: 'npc', speaker: '선배 지윤', text: '이번 주 축제 준비를 같이 해 볼래? 행사 일정표를 짜는 일이야.' })
       response.experience = {
         buildId: 'career-suite-integration-v005',
         buildUrl: '/mock-builds/career-suite-integration-v005/',
@@ -149,7 +150,7 @@ export const mockGameApi: GameApi = {
         reason: '선배가 축제 준비를 함께 하자고 제안했어요.',
       }
     } else {
-      response.messages.push({ speaker: '친구 민수', text: `"${message}"? 좋아, 그럼 같이 가 보자!` })
+      response.messages.push({ role: 'npc', speaker: '친구 민수', text: `"${message}"? 좋아, 그럼 같이 가 보자!` })
     }
 
     // 세 턴마다 하루가 지나 나이 계산에 반영되는 흉내 (03-rules.md 의 age = 시작 나이 + floor(elapsedDays / 365) 를 단순화)

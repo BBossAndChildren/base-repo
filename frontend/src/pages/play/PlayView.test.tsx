@@ -1,0 +1,175 @@
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ensurePlayerId } from '../../api'
+import { ApiError } from '../../api/errors'
+import { clearPlayerId } from '../../api/player'
+import { PlayerContext } from '../../app/playerContext'
+import { ToastProvider } from '../../components'
+import { mockControl, mockGameApi } from '../../mocks/mockGameApi'
+import type { PlayResume } from '../../types/api'
+import { PlayView } from './PlayView'
+import { avatarLetter, declineOpenOffers, type TimelineItem } from './timeline'
+
+async function setup(options: { onStartExperience?: () => void } = {}) {
+  await ensurePlayerId(mockGameApi)
+  const started = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
+  const play: PlayResume = await mockGameApi.getPlay(started.playId)
+  const user = userEvent.setup()
+  render(
+    <PlayerContext.Provider value={{ playerId: 'p', resetPlayer: vi.fn() }}>
+      <ToastProvider>
+        <MemoryRouter initialEntries={[`/play/${play.playId}`]}>
+          <Routes>
+            <Route path="/play/:playId" element={<PlayView play={play} onStartExperience={options.onStartExperience} />} />
+            <Route path="/play/:playId/result" element={<h1>결말 화면</h1>} />
+          </Routes>
+        </MemoryRouter>
+      </ToastProvider>
+    </PlayerContext.Provider>,
+  )
+  const input = screen.getByLabelText('하고 싶은 말이나 행동')
+  const say = async (text: string) => {
+    await user.clear(input)
+    await user.type(input, text)
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+  }
+  return { play, user, input, say }
+}
+
+const log = () => screen.getByRole('list', { name: '대화' })
+
+describe('PlayView', () => {
+  beforeEach(() => {
+    mockControl.setDelay(0)
+    mockControl.reset()
+    clearPlayerId()
+  })
+
+  it('나레이션 · NPC 메시지를 구분해 보여 주고, 상태 패널에 나이만 표시한다', async () => {
+    await setup()
+    expect(within(log()).getByText('나레이션')).toBeInTheDocument()
+    expect(within(log()).getByText('친구 민수')).toBeInTheDocument()
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    expect(within(panel).getByText('15세')).toBeInTheDocument()
+    expect(within(panel).getByText('게임 상태 (작가 확정 후 표시)')).toBeInTheDocument()
+  })
+
+  it('보내면 내 말이 오른쪽에 붙고, 응답과 힌트가 온다', async () => {
+    const { say } = await setup()
+    await say('안녕')
+    const mine = within(log()).getByText('안녕').closest('li')
+    expect(mine).toHaveClass('msg-user')
+    expect(await within(log()).findByText(/"안녕"\? 좋아/)).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: '이렇게 말해 볼 수 있어요' })).toBeInTheDocument()
+  })
+
+  it('빈 입력은 보낼 수 없다', async () => {
+    const { user, input } = await setup()
+    expect(screen.getByRole('button', { name: '보내기' })).toBeDisabled()
+    await user.type(input, '   ')
+    expect(screen.getByRole('button', { name: '보내기' })).toBeDisabled()
+  })
+
+  it('응답을 기다리는 동안 입력이 잠기고 "생각하는 중…" 을 보여 준다', async () => {
+    let resolve!: (value: Awaited<ReturnType<typeof mockGameApi.sendTurn>>) => void
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockReturnValueOnce(new Promise((r) => (resolve = r)))
+    const { say, input } = await setup()
+    await say('기다려')
+    expect(input).toBeDisabled()
+    expect(screen.getByText('생각하는 중…')).toBeInTheDocument()
+    resolve({ turnId: 't', messages: [{ role: 'npc', speaker: '친구 민수', text: '응' }], stateChanges: [], hints: [], experience: null, ended: false })
+    await waitFor(() => expect(input).toBeEnabled())
+    spy.mockRestore()
+  })
+
+  it('힌트를 누르면 입력칸에 채워진다', async () => {
+    const { say, input, user } = await setup()
+    await say('안녕')
+    await user.click(await screen.findByRole('button', { name: '동아리에 대해 물어본다' }))
+    expect(input).toHaveValue('동아리에 대해 물어본다')
+  })
+
+  it('나이가 바뀌면 상태 패널과 대화에 시간 경과를 보여 준다', async () => {
+    const { say } = await setup()
+    await say('하나')
+    await say('둘')
+    await say('셋')
+    expect(await within(log()).findByText('시간이 흘렀어요 · 16세')).toBeInTheDocument()
+    expect(within(screen.getByRole('complementary', { name: '내 상태' })).getByText('16세')).toBeInTheDocument()
+  })
+
+  it('오류가 나면 보낸 말을 입력칸에 되돌리고 토스트로 안내한다', async () => {
+    const { say, input } = await setup()
+    await say('오류')
+    expect(await screen.findByRole('alert')).toHaveTextContent('잠시 후 다시 시도해 주세요.')
+    expect(input).toHaveValue('오류')
+    expect(within(log()).queryByText('오류')).not.toBeInTheDocument()
+  })
+
+  it('3D 분기면 안내 카드(제목 · 직업 · 이유)를 보여 주고, 체험 시작을 부른다', async () => {
+    const onStartExperience = vi.fn()
+    const { say } = await setup({ onStartExperience })
+    await say('체험 할래')
+    const card = await screen.findByRole('listitem', { name: '주민 문화행사 준비' })
+    expect(card).toHaveTextContent('행사기획자')
+    expect(card).toHaveTextContent('선배가 축제 준비를 함께 하자고 제안했어요.')
+    await userEvent.click(within(card).getByRole('button', { name: '체험 시작' }))
+    expect(onStartExperience).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'career-net-951-experience' }))
+    expect(card).toHaveTextContent('체험을 시작했어요')
+  })
+
+  it('[다음에 할게요] 를 누르거나 카드를 두고 계속 말하면 카드가 접힌다', async () => {
+    const { say } = await setup()
+    await say('체험 할래')
+    await userEvent.click(await screen.findByRole('button', { name: '다음에 할게요' }))
+    expect(within(log()).getByText(/체험은 다음에 하기로 했어요/)).toBeInTheDocument()
+
+    await say('또 체험')
+    expect(await screen.findByRole('button', { name: '체험 시작' })).toBeInTheDocument()
+    await say('그냥 집에 갈래')
+    await waitFor(() => expect(screen.queryByRole('button', { name: '체험 시작' })).not.toBeInTheDocument())
+    expect(within(log()).getAllByText(/체험은 다음에 하기로 했어요/)).toHaveLength(2)
+  })
+
+  it('맞는 체험이 없으면 토스트로 안내한다', async () => {
+    const { say } = await setup()
+    await say('없는체험')
+    expect(await screen.findByText('지금 상황에 맞는 3D 체험이 없어 텍스트로 이야기를 이어갈게요.')).toBeInTheDocument()
+  })
+
+  it('인생이 끝나면 입력 대신 [결말 보기] 를 보여 준다', async () => {
+    const { say, user } = await setup()
+    await say('이제 끝')
+    const link = await screen.findByRole('link', { name: '결말 보기' })
+    expect(screen.queryByLabelText('하고 싶은 말이나 행동')).not.toBeInTheDocument()
+    await user.click(link)
+    expect(await screen.findByRole('heading', { name: '결말 화면' })).toBeInTheDocument()
+  })
+
+  it('이미 끝난 플레이에 보내면 결말 화면으로 간다', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(409, 'ALREADY_ENDED'))
+    const { say } = await setup()
+    await say('안녕')
+    expect(await screen.findByRole('heading', { name: '결말 화면' })).toBeInTheDocument()
+    spy.mockRestore()
+  })
+})
+
+describe('timeline helpers', () => {
+  it('아바타 글자는 이름의 마지막 단어 첫 글자', () => {
+    expect(avatarLetter('친구 민수')).toBe('민')
+    expect(avatarLetter('과학 선생님 윤서진')).toBe('윤')
+    expect(avatarLetter('')).toBe('?')
+  })
+
+  it('대기 중 카드만 접는다', () => {
+    const offer = { buildId: 'b', buildUrl: 'u', roomId: 'r', scenarioId: 's', scenarioVersion: 'v', title: 't', jobs: [], reason: '' }
+    const items: TimelineItem[] = [
+      { kind: 'experience', id: '1', offer, status: 'offered' },
+      { kind: 'experience', id: '2', offer, status: 'started' },
+    ]
+    expect(declineOpenOffers(items).map((item) => (item.kind === 'experience' ? item.status : ''))).toEqual(['declined', 'started'])
+  })
+})
