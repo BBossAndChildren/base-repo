@@ -30,7 +30,16 @@
 - `buildId` + `roomId` + `scenarioId` + `scenarioVersion` 네 값은 대소문자까지 정확해야 한다. `roomId` 는 `PAN-NNN` 형식
 - 이전 빌드 목록으로 새 빌드를 대조하지 않는다
 
+## Unity 담당의 다른 전달물 (이 폴더 밖)
+
+| 전달물 | 어디에 두었나 | 프론트 | 백엔드 |
+|--------|---------------|:---:|:---:|
+| 인트로 `career-intro-react-v001` 소스 (React + Three.js) | `frontend/src/pages/intro/` 로 TypeScript 로 옮김 (원본 디렉터리는 흡수 후 삭제, [12 결정 25](../development/12-decisions.md)) | ✅ (FE11) | |
+| 인트로 `intro.json` + 3D 모델 71개 (약 238MB) | **Git 제외.** 로컬 `frontend/public/intro-assets/`, 배포는 백엔드 서버 `/srv/intro-assets/` ([06 5-2-1](../development/06-deployment.md#5-2-1-인트로-에셋)) | ✅ (불러오기) | ✅ (BE15 제공) |
+| 디자인 토큰 `career-intro-component-tokens-v001` (+ 인트로 v002) | 전달물 그대로 [docs/design/](../design/README.md), 코드 사본 `frontend/src/design/tokens/tokens.json` ([12 결정 26](../development/12-decisions.md)) | ✅ (전체 디자인) | |
+
 ## 정리 기록
 
 - 2026-10-31: 받은 패키지에서 검수 증거(`actual/` · `adapter-validation/`), 효과음 메타데이터(`audio/`, 실제 mp3 는 빌드 `site/audio/` 에 있음), 에셋 보고서(`catalogs/`), 이전 빌드 목록과 같은 내용의 버전 이름 사본(`builds/earlier-builds/` · `builds/career-suite-*`), 빌드된 테스트 화면(`frontend/compiled/`), 다른 형식의 ID 목록(`ids/` 나머지), Unity 내부 기록(`docs/` 나머지)을 제거했다. Unity 원본 README 에는 이 파일들이 언급돼 있다
 - `webgl/` 은 최종 빌드 `career-suite-integration-v005` 로 교체했다 (2026-10-31, Git 제외)
+- 2026-11-01: 인트로 소스 · 모델 · 디자인 토큰 전달물의 위치를 위 표에 추가했다
