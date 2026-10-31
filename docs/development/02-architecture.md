@@ -33,10 +33,13 @@
 ### 웹 프론트
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
-| UI | React | TODO | Unity 연결 코드(`Experience.jsx`)가 React 기준 |
-| 빌드 | Vite | TODO | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
-| 언어 | TypeScript | TODO | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
-| API mock | TODO | — | 백엔드 게임 API 구현 전 개발용 |
+| UI | React | 19.3 | Unity 연결 코드(`Experience.jsx`)가 React 기준 |
+| 라우팅 | React Router | 8.5 | 시작 · 게임 · 결말 · 지난 기록 화면 주소 |
+| 빌드 | Vite | 8.3 | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
+| 언어 | TypeScript | 7.0 (strict) | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
+| 스타일 | 일반 CSS (CSS 변수) | — | 디자인 시안 `docs/design/styles.css` 를 그대로 옮김, 별도 라이브러리 없음 |
+| API mock | 직접 만든 mock (`src/mocks/`) | — | 백엔드 게임 API 구현 전 개발용. `VITE_USE_MOCK=true` 면 사용 |
+| 검사 | oxlint · Vitest · Testing Library | 1.89 · 5.0 · 16.3 | lint(경고도 실패) · 자동 테스트 |
 
 ### 3D 체험 (Unity WebGL)
 | 구분 | 기술 | 버전 | 선택 이유 |
@@ -75,7 +78,16 @@ base-repo/
 │  ├─ development/  game/  unity/
 ├─ frontend/                    ← 웹 프론트 (Vercel Root Directory)
 │  ├─ AGENTS.md · CLAUDE.md     ← 프론트 작업 때 꼭 읽을 문서
-│  └─ <!-- TODO: 프론트 프로젝트 구조 -->
+│  ├─ vercel.json               ← Vercel 빌드 · SPA 주소 처리 · docs 만 바뀌면 배포 건너뜀
+│  └─ src/
+│     ├─ api/                   ← 백엔드 호출 (gameApi · 3D 이벤트 API), mock 과 실제 전환
+│     ├─ mocks/                 ← 백엔드 전 개발용 가짜 응답
+│     ├─ app/ · hooks/          ← 화면 주소 · 게스트 ID · 이어하기
+│     ├─ components/            ← 버튼 · 입력칸 · 토스트 · 모달 등 공통
+│     ├─ pages/                 ← start · play · result · history 화면
+│     ├─ lib/experience/        ← Unity 체험 실행 (연결 코드는 빌드에서 불러옴)
+│     ├─ styles/                ← 화면별 CSS
+│     └─ types/                 ← API · Unity 타입
 ├─ backend/                     ← Django 백엔드 (서버에서 실행, 아래 상세)
 │  ├─ AGENTS.md · CLAUDE.md     ← 백엔드 작업 때 꼭 읽을 문서
 └─ scripts/                     ← 저장소 관리 스크립트 (라벨 생성 등)

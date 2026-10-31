@@ -6,7 +6,7 @@
 
 | 구성 | 어디에 | 외부 공개 방법 | SSL |
 |------|--------|----------------|-----|
-| 웹 프론트 | **Vercel** | Vercel 주소 (`https://<프로젝트>.vercel.app`) | Vercel 자동 |
+| 웹 프론트 | **Vercel** | Vercel 주소 (`https://base-repo-ck83.vercel.app`) | Vercel 자동 |
 | 백엔드 (Django · 3D 빌드 · game/ 문서) | **제공받은 네이버 클라우드 일반 서버** (사설 IP, SSL VPN 으로만 접속) | **Cloudflare Tunnel** (`https://<랜덤>.trycloudflare.com`) | Cloudflare 자동 |
 | AI 서버 (Qwen + RAG) | 제공받은 네이버 클라우드 GPU 서버 | **기본은 공개하지 않음** — 백엔드가 사설망으로 호출. 사설망이 막혀 있으면 터널 + 내부 키 ([5-3](#5-3-ai-서버-gpu-서버)) | — |
 
@@ -84,7 +84,8 @@ docker compose logs --tail=50 backend
 | `BACKEND_PORT` | Compose | | 백엔드 호스트 포트, 기본 8000 (127.0.0.1에만 공개) |
 | `POSTGRES_HOST_PORT` | 개발 Compose | | DB 호스트 포트, 기본 5433. 컨테이너 내부는 항상 5432 |
 | `HEALTHCHECK_HOST` | 백엔드 컨테이너 | | 상태 확인 요청의 Host, 기본 localhost. `ALLOWED_HOSTS`에 허용된 이름을 지정 |
-| `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 현재 터널 주소 (변수 이름은 프론트 도구에 맞춘다) |
+| `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 현재 터널 주소 (끝에 `/` 없이) |
+| `VITE_USE_MOCK` | 프론트 (Vercel) | | `true` 면 mock (기본). 백엔드 연결 때 `false` |
 | | | | |
 
 ## 4. 로컬 실행 확인
@@ -200,9 +201,9 @@ server {
             text/css                  css;
         }
         # Vercel 프론트 페이지만 이 빌드를 iframe 으로 넣을 수 있게 한다
-        add_header Content-Security-Policy "frame-ancestors https://<프로젝트>.vercel.app" always;
+        add_header Content-Security-Policy "frame-ancestors https://base-repo-ck83.vercel.app" always;
         # 프론트가 빌드의 연결 코드(frontend/client.js)와 지원 목록(supported-manifest.json)을 직접 불러온다 (05 4-1)
-        add_header Access-Control-Allow-Origin "https://<프로젝트>.vercel.app" always;
+        add_header Access-Control-Allow-Origin "https://base-repo-ck83.vercel.app" always;
         add_header Vary "Origin" always;
     }
 }
@@ -245,7 +246,7 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 항목 | 설정 |
 |------|------|
 | 담당 | **백엔드(Django, django-cors-headers)** 가 API 응답에 붙인다. Nginx 는 붙이지 않는다 (중복되면 브라우저가 거부) |
-| 허용 출처 | `CORS_ALLOWED_ORIGINS` = Vercel 주소 (`https://<프로젝트>.vercel.app`), 로컬 개발 때 `http://localhost:<포트>` 추가. `*` 는 쓰지 않는다 |
+| 허용 출처 | `CORS_ALLOWED_ORIGINS` = Vercel 주소 (`https://base-repo-ck83.vercel.app`), 로컬 개발 때 `http://localhost:<포트>` 추가. `*` 는 쓰지 않는다 |
 | 허용 헤더 | 기본 헤더 + `x-player-id` (`CORS_ALLOW_HEADERS` 에 추가). 이 헤더 때문에 브라우저가 사전 요청(OPTIONS)을 보낸다 |
 | 허용 메서드 | `GET` · `POST` · `OPTIONS` |
 | 쿠키 | 쓰지 않으므로 `CORS_ALLOW_CREDENTIALS = False` |
@@ -293,9 +294,9 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
-- `docs/` 만 바뀐 커밋으로 재배포되지 않게 Ignored Build Step 을 설정한다 (예: `git diff --quiet HEAD^ HEAD -- frontend/`)
-- 환경변수 `VITE_API_BASE_URL` 에 현재 터널 주소를 넣는다
-- SPA 라우팅이면 새로고침 404 를 막는 rewrites 설정 <!-- TODO: 프론트 구조 확정 후 -->
+- 배포 주소: **https://base-repo-ck83.vercel.app/** (현재 `VITE_USE_MOCK=true`, mock 모드)
+- `docs/` 만 바뀐 커밋으로 재배포되지 않게 하는 설정(`ignoreCommand`)과 새로고침 404 를 막는 rewrites 는 `frontend/vercel.json` 에 들어 있다
+- 백엔드 연결 때: 환경변수 `VITE_USE_MOCK=false`, `VITE_API_BASE_URL` 에 현재 터널 주소(끝에 `/` 없이)를 넣고 재배포한다
 - Vercel 주소가 정해지면 백엔드 `CORS_ALLOWED_ORIGINS` 와 Nginx `frame-ancestors` 에 등록한다
 
 #### 터널 주소가 바뀌었을 때

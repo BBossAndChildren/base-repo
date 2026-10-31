@@ -16,7 +16,7 @@
 ## 2. 기술 스택
 | 구분 | 기술 |
 |------|------|
-| 웹 프론트 | Vercel 배포 <!-- TODO: 프레임워크 --> |
+| 웹 프론트 | React · Vite · TypeScript, Vercel 배포 (https://base-repo-ck83.vercel.app/) |
 | 백엔드 | Python · Django + DRF · PostgreSQL · HTTPX · Gunicorn · Nginx |
 | AI 서버 (별도 저장소) | 오픈소스 Qwen + 직업 데이터 RAG |
 | 3D 체험 | Unity WebGL (Unity 담당 전달, [docs/unity/USAGE.md](docs/unity/USAGE.md)) |
@@ -40,7 +40,15 @@
 
 ## 6. 실행 방법
 ### 로컬
-<!-- TODO: frontend/ · backend/ 코드가 생기면 채운다 -->
+**웹 프론트** — 상세: [frontend/README.md](frontend/README.md)
+```bash
+cd frontend
+npm install
+cp .env.example .env.local   # 기본값은 mock 모드 (백엔드 없이 실행)
+npm run dev                  # http://localhost:5173
+```
+
+**백엔드** — 상세: [backend/README.md](backend/README.md) <!-- TODO: 백엔드 담당이 실행 방법 확정 후 정리 -->
 ### 배포
 [06-deployment.md](docs/development/06-deployment.md) — VPN · SSH 접속, 코드 받기, Gunicorn · Nginx · 터널, Vercel
 ### 환경변수
@@ -49,6 +57,7 @@
 | `AI_SERVER_KEY` · `AI_API_BASE_URL` | 백엔드 → AI 서버 호출 |
 | `CORS_ALLOWED_ORIGINS` · `ALLOWED_HOSTS` | 백엔드 접근 허용 |
 | `VITE_API_BASE_URL` | 프론트의 백엔드 주소 (현재 터널 주소) |
+| `VITE_USE_MOCK` | 프론트 mock 사용 여부 (`true` 기본, 백엔드 연결 때 `false`) |
 
 ## 7. 민감정보 관리
 API 키 · 비밀번호 · VPN 계정 · 토큰은 코드 · 문서 · 커밋에 쓰지 않는다. `.env` 로만 관리하고 저장소에는 `.env.example` 만 둔다. 건강 · 질병 정보는 받지도 저장하지도 않는다.
