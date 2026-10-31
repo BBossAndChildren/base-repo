@@ -143,6 +143,14 @@ export interface TurnResponse {
   events?: unknown[]
 }
 
+// 일시정지 · 재개 (03 게임 상태와 턴 확장, PATCH /api/v1/plays/{playId})
+export interface PauseResponse {
+  state: PlayState
+  paused: boolean
+  stateVersion: number
+  activePlaySeconds: number
+}
+
 // 1-5
 /** 추천 근거 종류 (03 1-5) */
 export type RecommendationBasis = 'experience' | 'conversation' | 'interest' | 'dreamJob'
