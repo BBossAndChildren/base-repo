@@ -20,3 +20,20 @@ python3 scripts/test_intro_gateway.py
 ```
 
 실제 71개 모델 배치 후 Vercel에서 로딩71/71·24초 재생을 별도로 확인한다. 근거: `docs/development/06-deployment.md` 5-2-1, 기능 BE15, 이슈 #67.
+
+## AI API 연결 (같은 GPU 서버)
+
+AI API(`BBossAndChildren/AI` 의 `ai_server`)는 호스트 Python 으로 돈다. 백엔드 컨테이너의 `127.0.0.1` 은 컨테이너 자신이라, `compose.yaml` 의 `extra_hosts: host.docker.internal:host-gateway` 로 호스트를 부른다.
+
+- AI 가 `127.0.0.1:8010` 에만 열려 있으면 (현재 운영) Docker 내부망에만 여는 중계기를 둔다
+  ```bash
+  docker run -d --name ai-relay --restart unless-stopped --network host alpine/socat \
+    TCP-LISTEN:18010,bind=172.17.0.1,fork,reuseaddr TCP:127.0.0.1:8010
+  ```
+  `.env`: `AI_API_BASE_URL=http://host.docker.internal:18010`
+- AI 를 `--host 172.17.0.1 --port 8010` 으로 띄우면 중계기 없이 `AI_API_BASE_URL=http://host.docker.internal:8010`
+- `.env` 의 `AI_SERVER_KEY` 는 AI 와 같은 값 (AI 담당의 기존 키). 화면에 보이지 않게: `read -rsp '키: ' K; echo; sed -i "s|^AI_SERVER_KEY=.*|AI_SERVER_KEY=$K|" .env; unset K`
+- `.env` 를 바꾼 뒤: `docker compose -f compose.yaml -f compose.gateway.yaml up -d --force-recreate --wait backend`
+- 연결 확인: `docker compose -f compose.yaml -f compose.gateway.yaml exec backend python -c "import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:18010/openapi.json', timeout=5).status)"` → `200`
+
+AI 와 중계기는 외부 인터페이스에 열지 않는다. 근거: `docs/development/06-deployment.md` 5-3, 이슈 #113.
