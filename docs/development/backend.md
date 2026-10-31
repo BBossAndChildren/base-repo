@@ -205,6 +205,9 @@ docker compose build backend
 | 58 | 최종 전체 검사 | 전체 `python manage.py test --verbosity 1 --noinput`, check, makemigrations --check --dry-run, migrate --check, spectacular --validate --fail-on-warn, Ruff check/format, Docker Compose build | PostgreSQL/규칙/모의 HTTP 144개 및 필수 검사 통과; Ruff 93파일 형식 확인, 실제 GPU·운영 WebGL/인트로 에셋은 미검증 | PR 준비 가능 |
 
 | 59 | Swagger 필수·조건부 필수·정상 요청 예시 #88 | 전체 `python manage.py test --verbosity 1 --noinput` (apiresume Docker) | PostgreSQL·모의 AI 146개 통과; 새 스키마 검사 2개 포함, situation 고딩 거부/고등학생 허용·정상 요청 예시 확인 | 스키마·lint·build 확인 후 PR |
+| 60 | BE14·BE15 게이트웨이 허용 출처 두 Vercel 주소 #86 | `python3 backend/scripts/test_intro_gateway.py` (Docker Nginx), 전체 `python manage.py test` (compose dev + mock) | 게이트웨이 PASS: `base-repo-zeta` · `base-repo-ck83` 출처 반환, 목록 밖 출처는 CORS 헤더 없음, 구문·JSON/GLB·캐시·404/403 유지 (가짜 파일). Django 146개 통과. 실제 서버 배치 · 실제 모델 · Vercel 로딩은 미검증 | 서버 배치 대기 |
+| 61 | Swagger 일시정지 · Unity 4개 요청 예시 #91 | `python manage.py test apps.game.tests.test_request_examples_schema`, 전체 test · check · makemigrations --check --dry-run · spectacular --validate --fail-on-warn · Ruff check/format | 신규 2개 포함 148개 통과; 5개 요청 예시가 입력 Serializer 검증 통과, 스키마 검증 · Ruff 90파일 통과 | 완료 |
+| 62 | 프론트 실제 연결 (로컬) | 로컬 Docker 백엔드(PostgreSQL + `compose.mock.yaml` 모의 AI) + 프론트 `VITE_USE_MOCK=false`, headless Chrome | 게스트 발급 → 시작 → 채팅(`requestId` 포함 200) → 재개 → 일시정지 · 이어 하기 → 지난 기록, 콘솔 오류 없음. 실제 GPU AI 미검증 | 서버 배포 · 실제 AI 대기 |
 
 ## 5. 미확정·외부 의존 사항
 
