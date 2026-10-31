@@ -221,3 +221,5 @@ docker compose build backend
 - AI 주소·내부 키는 환경변수로 제공한다. 실제 GPU AI 대화 연결은 2026-11-01 확인했다 (기록 64). 3D 추천 · 결말 호출은 AI 서버 구현 전이라 `외부 연동 대기`로 남긴다.
 - Unity 정산은 [원본 tx 명세](../unity/contracts/CONTRACT-SNAPSHOT.md)와 [수락 사례 16개](../unity/contracts/reconciliation-v003/acceptance-cases.json)를 따른다. Unity 원본과 작가 콘텐츠는 임의 수정하지 않는다.
 - 테스트 DB와 운영 DB를 구분하며 비밀값·사용자 실데이터는 문서·테스트·PR에 기록하지 않는다.
+
+| 55 | BE12 사망 시 인생 회고 · AI 결말 없을 때 백엔드 생성 (#127) | `python manage.py test --verbosity 1` (Docker) · check · makemigrations/migrate check · spectacular `--fail-on-warn` · Ruff · Docker build | PostgreSQL·모의 AI 152개 통과; AI 502·503·504 시 기록 기반 회고·추천 3개(새 직업 1개 이상) 저장, 다음 조회 때 AI 결말로 교체. 실제 AI 결말 API 미검증 | 결말 화면 AI 없이 동작 |

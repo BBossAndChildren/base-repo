@@ -447,6 +447,11 @@ class RecommendedJobSerializer(serializers.Serializer):
 class ResultDataSerializer(serializers.Serializer):
     ending = serializers.CharField(help_text="이번 인생에서 선택·경험한 내용의 요약")
     recommendedJobs = RecommendedJobSerializer(many=True, min_length=3, max_length=3)
+    generatedBy = serializers.ChoiceField(
+        choices=["backend"],
+        required=False,
+        help_text='AI 결말이 없거나 실패해 백엔드가 기록으로 만든 결말일 때만 "backend"',
+    )
 
     def validate(self, attrs):
         names = [job["job"].strip().casefold() for job in attrs["recommendedJobs"]]
