@@ -10,7 +10,7 @@
 ### 폰트
 - 제목 · 본문 모두 **Pretendard** (jsDelivr CDN 고정 버전). 대체: Malgun Gothic · 시스템 글꼴
 ### 디자인 토큰
-> 토큰 원본: `frontend/src/design/tokens/tokens.json` (전달물 [docs/design/src/tokens/tokens.json](../design/src/tokens/tokens.json) 과 같은 파일). `npm run tokens` 가 `--ci-*` CSS 변수를 만들고, 화면은 `frontend/src/styles/global.css` 의 역할 변수(`--color-*`)를 쓴다. 전체 연결표 · 명도 대비: [docs/design/README.md](../design/README.md#앱-역할-변수--토큰)
+> 토큰 원본: `frontend/src/design/tokens/tokens.json` (전달물 [docs/design/tokens.json](../design/tokens.json) 과 같은 파일). `npm run tokens` 가 `--ci-*` CSS 변수를 만들고, 화면은 `frontend/src/styles/global.css` 의 역할 변수(`--color-*`)를 쓴다. 전체 연결표 · 명도 대비: [docs/design/README.md](../design/README.md#앱-역할-변수--토큰)
 
 | 역할 변수 | 값 | 용도 |
 |------|----|------|
@@ -67,7 +67,7 @@
 - 재생: 모델 71개를 모두 받은 뒤 **[인트로 재생]** 을 눌러 시작한다 (소리는 Web Audio 로 만들기 때문에 사용자 클릭이 필요). 24초 뒤 검게 페이드되면 시작 화면으로 간다
 - **[건너뛰기]** (원본에 없어 추가): 로딩 중 · 재생 중 언제든 누를 수 있다. 누르면 시작 화면으로 간다
 - 실패: 에셋을 못 받거나 WebGL 을 쓸 수 없으면 토스트 "인트로를 불러오지 못해 시작 화면으로 이동해요." 를 띄우고 시작 화면으로 간다
-- 에셋: `intro.json` + 모델 71개(약 238MB)는 저장소에 넣지 않고 백엔드 서버 `/intro-assets/` 에서 받는다 (백엔드 기능 [BE15](features.md#1-백엔드-be)). 주소 규칙은 [06 3절 환경변수](06-deployment.md#3-환경변수) `VITE_INTRO_ASSET_BASE`
+- 에셋: `intro.json` + 모델 71개(약 238MB)는 저장소에 넣지 않고 백엔드 서버 `/intro-assets/` 에서만 받는다 (백엔드 기능 [BE15](features.md#1-백엔드-be)). **에셋 주소가 설정되지 않은 배포**(`VITE_INTRO_ASSET_BASE` · `VITE_API_BASE_URL` 모두 비어 있음)에서는 인트로를 띄우지 않고 바로 시작 화면을 보여 주며, 헤더의 "인트로 다시 보기" 도 숨긴다 주소 규칙은 [06 3절 환경변수](06-deployment.md#3-환경변수) `VITE_INTRO_ASSET_BASE`
 - 키보드: 인트로 안에 초점이 있을 때 Space 일시정지 · R 다시 보기 · Esc 촬영 화면 해제 (원본 동작)
 - 모션 줄이기: OS 의 `prefers-reduced-motion` 이 켜져 있으면 카메라를 고정하고 빛 효과를 끈다 (원본 동작, 장면 교체 · 페이드는 유지)
 - 성능: 인트로 코드(Three.js 포함)는 따로 나눠 불러와 다른 화면 로딩에 섞이지 않게 한다. 화면을 떠나면 GPU 자원 · 소리 · 이벤트를 정리한다

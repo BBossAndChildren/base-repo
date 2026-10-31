@@ -83,7 +83,6 @@ base-repo/
 ├─ frontend/                    ← 웹 프론트 (Vercel Root Directory)
 │  ├─ AGENTS.md · CLAUDE.md     ← 프론트 작업 때 꼭 읽을 문서
 │  ├─ vercel.json               ← Vercel 빌드 · SPA 주소 처리 · docs 만 바뀌면 배포 건너뜀
-│  ├─ public/intro-assets/      ← 로컬 개발용 인트로 에셋 (git 제외, 배포는 백엔드 서버 /intro-assets/)
 │  ├─ scripts/build-tokens.mjs  ← 디자인 토큰 생성 (npm run tokens, build 에 포함)
 │  └─ src/
 │     ├─ api/                   ← 백엔드 호출 (gameApi · 3D 이벤트 API), mock 과 실제 전환

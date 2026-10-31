@@ -35,8 +35,8 @@
 | 전달물 | 어디에 두었나 | 프론트 | 백엔드 |
 |--------|---------------|:---:|:---:|
 | 인트로 `career-intro-react-v001` 소스 (React + Three.js) | `frontend/src/pages/intro/` 로 TypeScript 로 옮김 (원본 디렉터리는 흡수 후 삭제, [12 결정 25](../development/12-decisions.md)) | ✅ (FE11) | |
-| 인트로 `intro.json` + 3D 모델 71개 (약 238MB) | **Git 제외.** 로컬 `frontend/public/intro-assets/`, 배포는 백엔드 서버 `/srv/intro-assets/` ([06 5-2-1](../development/06-deployment.md#5-2-1-인트로-에셋)) | ✅ (불러오기) | ✅ (BE15 제공) |
-| 디자인 토큰 `career-intro-component-tokens-v001` (+ 인트로 v002) | 전달물 그대로 [docs/design/](../design/README.md), 코드 사본 `frontend/src/design/tokens/tokens.json` ([12 결정 26](../development/12-decisions.md)) | ✅ (전체 디자인) | |
+| 인트로 `intro.json` + 3D 모델 71개 (약 238MB) | **Git 제외.** 백엔드 서버 `/srv/intro-assets/` 에만 둔다 ([06 5-2-1](../development/06-deployment.md#5-2-1-인트로-에셋)) | ✅ (불러오기) | ✅ (BE15 제공) |
+| 디자인 토큰 `career-intro-component-tokens-v001` | 토큰만 [docs/design/tokens.json](../design/tokens.json), 코드 사본 `frontend/src/design/tokens/` ([12 결정 26](../development/12-decisions.md)) | ✅ (전체 디자인) | |
 
 ## 정리 기록
 
