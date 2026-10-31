@@ -304,7 +304,9 @@ class TurnResponseSerializer(serializers.Serializer):
 
 class HeartbeatInputSerializer(StrictSerializer):
     sessionId = serializers.UUIDField(
-        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+        help_text="필수. POST /plays 또는 GET /plays/{p"
+        "layId} 응답의 실제 sessionId. 플레이 전체에"
+        "서 유지"
     )
     experienceId = serializers.CharField(
         max_length=200, help_text="필수. 프론트/Unity가 이번 체험 시작 시 사용한 실제 experienceId"
@@ -325,7 +327,9 @@ class HeartbeatResponseSerializer(serializers.Serializer):
 
 class PendingInputSerializer(StrictSerializer):
     sessionId = serializers.UUIDField(
-        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+        help_text="필수. POST /plays 또는 GET /plays/{p"
+        "layId} 응답의 실제 sessionId. 플레이 전체에"
+        "서 유지"
     )
     experienceId = serializers.CharField(max_length=200, help_text="종료 응답을 받지 못한 체험 ID")
     roomId = serializers.CharField(max_length=200, help_text="체험의 Unity 방 ID")
@@ -355,7 +359,9 @@ class EventInputSerializer(serializers.Serializer):
     )
     sequence = serializers.IntegerField(required=False, help_text="같은 실행 내 이벤트 순서")
     sessionId = serializers.CharField(
-        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+        help_text="필수. POST /plays 또는 GET /plays/{p"
+        "layId} 응답의 실제 sessionId. 플레이 전체에"
+        "서 유지"
     )
     experienceId = serializers.CharField(
         help_text="필수. 프론트/Unity가 이번 체험 시작 시 사용한 실제 experienceId"
@@ -390,7 +396,9 @@ class ReconcileInputSerializer(StrictSerializer):
     )
     protocol = serializers.ChoiceField(
         choices=["career-experience-resolution"],
-        help_text="필수 고정값 career-experience-resolution. 실시간 이벤트의 career-experience와 다름",
+        help_text="필수 고정값 career-experience-resolut"
+        "ion. 실시간 이벤트의 career-experience와"
+        " 다름",
     )
     action = serializers.ChoiceField(
         choices=["reconcile_experience"],
@@ -398,19 +406,24 @@ class ReconcileInputSerializer(StrictSerializer):
     )
     reconcileRequestId = serializers.CharField(
         max_length=200,
-        help_text="필수. 프론트가 새 정산에 생성한 요청 ID. 같은 정산 재전송에는 본문과 함께 그대로 유지",
+        help_text="필수. 프론트가 새 정산에 생성한 요청 ID. 같은 정산 "
+        "재전송에는 본문과 함께 그대로 유지",
     )
     sessionId = serializers.CharField(
         max_length=200,
-        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지",
+        help_text="필수. POST /plays 또는 GET /plays/{p"
+        "layId} 응답의 실제 sessionId. 플레이 전체에"
+        "서 유지",
     )
     experienceId = serializers.CharField(
         max_length=200,
-        help_text="필수. 종료 응답을 못 받은 이전 체험의 experienceId. 프론트/Unity에서 사용한 실제 ID",
+        help_text="필수. 종료 응답을 못 받은 이전 체험의 experienc"
+        "eId. 프론트/Unity에서 사용한 실제 ID",
     )
     roomId = serializers.CharField(
         max_length=200,
-        help_text="필수. 이전 체험의 roomId. 추천 응답/Unity 이벤트에서 받은 PAN-002 같은 정확한 값",
+        help_text="필수. 이전 체험의 roomId. 추천 응답/Unity 이"
+        "벤트에서 받은 PAN-002 같은 정확한 값",
     )
     trigger = serializers.CharField(
         max_length=200,
