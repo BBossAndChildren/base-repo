@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "protocol": "career-experience",
+  "eventId": "evt-020",
+  "sequence": 20,
+  "occurredAt": "2026-10-31T10:30:00+09:00",
+  "sessionId": "session-example-001",
+  "scenarioRunId": "run-example-001",
+  "buildId": "example-v001",
+  "sceneId": "office",
+  "scenarioId": "career-net-253-office-documents",
+  "scenarioVersion": "v001",
+  "objectId": null,
+  "instanceId": null,
+  "assetId": null,
+  "assetVersion": null,
+  "stepId": null,
+  "workItemId": null,
+  "attemptId": null,
+  "requestRevision": 1,
+  "documentRevision": 2,
+  "type": "experience.ended",
+  "action": "end_experience",
+  "process": {
+    "scope": "scenario",
+    "measurementStatus": "complete",
+    "measurementNote": null,
+    "attemptCount": 6,
+    "navigationBackCount": 3,
+    "backtrackCount": 1,
+    "retryCount": 1,
+    "mistakeCount": 1,
+    "repeatedMistakeCount": 0,
+    "helpRequestCount": 0,
+    "guidanceUsed": false,
+    "elapsedActiveMs": 95000
+  },
+  "result": {
+    "outcome": "completed",
+    "success": true,
+    "completionCode": "OFFICE_DOCUMENTS_HANDED_OFF",
+    "data": {
+      "documentId": "DOC-001",
+      "copies": 2,
+      "folder": "회의자료",
+      "handoffConfirmed": true
+    }
+  },
+  "context": {
+    "assessmentStatus": "evaluated",
+    "assessmentCode": "TASK_SELF_CORRECTED",
+    "ruleVersion": "v001",
+    "reasonCodes": [
+      "COPY_COUNT_MISMATCH",
+      "USER_RECHECK"
+    ],
+    "evidenceEventIds": [
+      "evt-012",
+      "evt-013",
+      "evt-019"
+    ],
+    "interpretation": "부수 오류 1회 후 요청을 재확인하고 수정하여 출력·보관·인계를 완료함",
+    "limitations": [
+      "가상 체험 한 회의 수행 기록이며 직업 적성·전반적 능력 진단이 아님",
+      "가상 전달 예시: 원본 근거 이벤트는 이 파일에 포함하지 않음"
+    ],
+    "termination": null
+  },
+  "data": {
+    "events": [],
+    "eventsComplete": false,
+    "previousRuns": []
+  },
+  "requestId": "req-end-001",
+  "roomId": "office",
+  "experienceId": "experience-example-001"
+}

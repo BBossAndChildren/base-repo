@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "protocol": "career-experience",
+  "eventId": "evt-020",
+  "sequence": 20,
+  "occurredAt": "2026-10-31T10:30:00+09:00",
+  "sessionId": "session-example-001",
+  "scenarioRunId": "run-example-001",
+  "buildId": "example-v001",
+  "sceneId": "office",
+  "scenarioId": "career-net-253-office-documents",
+  "scenarioVersion": "v001",
+  "objectId": null,
+  "instanceId": null,
+  "assetId": null,
+  "assetVersion": null,
+  "stepId": null,
+  "workItemId": null,
+  "attemptId": null,
+  "requestRevision": 1,
+  "documentRevision": 2,
+  "type": "experience.ended",
+  "action": "end_experience",
+  "process": {
+    "scope": "scenario",
+    "measurementStatus": "partial",
+    "measurementNote": "일부 원본 이벤트가 누락되어 전체 횟수를 재현할 수 없음",
+    "attemptCount": null,
+    "navigationBackCount": null,
+    "backtrackCount": null,
+    "retryCount": null,
+    "mistakeCount": null,
+    "repeatedMistakeCount": null,
+    "helpRequestCount": null,
+    "guidanceUsed": null,
+    "elapsedActiveMs": null
+  },
+  "result": {
+    "outcome": "aborted",
+    "success": false,
+    "completionCode": "USER_ABORTED",
+    "data": {
+      "partialResults": {
+        "documentSaved": true,
+        "printedCopies": 0,
+        "handoffConfirmed": false
+      }
+    }
+  },
+  "context": {
+    "assessmentStatus": "unavailable",
+    "assessmentCode": null,
+    "ruleVersion": "v001",
+    "reasonCodes": [
+      "COPY_COUNT_MISMATCH",
+      "USER_ABORTED"
+    ],
+    "evidenceEventIds": [
+      "evt-quit-confirmed"
+    ],
+    "interpretation": "사용자 종료는 확인했으나 이전 과정 일부가 누락되어 수행 평가는 미확정",
+    "limitations": [
+      "종료 자체는 업무 실수나 적성 판단 근거가 아님",
+      "가상 전달 예시: 실제 플레이 측정값이 아님",
+      "누락된 과정의 횟수를 0으로 해석하지 않음"
+    ],
+    "termination": {
+      "terminationId": "termination-example-001",
+      "code": "USER_ABORTED",
+      "initiatedBy": "user",
+      "workStarted": true,
+      "lastStepId": "print",
+      "lastObjectId": "copier",
+      "lastState": "printing",
+      "completedStepIds": [
+        "confirm",
+        "review"
+      ],
+      "remainingStepIds": [
+        "print",
+        "file"
+      ],
+      "inFlightActionIds": [
+        "print-job-example-001"
+      ]
+    }
+  },
+  "data": {
+    "events": [],
+    "eventsComplete": false,
+    "previousRuns": []
+  },
+  "requestId": "req-end-001",
+  "roomId": "office",
+  "experienceId": "experience-example-001"
+}

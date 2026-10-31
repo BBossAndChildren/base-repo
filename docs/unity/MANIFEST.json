@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "package_id": "career-experience-frontend",
+  "version": "v001",
+  "protocol": "career-experience",
+  "protocol_version": "v001",
+  "kind": "frontend_protocol_handoff_not_webgl_build",
+  "created_at": "2026-10-31T05:15:35.126087+09:00",
+  "status": "specification_only",
+  "implementation_status": {
+    "unity_bridge": "not_implemented",
+    "react_adapter": "not_implemented",
+    "unity_react_roundtrip": "unverified"
+  },
+  "source_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "d7e21a113fff0ca4575a7d5f4e8498348178e176a0679102351917693d28755c"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "f3b79738f2a71d641223af228e4e742066a81a711cf3c3af6219dd136141a2d7",
+      "bytes": 2047
+    },
+    {
+      "path": "CALLS.md",
+      "sha256": "1ddf50654559f9df5e82d9667a13f4a1f97421361298c6eb8e2b6657598baecd",
+      "bytes": 2147
+    },
+    {
+      "path": "RESPONSES.md",
+      "sha256": "4bfa6d1561ee653d890a6fd7447fd230311af694f786068190570c6f22423dac",
+      "bytes": 2784
+    },
+    {
+      "path": "INTEGRATION.md",
+      "sha256": "e5d6a8540abe3762872863903f645c818e7c9441a0cfff535a431a22ed3f4d86",
+      "bytes": 3318
+    },
+    {
+      "path": "PROTOCOL-SNAPSHOT.md",
+      "sha256": "140c23ed8a8ec5a136a211582b20d89831fa5971a35d696f4e88687e5b639abb",
+      "bytes": 28318
+    },
+    {
+      "path": "types/career-experience.types.ts",
+      "sha256": "57f7323aa83233b23e536cbfffc7f09d4071acedc92b82c6ff40486ab0a05e9d",
+      "bytes": 3927
+    },
+    {
+      "path": "examples/01-start-experience.json",
+      "sha256": "c7afa1d75852e2a302f7af38a78ce5056d3f6605bd80b349e48bc824558f5b0d",
+      "bytes": 308
+    },
+    {
+      "path": "examples/02-end-experience.json",
+      "sha256": "59853ff76e6d9ba4a6d094bc2cc2af9611678f3560a7e50567a02d6f00d85e6f",
+      "bytes": 258
+    },
+    {
+      "path": "examples/03-started-response.json",
+      "sha256": "0f101331445e2d6f6c72a4581d863325d0fde644c0da775da2fd5013849d80e0",
+      "bytes": 1494
+    },
+    {
+      "path": "examples/04-completed-response.json",
+      "sha256": "94075482777e959c4379fa67866e5813c79053c452304db7b47e5bb9df015414",
+      "bytes": 2053
+    },
+    {
+      "path": "examples/05-aborted-response.json",
+      "sha256": "84a9a838c3ebbcfadd8af0a14aa6828f92e827832afc0a6974ee34fa70c30469",
+      "bytes": 2441
+    },
+    {
+      "path": "examples/06-failed-response.json",
+      "sha256": "1e87914509ec067e8c83d21fc850e56e56f985462425a2ce51e06d96b4569831",
+      "bytes": 1971
+    },
+    {
+      "path": "examples/07-partial-data-response.json",
+      "sha256": "b1d8e828569785686039e40de3cab1b0d53d0bcfdf6b3bdb35a5f60badbcdfac",
+      "bytes": 2564
+    },
+    {
+      "path": "examples/08-control-error-response.json",
+      "sha256": "e2b3be81d93bcec914d9fa326daa1c32d9fe3b94c3e784ea358e6fc69f4f9322",
+      "bytes": 340
+    }
+  ]
+}
