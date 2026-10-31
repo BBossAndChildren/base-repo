@@ -22,3 +22,13 @@ media/
 
 # 로컬 테스트 수신기 기록 (Unity 연결 코드 server.mjs)
 local-receiver-data/
+# Python / local configuration
+*.py[cod]
+.env
+.env.*
+!.env.example
+.ruff_cache/
+*.egg-info/
+backend/.local/
+backend/staticfiles/
+backend/dist/

@@ -12,9 +12,9 @@
 | 인증 | 로그인 없는 게스트 (`X-Player-Id`) | 해커톤 · 짧은 플레이(권장 15분)라 가입 단계를 없앤다 ([03 인증](03-api.md#인증-방식)) |
 | 공통 지침 | 시나리오 · 가이드라인 마크다운을 매 AI 요청에 고정으로 넣음 | 게임이 범위를 벗어나지 않게 하는 하네스 ([12 결정 3](12-decisions.md)) |
 | 상태 변경 | AI 는 제안만, 백엔드가 확인 후 반영 | 말만으로 직업이 바뀌는 등 근거 없는 변경 방지 ([12 결정 6](12-decisions.md)) |
-| 3D 체험 | Unity 카탈로그 555개 중 백엔드가 후보 20개 → AI 가 선택 | [12 결정 13 · 15](12-decisions.md) |
-| 직업 지식 | AI 서버 RAG | [12 결정 12](12-decisions.md) |
-| 저장소 | `base-repo` 하나에 `frontend/` · `backend/` · `docs/`, AI 는 별도 저장소 | [12 결정 14](12-decisions.md) |
+| 3D 체험 | Unity 카탈로그 555개 중 백엔드가 후보 20개 → AI 가 선택 | [12 결정 16 · 18](12-decisions.md) |
+| 직업 지식 | AI 서버 RAG | [12 결정 15](12-decisions.md) |
+| 저장소 | `base-repo` 하나에 `frontend/` · `backend/` · `docs/`, AI 는 별도 저장소 | [12 결정 17](12-decisions.md) |
 
 ## 1. 백엔드 (BE)
 

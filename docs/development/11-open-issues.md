@@ -32,7 +32,7 @@
 | 직업 데이터 | AI 서버(Qwen)에 RAG 로 552개 직업 데이터를 넣음 (A2 해결) | [10 6](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버) |
 | 터널 공개 규정 | 괜찮은 것으로 확인 (F6 해결) | [06 0](06-deployment.md#0-배포-환경-한눈에) |
 | 후보 20개 고르는 방식 (A3) | 1단계 점수(희망 직업 · 대화 속 직업 · 관심사) 상위 12개 + 다른 방 무작위 8개. 부족하면 2단계 임베딩 | [10 4-1-1](10-prompt-assembly.md#4-1-1-후보-20개-고르는-방식-be7) |
-| 저장소 구성 | `base-repo` 하나에 `frontend/` · `backend/` · `docs/` (모노레포), AI 서버는 별도 저장소. 라벨 · scope 는 AI 도 `be` | [02 3](02-architecture.md#3-디렉터리-구조) · [12 결정 14](12-decisions.md) |
+| 저장소 구성 | `base-repo` 하나에 `frontend/` · `backend/` · `docs/` (모노레포), AI 서버는 별도 저장소. 라벨 · scope 는 AI 도 `be` | [02 3](02-architecture.md#3-디렉터리-구조) · [12 결정 17](12-decisions.md) |
 | 플레이 시간 | 약 15분은 **권장 · 예상 시간**이며 강제 제한이 아님 | [00 5장](../00-idea.md#5-진행-속도와-인생-전략) |
 | AI 분기 주제 필드 | AI 대화 응답에 `branch`(topic · jobs · reason). 백엔드가 감지해 3D 추천, 프론트가 `experience` 를 감지해 렌더 | [03 2-1](03-api.md#2-1-대화-생성) · [10 4](10-prompt-assembly.md#4-3d-체험-연동) |
 | `sessionId` 발급 | 백엔드가 게임 시작 때 발급 | [03 1-2](03-api.md#1-2-게임-시작) |
@@ -47,6 +47,7 @@
 ## B. 팀 · 협업 규칙 불일치
 | # | 내용 | 결정 |
 |---|------|------|
+| B1 | **`backend.md`(백엔드 담당 구현 계획)가 예전 API 기준이다.** ① 기능 번호가 [features.md](features.md) 와 다르다 (예: 3D 이벤트 = backend.md BE4 / features BE8). ② 3D API 주소가 예전 것이다 (`experiences/{experienceId}/events` → 현재 `experience-events`, `experiences/reconcile` → `experience-reconcile`, heartbeat 동일). ③ 이후 추가된 미수신 기록(03 1-10), 결말 생성(03 2-3), AI 응답 `branch`, 게임 시작 `sessionId`, 3D API 응답 비포장이 빠져 있다. 백엔드 담당이 features.md · 03 기준으로 맞춘다 (다른 담당 영역이라 문서 총괄이 고치지 않음, 링크 경로만 수정) | |
 | | | |
 
 ## C. 없는 파일 · 깨진 참조

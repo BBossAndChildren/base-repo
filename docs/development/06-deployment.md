@@ -16,7 +16,7 @@
        └── https ──▶ Cloudflare ◀── cloudflared (백엔드 서버가 바깥으로 연결)
                                         │
                                         ▼
-                              Nginx (127.0.0.1:80) ─┬─ /api/    → Gunicorn (127.0.0.1:8000, Django) ──사설망──▶ AI 서버
+                              Nginx (127.0.0.1:80) ─┬─ /api/    → 127.0.0.1:8000 (Docker: Gunicorn + Django, PostgreSQL) ──사설망──▶ AI 서버
                                                     └─ /builds/ → /srv/builds/ (3D 빌드)
 ```
 
@@ -27,14 +27,36 @@
 ## 1. 요구 환경
 | 도구 | 버전 | 고정 방법 |
 |------|------|-----------|
-| Python | TODO | <!-- 예: .python-version --> |
-| Nginx | 서버 패키지 기본 | |
+| Python | 3.12.13 | `backend/.python-version` |
+| uv | 0.10.9 (이미지 빌드 도구) | 컨테이너에서 `uv sync --locked --no-dev --no-install-project` + `backend/uv.lock` |
+| PostgreSQL | 15 계열 | 직접 설치 또는 `backend/compose.yaml` |
+| Docker · Docker Compose | Compose v2 | 백엔드 · DB 컨테이너 실행. 소스 직접 실행도 가능 |
+| Nginx | 서버 패키지 기본 | 호스트에 설치 (API · 빌드 · 정적 파일 전달) |
 | cloudflared | 최신 | GitHub 릴리스 실행 파일 |
 
-## 2. 설치 (로컬 개발)
+## 2. 설치
 ### 백엔드
+기존 스택(Django · DRF · PostgreSQL · HTTPX · Gunicorn WSGI)을 유지한다. 개발할 때는 기본 Compose에 개발 설정을 덧붙인다.
+
 ```bash
+cd backend
+# .env가 없을 때 한 번만 실행한다. 기존 파일은 그대로 사용한다.
+python3 scripts/init_local_env.py
+docker compose -f compose.yaml -f compose.dev.yaml up --build -d --wait
+docker compose logs --tail=50 backend
 ```
+
+`init_local_env.py`는 개발 전용 비밀값을 생성하고 `.env`에만 저장한다. 기존 `.env`는 덮어쓰지 않는다. `.env.example`을 직접 복사했다면 비어 있는 필수 값을 채워야 한다. AI 서버 주소와 내부 키는 실제 AI 연동 구현 전까지 비워 둬도 된다. 패키지 목록은 기존 `uv.lock`을 사용한다. Python 패키지가 바뀌면 이미지를 다시 빌드한다.
+
+기본 `compose.yaml`은 Gunicorn WSGI로 실행하고 DEBUG를 끈다. `compose.dev.yaml`을 추가하면 개발 서버와 DEBUG를 켜고 `apps/` · `config/` · `scripts/` · `manage.py` · `docs/game/` 수정이 반영된다. 컨테이너 안의 Python 가상환경은 호스트 가상환경과 분리한다.
+
+개발용 `apps/`는 컨테이너에서 생성한 migration도 호스트에 남도록 쓰기를 허용한다. 나머지 소스 연결과 게임 문서는 읽기 전용이다. Linux에서 호스트 폴더 쓰기 권한이 다르면 migration 생성은 호스트의 `uv run python manage.py makemigrations`로 실행한다.
+
+컨테이너에서는 DB 주소를 `db:5432`로 덮어쓴다. 기본 Compose는 DB를 호스트에 공개하지 않으며, 개발 설정에서만 `127.0.0.1:5433`으로 공개한다. 호스트 DB 도구로 조회할 때는 `.env`의 계정 · DB 이름과 호스트 포트를 사용한다.
+
+기존에 초기화한 `backend/.local/postgres`와 호스트 5432의 DB는 보존한다. Docker의 `postgres_data` 볼륨은 별도 DB이므로 기존 데이터가 필요하면 PostgreSQL dump/restore로 옮긴다. 이전 과정은 자동 실행하지 않는다. 기존 볼륨의 DB 계정 · 비밀번호는 `.env` 수정만으로 바뀌지 않는다.
+
+중지는 `docker compose -f compose.yaml -f compose.dev.yaml stop`으로 한다. DB 볼륨은 유지된다. 호스트에서 직접 실행하려면 `uv sync --locked` 후 `.env`의 `DB_HOST` · `DB_PORT`를 접속할 DB에 맞추고 `uv run python manage.py runserver 127.0.0.1:8000`을 사용한다.
 ### AI 서버
 ```bash
 ```
@@ -47,15 +69,44 @@
 
 | 키 | 위치 | 필수 | 설명 |
 |----|------|:---:|------|
+| `DJANGO_SECRET_KEY` | 백엔드 | ✅ | 환경별로 별도 생성, 빈 값이면 시작 실패 |
+| `DJANGO_DEBUG` | 백엔드 | | 기본 False. 로컬 생성 스크립트는 True, 운영에서는 반드시 False |
+| `DB_HOST` · `DB_PORT` | 백엔드 | ✅ | PostgreSQL 주소와 포트 |
+| `DB_NAME` · `DB_USER` · `DB_PASSWORD` | 백엔드 | ✅ | DB 이름 · 접속 계정 · 비밀번호 |
+| `DB_SSLMODE` | 백엔드 | | 기본 prefer. 운영 DB의 TLS 구성에 맞춰 설정 |
+| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI 서버 주소 — 사설 IP (`http://<GPU 사설 IP>:<포트>`) 또는 AI 터널 주소 ([5-3](#5-3-ai-서버-gpu-서버)). 아직 호출 로직 없음 |
 | `AI_SERVER_KEY` | 백엔드 · AI 서버 | ✅ | 백엔드 → AI 서버 내부 호출 키 (헤더 `X-Internal-Key`). 두 서버에 같은 값 |
-| `AI_SERVER_URL` | 백엔드 | ✅ | AI 서버 사설 주소 (예: `http://<AI 서버 사설 IP>:<포트>`) |
 | `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | Vercel 프론트 주소 (쉼표 구분) |
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | `.trycloudflare.com,localhost,127.0.0.1` (터널 주소가 바뀌어도 되도록 앞에 점) |
+| `CSRF_TRUSTED_ORIGINS` | 백엔드 | | 신뢰하는 프론트 출처 (쉼표 구분) |
+| `WEB_CONCURRENCY` · `GUNICORN_THREADS` | 백엔드 | | 초기값 worker 2 · thread 4, 부하 측정 후 조정 |
+| `GUNICORN_BIND` | 백엔드 | | 직접 실행은 기본 로컬 주소, 컨테이너는 전체 인터페이스의 8000. 호스트 공개 범위는 Compose가 제한 |
+| `BACKEND_PORT` | Compose | | 백엔드 호스트 포트, 기본 8000 (127.0.0.1에만 공개) |
+| `POSTGRES_HOST_PORT` | 개발 Compose | | DB 호스트 포트, 기본 5433. 컨테이너 내부는 항상 5432 |
+| `HEALTHCHECK_HOST` | 백엔드 컨테이너 | | 상태 확인 요청의 Host, 기본 localhost. `ALLOWED_HOSTS`에 허용된 이름을 지정 |
 | `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 현재 터널 주소 (변수 이름은 프론트 도구에 맞춘다) |
+| | | | |
 
 ## 4. 로컬 실행 확인
 ```bash
+cd backend
+docker compose exec backend python manage.py check
+docker compose exec backend python manage.py migrate --check
+docker compose exec backend python manage.py test
+docker compose exec backend python manage.py spectacular --validate --fail-on-warn > /dev/null
+docker compose exec backend id
+curl --fail http://127.0.0.1:8000/api/health
+
+# 소스 lint · 포맷 · Python 패키지 빌드 (호스트 개발 도구)
+uv sync --locked
+uv run ruff check .
+uv run ruff format --check .
+uv build
 ```
+
+Swagger: `http://127.0.0.1:8000/api/docs/`. `docker compose ps`에서 백엔드 · DB가 healthy인지 확인한다. DB가 연결되면 상태 확인은 200, 연결되지 않으면 503이다. AI 서버 상태는 검사하지 않는다. 테스트는 실제 PostgreSQL에 임시 테스트 DB를 생성하므로 **개발용 계정에만** CREATEDB 권한이 필요하다. 게임 테이블은 아직 만들지 않았으며 현재 migration은 Django contenttypes 기본 테이블만 생성한다. 런타임 컨테이너에는 Ruff 등 개발 도구를 설치하지 않는다.
+
+`uv build`는 Python sdist · wheel을 `backend/dist/`에 생성한다. 정적 파일과 빌드 산출물은 Git에서 제외한다.
 
 ## 5. 배포
 
@@ -84,25 +135,29 @@ cd base-repo/backend
 - 비공개 저장소면 GitHub 토큰 · 배포 키가 필요하다. 토큰 값은 문서 · 코드에 쓰지 않는다
 - 배포 브랜치: <!-- TODO: develop 또는 main 중 어느 브랜치를 서버에 받을지 -->
 
-**② Python 환경 · 패키지 · 설정**
+**② 운영용 `.env` 준비**
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env          # 값은 직접 채운다 (3절)
-python manage.py migrate
-python manage.py check --deploy
+cp .env.example .env    # 값은 직접 채운다 (3절). DJANGO_DEBUG 는 False
 ```
 
-**③ Gunicorn 실행 (내부에서만)**
+**③ 백엔드 · DB 실행 (Docker Compose — 백엔드 담당 구성)**
 ```bash
-tmux new -s backend
-source .venv/bin/activate
-gunicorn <프로젝트>.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
-# Ctrl+B 누른 뒤 D 로 빠져나오면 계속 실행된다. 다시 보기: tmux attach -t backend
+docker compose up --build -d --wait
+# 호스트 Nginx 가 제공할 정적 파일을 이미지에서 복사한다
+mkdir -p staticfiles
+docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
+docker compose exec backend python manage.py check --deploy
+curl --fail http://127.0.0.1:8000/api/health
 ```
-- `--bind 127.0.0.1` 로 서버 안에서만 열고, 외부 공개는 Nginx · 터널이 맡는다
-- `--timeout 60` 은 채팅 대기 30초보다 길게 둔다 (7절)
+- 기본 `compose.yaml` 만 쓴다. Gunicorn WSGI 가 컨테이너에서 실행되고, Nginx · https(터널)는 호스트가 맡는다. PostgreSQL 도 같은 서버 컨테이너로 실행한다
+- Compose 는 호스트 `127.0.0.1:8000` 만 공개한다. Gunicorn 은 컨테이너 안 8000, 타임아웃 60초 (채팅 대기 30초보다 길게)
+- DB 가 healthy 가 되면 migration · 정적 파일 수집 후 서버를 시작한다. 여러 서버로 늘릴 때는 migration 을 별도 단계로 분리한다
+- `staticfiles/` 는 컨테이너 `static_files` 볼륨과 별개인 호스트 복사본이다. 이미지를 바꾸면 다시 복사한다
+- `.dockerignore` 는 `.env` · 가상환경 · 로컬 DB · 수집 결과 · Unity 바이너리를 이미지에서 뺀다. **`docs/game/` 은 이미지에 포함되므로 작가 문서가 바뀌면 이미지를 다시 빌드한다**
+- WSGI 는 AI 응답을 기다리는 동안 thread 를 점유한다. 동시 요청량을 측정해 `WEB_CONCURRENCY` · `GUNICORN_THREADS` 를 조정한다
+- 운영 DB 계정 · 백업은 배포 전에 확정한다. named volume 은 영구 저장 위치일 뿐 백업이 아니다
+- 게임 API 의 30초 대기 제한과 HTTPX 타임아웃 · 재시도 구현은 후속 작업이다
+- 로컬 검증은 실제 운영 배포 검증을 대신하지 않는다
 
 **④ 3D 빌드 파일 올리기** — [5-2](#5-2-3d-빌드-파일-저장--관리--전달)
 
@@ -126,6 +181,10 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto https;   # Cloudflare 가 https 로 받아 넘긴다
         proxy_read_timeout 60s;
+    }
+
+    location /static/ {
+        alias /home/ncloud/base-repo/backend/staticfiles/;  # 5-1 ③ 에서 복사한 위치
     }
 
     # Unity WebGL 빌드 (현재 테스트 빌드는 비압축)
@@ -173,9 +232,10 @@ cloudflared tunnel --url http://127.0.0.1:80
 #### 코드 업데이트할 때
 ```bash
 cd ~/base-repo && git pull && cd backend
-source .venv/bin/activate && pip install -r requirements.txt && python manage.py migrate
-tmux attach -t backend    # Ctrl+C 로 Gunicorn 종료 후 ③ 명령 다시 실행
+docker compose up --build -d --wait
+docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 ```
+- 작가 문서(`docs/game/`)만 바뀌어도 이미지를 다시 빌드한다
 - 터널은 끄지 않는다. 끄면 주소가 바뀐다
 
 #### CORS — Django 가 담당
@@ -213,7 +273,7 @@ curl -m 5 http://<GPU 서버 사설 IP>:<AI 포트>/
 ```
 | 결과 | 진행 |
 |------|------|
-| 응답이 온다 | **터널을 쓰지 않는다.** `AI_SERVER_URL=http://<GPU 사설 IP>:<포트>` 로 사설망 호출. AI 서버는 외부에 공개되지 않는다 (권장) |
+| 응답이 온다 | **터널을 쓰지 않는다.** `AI_API_BASE_URL=http://<GPU 사설 IP>:<포트>` 로 사설망 호출. AI 서버는 외부에 공개되지 않는다 (권장) |
 | 시간 초과 · 연결 거부 | 서버 사이에도 ACG 가 막고 있는 것이다. 아래 터널로 연결한다 |
 
 #### 사설망이 막혀 있을 때만: GPU 서버에 터널
@@ -222,11 +282,11 @@ curl -m 5 http://<GPU 서버 사설 IP>:<AI 포트>/
 curl -I https://www.cloudflare.com          # HTTP/2 200 이면 가능
 tmux new -s ai-tunnel
 cloudflared tunnel --url http://127.0.0.1:<AI 포트>
-# 출력된 https://<랜덤>.trycloudflare.com 을 백엔드 .env 의 AI_SERVER_URL 에 넣고 Gunicorn 재시작
+# 출력된 https://<랜덤>.trycloudflare.com 을 백엔드 .env 의 AI_API_BASE_URL 에 넣고 백엔드 재시작 (`docker compose up -d`)
 ```
 - AI 앱은 `127.0.0.1` 에만 열고 외부 공개는 터널로만 한다
 - 터널 주소는 인터넷에 공개되므로 **`X-Internal-Key` 검사가 반드시 켜져 있어야 한다.** 주소는 프론트 · 문서 · 채팅에 공유하지 않는다
-- 터널 주소가 바뀌면 백엔드 `.env` 의 `AI_SERVER_URL` 만 바꾸고 Gunicorn 을 재시작한다 (프론트는 바꿀 것 없음)
+- 터널 주소가 바뀌면 백엔드 `.env` 의 `AI_API_BASE_URL` 만 바꾸고 백엔드를 재시작한다 (`docker compose up -d`) (프론트는 바꿀 것 없음)
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
@@ -244,7 +304,7 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 4. 백엔드 · Nginx 설정은 바꾸지 않는다 (`ALLOWED_HOSTS` 가 `.trycloudflare.com` 전체를 허용하고, 빌드 주소는 요청 주소 기준으로 만든다)
 
 ### 5-5. 배포 순서
-1. AI 서버 실행 → 2. 백엔드 세팅 (5-1 ①~⑤) → 3. 빌드 파일 업로드 · 카탈로그 반영 (5-2) → 4. 터널 실행 (5-1 ⑥) → 5. Vercel 배포 (5-4) → 6. Vercel 주소를 백엔드 CORS · Nginx frame-ancestors 에 등록
+1. AI 서버 실행 → 2. 백엔드 세팅 (5-1 ①~⑤, Docker) → 3. 빌드 파일 업로드 · 카탈로그 반영 (5-2) → 4. 터널 실행 (5-1 ⑥) → 5. Vercel 배포 (5-4) → 6. Vercel 주소를 백엔드 CORS · Nginx frame-ancestors 에 등록
 
 ## 6. 배포 후 확인
 - [ ] VPN 을 끈 휴대폰(LTE)에서 `https://<터널 주소>/api/v1/...` 가 응답한다
@@ -258,7 +318,7 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 | 증상 | 원인 | 해결 |
 |------|------|------|
 | 프론트에서 갑자기 모든 API 가 실패 | 터널 주소가 바뀜 (cloudflared 재실행 · 서버 재시작) | [터널 주소가 바뀌었을 때](#터널-주소가-바뀌었을-때) |
-| SSH 를 끊었더니 서비스가 멈춤 | tmux 밖에서 실행함 | Gunicorn · cloudflared 를 tmux 안에서 실행 |
+| SSH 를 끊었더니 터널이 멈춤 | tmux 밖에서 실행함 | cloudflared 를 tmux 안에서 실행 (백엔드는 Docker 가 계속 실행) |
 | 채팅이 30초 부근에서 `TIMEOUT` 대신 502 로 끊김 | Gunicorn 기본 worker 타임아웃(30초)이 채팅 대기 시간(30초)과 같음 | Gunicorn `--timeout 60`, HTTPX 타임아웃은 그보다 짧게 |
 | 여러 명이 동시에 채팅하면 응답이 밀림 | WSGI worker 하나가 AI 응답을 기다리는 동안 다른 요청을 못 받음 | worker 수를 늘리거나 `--threads` 사용 |
 | 3D 빌드가 브라우저에서 안 열림 | `.wasm` Content-Type 누락, 비압축 빌드에 `Content-Encoding` 을 붙임, `frame-ancestors` 에 Vercel 주소 누락 | 5-1 ⑤ Nginx 설정 확인 |
@@ -266,5 +326,5 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 | Django 가 400 Bad Request | `ALLOWED_HOSTS` 에 터널 주소 없음 | `.trycloudflare.com` 추가 |
 
 ## 8. 민감정보 관리 체크
-- [ ] `.env` 가 `.gitignore` 에 있다
+- [x] `.env` 가 `.gitignore` 에 있다
 - [ ] 코드 · 문서에 키 값 · VPN 계정 · GitHub 토큰이 없다

@@ -46,7 +46,7 @@
 ### 환경변수
 | 키 | 설명 |
 |----|------|
-| `AI_SERVER_KEY` · `AI_SERVER_URL` | 백엔드 → AI 서버 호출 |
+| `AI_SERVER_KEY` · `AI_API_BASE_URL` | 백엔드 → AI 서버 호출 |
 | `CORS_ALLOWED_ORIGINS` · `ALLOWED_HOSTS` | 백엔드 접근 허용 |
 | `VITE_API_BASE_URL` | 프론트의 백엔드 주소 (현재 터널 주소) |
 

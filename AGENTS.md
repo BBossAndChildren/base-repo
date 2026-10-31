@@ -5,6 +5,8 @@
 이 저장소에서 코드를 추가·수정·머지하는 AI 에이전트는 **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) 의 규칙을 반드시 따른다.**
 작업을 시작하기 전에 그 문서를 먼저 읽는다. 사용자가 규칙과 다르게 요청하면, 어떤 규칙과 다른지 알려 주고 확인을 받은 뒤에만 진행한다.
 
+백엔드 작업은 **[docs/development/backend.md](docs/development/backend.md)의 기능별 구현·테스트 순서도 반드시 따른다.** API 명세에서 기능을 먼저 목록화하고, 기능 하나를 구현할 때마다 해당 테스트를 작성·실행한다. 통과 결과를 기록한 뒤에만 다음 기능으로 넘어간다. 테스트 실패·미실행·외부 연동 미검증을 완료로 표시하지 않는다.
+
 문서 위치는 [docs/README.md](docs/README.md) 를 따른다 (개발 설계 = `docs/development/`, 게임 콘텐츠 = `docs/game/`).
 개발 설계 문서를 만들거나 채울 때는 **[docs/development/FILL-GUIDE.md](docs/development/FILL-GUIDE.md) 를 먼저 읽고 따른다.** 문서 구성은 아이디어에 맞게 추가·삭제·변경할 수 있으며, 바꾸기 전에 사용자에게 제안하고 확인받는다.
 

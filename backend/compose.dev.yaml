@@ -1,0 +1,21 @@
+services:
+  backend:
+    environment:
+      DJANGO_DEBUG: "True"
+    command:
+      - sh
+      - scripts/start_container.sh
+      - python
+      - manage.py
+      - runserver
+      - 0.0.0.0:8000
+    volumes:
+      - ./apps:/app/backend/apps
+      - ./config:/app/backend/config:ro
+      - ./scripts:/app/backend/scripts:ro
+      - ./manage.py:/app/backend/manage.py:ro
+      - ../docs/game:/app/docs/game:ro
+
+  db:
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
