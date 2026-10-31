@@ -1,6 +1,6 @@
 # 어른왕자 웹 프론트
 
-React + Vite + TypeScript. 설계 기준은 [docs/development/05-ui-ux.md](../docs/development/05-ui-ux.md), 작업 규칙은 [AGENTS.md](AGENTS.md).
+React + Vite + TypeScript (Node.js 20.11 이상). 설계 기준은 [docs/development/05-ui-ux.md](../docs/development/05-ui-ux.md), 작업 규칙은 [AGENTS.md](AGENTS.md).
 
 ## 실행
 
@@ -82,6 +82,8 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 | `src/design/tokens/` | 디자인 토큰 원본 · 생성 파일 |
 | `src/styles/` | 전역 역할 변수 · 화면별 CSS |
 | `src/types/` | API · 도메인 타입 |
+| `scripts/` | 디자인 토큰 생성 (`npm run tokens`) |
+| `public/intro-assets/` | 로컬 개발용 인트로 에셋 (Git 제외) |
 
 ## 배포 (Vercel)
 
@@ -100,13 +102,18 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 | 지금 (백엔드 게임 API 없음) | `true` | 비워 둔다 (쓰지 않음) |
 | 실제 백엔드 연결 후 | `false` | 현재 터널 주소 (`https://….trycloudflare.com`, 끝에 `/` 없이). 터널 주소가 바뀌면 바꾸고 **재배포** |
 
+`VITE_INTRO_ASSET_BASE` (인트로 에셋): `VITE_API_BASE_URL` 이 있으면 비워 둔다 (그 주소 + `/intro-assets/`). **mock 배포처럼 `VITE_API_BASE_URL` 이 비어 있으면 `https://<터널 주소>/intro-assets/` 를 넣어야** 인트로가 뜬다. 서버 배치는 백엔드 BE15 (#67, docs/development/06-deployment.md 5-2-1)
+
 환경변수는 빌드할 때 들어가므로, 바꾼 뒤에는 반드시 Redeploy 한다.
 
 **mock 배포의 한계**
-- 플레이 기록은 브라우저 메모리에만 있어 **새로고침하면 진행 중 플레이가 사라진다** ("인생을 찾을 수 없어요" 안내 후 새로 시작)
+- 플레이 기록은 브라우저 메모리에만 있어 **새로고침하면 진행 중 플레이가 사라진다** (게스트는 기억하므로 새로 시작은 바로 된다) ("인생을 찾을 수 없어요" 안내 후 새로 시작)
+- 인트로 에셋(모델 238MB)은 배포 사이트에 없어, 첫 방문 때 `/intro` 로 갔다가 "인트로를 불러오지 못해 시작 화면으로 이동해요." 안내 후 시작 화면으로 간다 (BE15 배치 + `VITE_INTRO_ASSET_BASE` 설정 전까지)
 - 3D 체험 빌드는 배포 사이트에 없어, [체험 시작] 을 누르면 "3D 체험을 불러오지 못했어요" 안내 후 텍스트로 이어간다 (실제 3D 는 백엔드 서버의 `/builds/` 로 제공 — docs/development/06-deployment.md 5-2)
 
 **배포 후 확인**
+- [ ] 처음 방문(사이트 데이터 삭제 후) → `/intro`. 에셋이 있으면 71/71 → [인트로 재생] → 24초 뒤 시작 화면, 없으면 안내 토스트 후 시작 화면
+- [ ] 글꼴이 Pretendard, 화면이 어두운 청록 · 민트 디자인
 - [ ] 시작 화면 → 필수 4개 입력 → [인생 시작하기] → 게임 화면
 - [ ] 채팅 · 힌트 · 나이 변화(세 턴마다) · "오류" 입력 시 토스트와 입력 유지
 - [ ] "체험" 입력 → 3D 안내 카드 → [체험 시작] → 불러오지 못했어요 토스트 → 카드 접힘 (mock 배포 기준)
