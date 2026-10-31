@@ -303,8 +303,12 @@ class TurnResponseSerializer(serializers.Serializer):
 
 
 class HeartbeatInputSerializer(StrictSerializer):
-    sessionId = serializers.UUIDField(help_text="게임 시작 응답의 sessionId")
-    experienceId = serializers.CharField(max_length=200, help_text="이번 3D 체험의 ID")
+    sessionId = serializers.UUIDField(
+        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+    )
+    experienceId = serializers.CharField(
+        max_length=200, help_text="필수. 프론트/Unity가 이번 체험 시작 시 사용한 실제 experienceId"
+    )
 
 
 class HeartbeatDataSerializer(serializers.Serializer):
@@ -320,10 +324,15 @@ class HeartbeatResponseSerializer(serializers.Serializer):
 
 
 class PendingInputSerializer(StrictSerializer):
-    sessionId = serializers.UUIDField(help_text="게임 시작 응답의 sessionId")
+    sessionId = serializers.UUIDField(
+        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+    )
     experienceId = serializers.CharField(max_length=200, help_text="종료 응답을 받지 못한 체험 ID")
     roomId = serializers.CharField(max_length=200, help_text="체험의 Unity 방 ID")
-    requestId = serializers.CharField(max_length=200, help_text="원래 종료 호출에 사용한 requestId")
+    requestId = serializers.CharField(
+        max_length=200,
+        help_text="필수. 응답이 없었던 Unity 종료 호출의 원래 requestId. 새 ID를 생성하지 않음",
+    )
     reason = serializers.ChoiceField(
         choices=["END_RESPONSE_TIMEOUT"], help_text="5초 동안 종료 응답을 받지 못함"
     )
@@ -345,8 +354,12 @@ class EventInputSerializer(serializers.Serializer):
         required=False, help_text="중복 제거용 이벤트 ID. 제어 오류에는 없을 수 있음"
     )
     sequence = serializers.IntegerField(required=False, help_text="같은 실행 내 이벤트 순서")
-    sessionId = serializers.CharField(help_text="게임 시작 응답의 sessionId")
-    experienceId = serializers.CharField(help_text="이번 3D 체험의 ID")
+    sessionId = serializers.CharField(
+        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지"
+    )
+    experienceId = serializers.CharField(
+        help_text="필수. 프론트/Unity가 이번 체험 시작 시 사용한 실제 experienceId"
+    )
     buildId = serializers.CharField(required=False, help_text="Unity 빌드 ID")
     roomId = serializers.CharField(help_text="Unity 방 ID")
     scenarioId = serializers.CharField(required=False, help_text="Unity 시나리오 ID")
@@ -372,21 +385,45 @@ class EventAckResponseSerializer(serializers.Serializer):
 
 
 class ReconcileInputSerializer(StrictSerializer):
-    schemaVersion = serializers.ChoiceField(choices=[1], help_text="Unity 정산 계약 버전")
-    protocol = serializers.ChoiceField(choices=["career-experience-resolution"])
-    action = serializers.ChoiceField(choices=["reconcile_experience"])
-    reconcileRequestId = serializers.CharField(max_length=200, help_text="재전송 시 유지할 요청 ID")
-    sessionId = serializers.CharField(max_length=200, help_text="게임 시작 응답의 sessionId")
-    experienceId = serializers.CharField(max_length=200, help_text="정산 대상 이전 체험 ID")
-    roomId = serializers.CharField(max_length=200, help_text="이전 체험 방 ID")
-    trigger = serializers.CharField(
-        max_length=200, help_text="정산 사유, 새 체험 시작은 NEW_PLAY_START"
+    schemaVersion = serializers.ChoiceField(
+        choices=[1], help_text="필수 고정값 1. Unity 정산 봉투의 계약 버전"
     )
-    newExperienceId = serializers.CharField(max_length=200, help_text="새로 시작할 체험 ID")
+    protocol = serializers.ChoiceField(
+        choices=["career-experience-resolution"],
+        help_text="필수 고정값 career-experience-resolution. 실시간 이벤트의 career-experience와 다름",
+    )
+    action = serializers.ChoiceField(
+        choices=["reconcile_experience"],
+        help_text="필수 고정값 reconcile_experience. 이전 체험의 종료 미수신 정산 요청",
+    )
+    reconcileRequestId = serializers.CharField(
+        max_length=200,
+        help_text="필수. 프론트가 새 정산에 생성한 요청 ID. 같은 정산 재전송에는 본문과 함께 그대로 유지",
+    )
+    sessionId = serializers.CharField(
+        max_length=200,
+        help_text="필수. POST /plays 또는 GET /plays/{playId} 응답의 실제 sessionId. 플레이 전체에서 유지",
+    )
+    experienceId = serializers.CharField(
+        max_length=200,
+        help_text="필수. 종료 응답을 못 받은 이전 체험의 experienceId. 프론트/Unity에서 사용한 실제 ID",
+    )
+    roomId = serializers.CharField(
+        max_length=200,
+        help_text="필수. 이전 체험의 roomId. 추천 응답/Unity 이벤트에서 받은 PAN-002 같은 정확한 값",
+    )
+    trigger = serializers.CharField(
+        max_length=200,
+        help_text="필수. 새 체험 시작 직전 정산은 NEW_PLAY_START. 단순 재접속으로 보내지 않음",
+    )
+    newExperienceId = serializers.CharField(
+        max_length=200,
+        help_text="필수. 새 체험 시작용으로 프론트가 준비한 ID. 정산 대상 experienceId와 달라야 함",
+    )
 
 
 class ResolutionResponseSerializer(serializers.Serializer):
-    schemaVersion = serializers.IntegerField(help_text="Unity 정산 계약 버전")
+    schemaVersion = serializers.IntegerField(help_text="필수 고정값 1. Unity 정산 봉투의 계약 버전")
     protocol = serializers.CharField()
     type = serializers.CharField()
     producer = serializers.ChoiceField(choices=["backend"])

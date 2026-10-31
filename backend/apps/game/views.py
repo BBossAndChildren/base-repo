@@ -16,6 +16,13 @@ from .experiences import heartbeat, mark_pending
 from .models import Message, Play, Player
 from .pause import set_paused
 from .reconciliation import reconcile
+from .request_examples import (
+    EVENT_EXAMPLES,
+    HEARTBEAT_EXAMPLES,
+    PAUSE_EXAMPLES,
+    PENDING_EXAMPLES,
+    RECONCILE_EXAMPLES,
+)
 from .serializers import (
     EventAckResponseSerializer,
     EventInputSerializer,
@@ -129,6 +136,7 @@ class ResumeView(PlayerRequiredView):
             "paused를 저장하고 현재 확정 state를 반환합니다. 정지 중 새 턴을 차단합니다. "
             "진행 중 턴은 상태 버전으로 충돌을 확인합니다."
         ),
+        examples=PAUSE_EXAMPLES,
         request=PauseInputSerializer,
         responses=api_responses(PauseResponseSerializer, 400, 401, 404, 409),
     )
@@ -257,6 +265,7 @@ class HeartbeatView(PlayerRequiredView):
             "Unity 어댑터가 30초마다 호출합니다. lease를 120초 갱신합니다. "
             "응답은 {code,data}로 감싸지 않습니다."
         ),
+        examples=HEARTBEAT_EXAMPLES,
         request=HeartbeatInputSerializer,
         responses=api_responses(HeartbeatResponseSerializer, 400, 401, 404, 409),
     )
@@ -278,6 +287,7 @@ class PendingView(PlayerRequiredView):
             "종료 응답이 5초 동안 없으면 pending_reconciliation으로 기록합니다. "
             "체험 종료를 확정하지 않으며 응답은 감싸지 않습니다."
         ),
+        examples=PENDING_EXAMPLES,
         request=PendingInputSerializer,
         responses=api_responses(PendingResponseSerializer, 400, 401, 404, 409),
     )
@@ -296,6 +306,7 @@ class EventView(PlayerRequiredView):
             "Unity 이벤트 객체를 그대로 받습니다. DB 저장 후 ACK를 반환하고 "
             "(sessionId,eventId) 중복을 제거합니다. 응답은 감싸지 않습니다."
         ),
+        examples=EVENT_EXAMPLES,
         request=EventInputSerializer,
         responses=api_responses(EventAckResponseSerializer, 400, 401, 404, 409),
     )
@@ -311,8 +322,16 @@ class ReconcileView(PlayerRequiredView):
         summary="종료 미수신 체험 정산",
         description=(
             "새 체험 시작 전에 Unity v003 정산 요청 원본을 받습니다. "
-            "Unity experience.reconciled 객체를 감싸지 않고 반환합니다."
+            "Unity experience.reconciled 객체를 감싸지 않고 반환합니다.\n\n"
+            "**호출 순서**: 게스트 발급 → 게임 시작 → 3D 체험 → 이전 종료 응답 미수신 → 새 체험 전 정산.\n\n"
+            "- **고정값**: schemaVersion=1, protocol=career-experience-resolution, action=reconcile_experience.\n"
+            "- **기존 체험**: sessionId는 시작/재개 응답 값, experienceId·roomId는 정산할 이전 체험 값.\n"
+            "- **새 체험**: newExperienceId는 프론트가 준비한 새 ID. 이전 ID와 달라야 합니다.\n"
+            "- **사유**: 새 체험 직전은 trigger=NEW_PLAY_START. 단순 새로고침에는 호출하지 않습니다.\n"
+            "- **재전송**: 같은 reconcileRequestId와 같은 JSON 본문 유지. 다른 본문으로 재사용하면 409.\n\n"
+            "아래 Examples에서 실제 형식의 JSON을 선택한 뒤 가상 ID를 실제 값으로 교체하세요."
         ),
+        examples=RECONCILE_EXAMPLES,
         request=ReconcileInputSerializer,
         responses=api_responses(ResolutionResponseSerializer, 400, 401, 404, 409),
     )
