@@ -19,9 +19,9 @@
 | 빌드 카탈로그 · 플레이어 기록 형식 | 카탈로그 JSON 항목과 플레이어 기록 항목 | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공) · [10 5](10-prompt-assembly.md#5-플레이어-기록-항목) |
 | 백엔드 기술 스택 · DB | Python · Django + DRF · HTTPX · **PostgreSQL** · Gunicorn, 네이버 클라우드 배포 (백엔드 담당 결정) | [02 1](02-architecture.md#1-기술-스택) · [06](06-deployment.md) |
 | 게임 시작 입력 항목 | 필수 4개 + 선택 7개 (시작 때 랜덤 2개, 나머지는 게임 중 대화로 하나씩). 건강 · 질병은 받지도 유도하지도 않음, 가족관계 · 반려동물은 받지 않음 | [00 게임 시작 입력](../00-idea.md#게임-시작-입력-회의-결정) · [03 1-2](03-api.md#1-2-게임-시작) · [10 3](10-prompt-assembly.md#3-ai-응답-처리) |
-| 3D 빌드 파일 위치 | 백엔드 서버 폴더(`/srv/builds/`) + Nginx 가 내려줌. Git 저장소에는 넣지 않음 | [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달) |
+| 3D 빌드 파일 위치 | 서버(GPU 서버) 폴더(`/srv/builds/`) + 게이트웨이가 내려줌. Git 저장소에는 넣지 않음 | [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달) |
 | 웹 프론트 배포 | Vercel (SSL 자동) | [06 5-4](06-deployment.md#5-4-웹-프론트--vercel) |
-| 백엔드 외부 공개 | 제공 서버는 사설 IP · VPN 전용이라 도메인 없이 **Cloudflare Tunnel** 로 공개 (SSL 은 Cloudflare). 서버 바깥 연결 확인 완료. AI 서버는 비공개 | [06 0절](06-deployment.md#0-배포-환경-한눈에) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
+| 백엔드 외부 공개 | 제공 서버는 사설 IP · VPN 전용이라 도메인 없이 **Cloudflare Tunnel** 로 공개 (SSL 은 Cloudflare). 서버 바깥 연결 확인 완료(이전 일반 서버 기준). AI 는 비공개. GPU 단일 서버로 바꾼 뒤 터널은 GPU 서버 게이트웨이에 다시 연결해야 한다 (미검증) | [06 0절](06-deployment.md#0-배포-환경-한눈에) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
 | CORS 담당 | 백엔드(Django · django-cors-headers)가 붙이고 프론트는 설정하지 않음. 빌드 iframe 은 `frame-ancestors` 로 허용 | [06 CORS](06-deployment.md#cors--django-가-담당) · [05 4](05-ui-ux.md#4-api-호출-공통-모듈) |
 | 실제 방 · 시나리오 목록 | `PAN-NNN` 방 ID, 71개 방 · 555개 조합 (buildId `career-suite-integration-v005`). 체험별 `jobs` · `description` 포함 | [docs/unity/USAGE.md](../unity/USAGE.md) |
 | 실시간 이벤트 형식 | Unity 명세 `docs/unity/contracts/realtime-v002/realtime-contract.json` (실시간 전달 필수) | [10 4-2](10-prompt-assembly.md#4-2-체험-결과값-형식-unity--프론트) |
@@ -50,6 +50,7 @@
 | 재개 응답의 `sessionId` | 플레이 재개(1-7) 응답에도 `sessionId` 를 준다 (다른 기기에서 이어 할 때 3D 연동용) | [03 1-7](03-api.md#1-7-플레이-재개) |
 | 메시지 `role` | 메시지에 `role`(user · npc · narrator) 추가. 재개 때 내 말과 NPC 말을 구분 | [03 메시지 형식](03-api.md#메시지-형식) |
 | Unity 연결 코드 사용 | 빌드의 `frontend/client.js` 를 실행 시 불러옴, 빌드 서버 `/builds/` CORS 허용 | [05 4-1](05-ui-ux.md#4-1-3d-체험-연결-unity) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) · [12 결정 23](12-decisions.md) |
+| 서버 배치 | **GPU 서버 한 대**에 게이트웨이 · Django · PostgreSQL · AI API · 터널 (기존 일반 서버 + GPU 서버 두 대 구성 대체). 이식 · 연동 미검증 | [02](02-architecture.md#1-기술-스택) · [06 0절](06-deployment.md#0-배포-환경-한눈에) · [12 결정 27](12-decisions.md) |
 | 디자인 | 인트로 디자인 토큰을 앱 전체에 적용, 기존 그림책 시안 폐기, Pretendard | [docs/design/](../design/README.md) · [05 1절](05-ui-ux.md#1-디자인-시스템) · [12 결정 26](12-decisions.md) |
 | 인트로 (FE11) | Unity 담당 인트로를 원본 그대로 흡수, 첫 방문만 + 건너뛰기, 에셋은 서버 `/intro-assets/` | [05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택) · [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋) · [12 결정 25](12-decisions.md) |
 
@@ -92,5 +93,5 @@
 |---|------|----|
 | F11 | **Vercel 프로젝트가 두 개다** — `base-repo` (https://base-repo-zeta.vercel.app, 2026-11-01 배포 주소로 사용) · `base-repo-ck83` (이전 주소). 하나만 남길지, 둘 다 쓸지? 둘 다 쓰면 CORS · Nginx 허용 출처를 둘 다 넣어야 한다 ([06 5-4](06-deployment.md#5-4-웹-프론트--vercel)) | 결정 전까지 **둘 다 허용**한다 (#86: 게이트웨이 `map $http_origin` · Django `CORS_ALLOWED_ORIGINS` 에 두 주소). 하나로 정하면 나머지를 뺀다 |
 | F10 | 최신 상태 계약 구현 | 기획은 `06-life-career-design.md`, API·DB 반영 설계는 03·04 참조. 원화 자금·빚·건강·스트레스·주거·성장 및 기억/턴 원자성 구현은 후속 작업. 현재 프론트의 기존 상태 표시와 구분 |
-| F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | |
-| F7 | 백엔드 저장소 주소 · AI 서버 사설 IP · 포트 · OS (06 의 TODO) | |
+| F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | **해당 없음** — GPU 단일 서버로 Django 와 AI API 가 같은 서버 (결정 27, 2026-11-01) |
+| F7 | GPU 서버 접속 방법 · OS · Docker 가능 여부 · Django 와 AI API 내부 포트 · 터널 도메인 (06 의 TODO) | GPU 단일 서버로 바뀌어 질문을 갱신함. 이식 때 확정 |

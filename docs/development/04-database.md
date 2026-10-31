@@ -121,7 +121,7 @@ python manage.py dbshell
 ```
 
 ## 운영 주의
-- PostgreSQL 은 백엔드 서버에 함께 둔다 <!-- TODO: 같은 서버 설치 여부 · 백업 방법 (백엔드 담당) -->
+- PostgreSQL 은 GPU 서버에 Django · AI API 와 함께 둔다 ([12 결정 27](12-decisions.md)). 설치 · 기존 데이터 이전 여부 · 백업 방법은 미검증 <!-- TODO: 백업 · 복구 방법 (백엔드 담당) -->
 - 스키마 변경은 Django Migrations 로만 한다
 - `experience_events` 는 계속 늘어난다. 시연 기간에는 지우지 않는다
 

@@ -24,7 +24,7 @@
 | `builds/production-ai-build-catalog.json` | 체험별 `jobs` · `description` (AI 선택 근거) | | ✅ (후보 20개로 줄임) | ✅ (백엔드가 보낸 후보로 선택) |
 | `builds/test-*.json` | 테스트 빌드용 같은 목록 | 테스트 | 테스트 | |
 | `ids/career-experience-descriptions-v001.json` | 체험 설명 전체 원본 | | 참고 | |
-| `webgl/` | 테스트용 실행 빌드. **Git 에 올리지 않는다** (`.gitignore`). 최종 빌드는 백엔드 서버 `/srv/builds/` 에서 제공 | 로컬 테스트 | 배포 참고 | |
+| `webgl/` | 테스트용 실행 빌드. **Git 에 올리지 않는다** (`.gitignore`). 최종 빌드는 GPU 서버 게이트웨이 `/srv/builds/` 에서 제공 | 로컬 테스트 | 배포 참고 | |
 
 - AI 서버는 이 폴더의 파일을 직접 읽지 않는다. 백엔드가 카탈로그에서 고른 후보를 요청에 담아 보낸다
 - `buildId` + `roomId` + `scenarioId` + `scenarioVersion` 네 값은 대소문자까지 정확해야 한다. `roomId` 는 `PAN-NNN` 형식
@@ -35,7 +35,7 @@
 | 전달물 | 어디에 두었나 | 프론트 | 백엔드 |
 |--------|---------------|:---:|:---:|
 | 인트로 `career-intro-react-v001` 소스 (React + Three.js) | `frontend/src/pages/intro/` 로 TypeScript 로 옮김 (원본 디렉터리는 흡수 후 삭제, [12 결정 25](../development/12-decisions.md)) | ✅ (FE11) | |
-| 인트로 `intro.json` + 3D 모델 71개 (약 238MB) | **Git 제외.** 백엔드 서버 `/srv/intro-assets/` 에만 둔다 ([06 5-2-1](../development/06-deployment.md#5-2-1-인트로-에셋)) | ✅ (불러오기) | ✅ (BE15 제공) |
+| 인트로 `intro.json` + 3D 모델 71개 (약 238MB) | **Git 제외.** GPU 서버 `/srv/intro-assets/` 에만 둔다 ([06 5-2-1](../development/06-deployment.md#5-2-1-인트로-에셋)) | ✅ (불러오기) | ✅ (BE15 제공) |
 | 디자인 토큰 `career-intro-component-tokens-v001` | 토큰만 [docs/design/tokens.json](../design/tokens.json), 코드 사본 `frontend/src/design/tokens/` ([12 결정 26](../development/12-decisions.md)) | ✅ (전체 디자인) | |
 
 ## 정리 기록

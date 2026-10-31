@@ -18,17 +18,18 @@
 |------|------|
 | 웹 프론트 | React · Vite · TypeScript · Three.js(인트로), Vercel 배포 (https://base-repo-zeta.vercel.app/) |
 | 백엔드 | Python · Django + DRF · PostgreSQL · HTTPX · Gunicorn · Nginx |
-| AI 서버 (별도 저장소) | 오픈소스 Qwen + 직업 데이터 RAG |
+| AI 서버 (별도 저장소) | 오픈소스 Qwen + 직업 데이터 RAG (Django 와 같은 GPU 서버에서 실행) |
 | 3D 체험 | Unity WebGL (Unity 담당 전달, [docs/unity/USAGE.md](docs/unity/USAGE.md)) |
-| 배포 | 네이버 클라우드 서버 + Cloudflare Tunnel, Vercel |
+| 배포 | **GPU 서버 한 대**(Django · PostgreSQL · AI API · 게이트웨이) + Cloudflare Tunnel, Vercel |
 
 ## 3. 시스템 구조
 ```
 브라우저 ─▶ Vercel (프론트)
-   └─ https ─▶ Cloudflare Tunnel ─▶ Nginx ─┬─ /api/    → Django ──사설망──▶ AI 서버 (Qwen + RAG)
-                                           ├─ /builds/ → Unity WebGL 빌드
-                                           └─ /intro-assets/ → 인트로 3D 모델
+   └─ https ─▶ Cloudflare Tunnel ─▶ GPU 서버 게이트웨이 ─┬─ /api/    → Django ──내부 호출──▶ Qwen AI API (같은 서버)
+                                                        ├─ /builds/ → Unity WebGL 빌드
+                                                        └─ /intro-assets/ → 인트로 3D 모델
 ```
+GPU 서버 한 대 운영 (2026-11-01 합의, [12 결정 27](docs/development/12-decisions.md)). 이식 · 연동은 아직 검증 전이다.
 상세: [02-architecture.md](docs/development/02-architecture.md) · [06-deployment.md](docs/development/06-deployment.md)
 
 ## 4. API 명세 (요약)
