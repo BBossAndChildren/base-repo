@@ -9,7 +9,8 @@ docs/
 ├─ 00-idea.md         ← 아이디어 원문. 모든 문서의 출발점
 ├─ development/       ← 개발 설계 문서 (어떻게 만드는가)
 ├─ game/              ← 게임 콘텐츠 문서 (무엇을 플레이하는가) — 시나리오 작가 담당
-└─ unity/             ← Unity 3D 체험 연동 자료 (Unity 담당 전달물). 누가 무엇을 쓰는지는 unity/USAGE.md
+├─ unity/             ← Unity 3D 체험 연동 자료 (Unity 담당 전달물). 누가 무엇을 쓰는지는 unity/USAGE.md
+└─ design/            ← 디자인 토큰 (Unity 담당 전달물, 앱 전체 디자인의 원본). design/README.md
 
 저장소 최상위: frontend/ (웹 프론트) · backend/ (Django) · docs/ (이 폴더). AI 서버는 별도 저장소.
 ```
@@ -18,6 +19,7 @@ docs/
 |------|-------------|------------------|--------|
 | `development/` | 기능 목록, 사용자 흐름, 구조, API, DB, 화면 설계, 배포, 검증, 결정 기록 | 게임 스토리·규칙·대사 | [FILL-GUIDE.md](development/FILL-GUIDE.md) |
 | `game/` | 세계관, 게임 시나리오, 게임 규칙·밸런스, AI 프롬프트 설계와 버전 기록 | API·DB·배포 같은 구현 설계 | [README.md](game/README.md) |
+| `design/` | 디자인 토큰 전달물 · 앱 역할 변수 연결표 · 명도 대비 | 화면 구성 · 문구 (→ `development/05-ui-ux.md`) | [README.md](design/README.md) |
 
 ## 헷갈리기 쉬운 것
 
