@@ -1,3 +1,16 @@
 .DS_Store
 # Unity 테스트용 WebGL 빌드 (수십 MB, 백엔드에서 전달 예정) — 저장소에 올리지 않는다
 docs/unity/webgl/
+
+# Python / local configuration
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+.ruff_cache/
+*.egg-info/
+backend/.local/
+backend/staticfiles/
+backend/dist/

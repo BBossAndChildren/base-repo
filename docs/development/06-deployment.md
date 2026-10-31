@@ -6,12 +6,29 @@
 ## 1. 요구 환경
 | 도구 | 버전 | 고정 방법 |
 |------|------|-----------|
-| | | <!-- 예: .nvmrc --> |
+| Python | 3.12.13 | `backend/.python-version` |
+| uv | 프로젝트 의존성 설치 도구 | `uv sync --locked` + `backend/uv.lock` |
+| PostgreSQL | 15 계열 | 직접 설치 또는 `backend/compose.yaml` |
+| Docker Compose | v2 (선택) | 개발용 DB를 컨테이너로 실행할 때만 필요 |
 
 ## 2. 설치
 ### 백엔드
 ```bash
+cd backend
+uv sync --locked
+uv run python scripts/init_local_env.py
+# PostgreSQL을 직접 설치했다면 .env의 DB_*를 해당 DB에 맞춘다.
+# Docker를 쓴다면 아래 명령으로 DB를 만든다.
+docker compose up -d --wait db
+uv run python manage.py migrate
+uv run python manage.py runserver 127.0.0.1:8000
 ```
+
+`init_local_env.py`는 개발 전용 비밀값을 생성하고 `.env`에만 저장한다. 기존 `.env`는 덮어쓰지 않는다. `.env.example`을 직접 복사했다면 비어 있는 필수 값을 채워야 한다. AI 서버 주소와 내부 키는 실제 AI 연동 구현 전까지 비워 둬도 된다. 설치된 패키지 목록은 `uv.lock`에 고정한다.
+
+Docker DB는 `127.0.0.1`에만 공개한다. `docker compose stop db`로 중지하고, 다시 시작할 때 `docker compose up -d --wait db`를 쓴다. 기존 볼륨이 있으면 `.env`의 DB 계정 · 비밀번호를 바꿔도 DB 내부 계정은 자동 변경되지 않는다. 개발용 계정과 운영용 계정은 별도로 준비한다.
+
+이 작업 환경에서는 설치되어 있던 PostgreSQL 15.17을 `backend/.local/postgres`에 별도 초기화했다. 저장소 루트에서 `pg_ctl -D backend/.local/postgres -l backend/.local/postgres.log -o '-h 127.0.0.1 -p 5432 -k /private/tmp' start`로 시작하고, `pg_ctl -D backend/.local/postgres stop`으로 중지한다. 이 폴더와 실제 데이터는 Git에서 제외한다. 같은 포트에서 Docker DB와 동시에 실행하지 않는다.
 ### AI 서버
 ```bash
 ```
@@ -24,18 +41,54 @@
 
 | 키 | 위치 | 필수 | 설명 |
 |----|------|:---:|------|
+| `DJANGO_SECRET_KEY` | 백엔드 | ✅ | 환경별로 별도 생성, 빈 값이면 시작 실패 |
+| `DJANGO_DEBUG` | 백엔드 | | 기본 False. 로컬 생성 스크립트는 True, 운영에서는 반드시 False |
+| `DB_HOST` · `DB_PORT` | 백엔드 | ✅ | PostgreSQL 주소와 포트 |
+| `DB_NAME` · `DB_USER` · `DB_PASSWORD` | 백엔드 | ✅ | DB 이름 · 접속 계정 · 비밀번호 |
+| `DB_SSLMODE` | 백엔드 | | 기본 prefer. 운영 DB의 TLS 구성에 맞춰 설정 |
+| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | GPU 서버 API 주소. 아직 호출 로직 없음 |
 | `AI_SERVER_KEY` | 백엔드 · AI 서버 | ✅ | 백엔드 → AI 서버 내부 호출 키 (헤더 `X-Internal-Key`). 두 서버에 같은 값 |
 | `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | 프론트 배포 주소 (쉼표 구분) |
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | 백엔드 도메인 |
+| `CSRF_TRUSTED_ORIGINS` | 백엔드 | | 신뢰하는 프론트 출처 (쉼표 구분) |
+| `WEB_CONCURRENCY` · `GUNICORN_THREADS` | 백엔드 | | 초기값 worker 2 · thread 4, 부하 측정 후 조정 |
 | `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 백엔드 주소 (변수 이름은 프론트 도구에 맞춘다) |
 | | | | |
 
 ## 4. 로컬 실행 확인
 ```bash
+cd backend
+uv run python manage.py check
+uv run python manage.py migrate --check
+uv run python manage.py test
+uv run ruff check .
+uv run ruff format --check .
+mkdir -p .local
+uv run python manage.py spectacular --validate --fail-on-warn --file .local/openapi.yaml
+uv run python manage.py collectstatic --noinput
+uv build
+curl --fail http://127.0.0.1:8000/api/health
 ```
+
+Swagger: `http://127.0.0.1:8000/api/docs/`. DB가 연결되면 상태 확인은 200, 연결되지 않으면 503이다. AI 서버 상태는 검사하지 않는다. 테스트는 실제 PostgreSQL에 임시 테스트 DB를 생성하므로 **개발용 계정에만** CREATEDB 권한이 필요하다. 게임 테이블은 아직 만들지 않았으며 현재 migration은 Django contenttypes 기본 테이블만 생성한다.
+
+`uv build`는 Python sdist · wheel을 `backend/dist/`에 생성한다. 정적 파일과 빌드 산출물은 Git에서 제외한다.
 
 ## 5. 배포
 ### 5-1. 백엔드 (game/ 마크다운 · 3D 빌드 · 빌드 카탈로그 JSON 포함)
+
+백엔드 폴더에서 의존성과 운영 환경변수를 준비한 뒤 실행한다. 이번 작업은 로컬 세팅이며 실제 네이버 클라우드 배포는 수행하지 않는다.
+
+```bash
+uv sync --locked --no-dev
+uv run --no-dev python manage.py migrate
+uv run --no-dev python manage.py collectstatic --noinput
+uv run --no-dev gunicorn -c gunicorn.conf.py config.wsgi:application
+```
+
+`gunicorn.conf.py`는 로컬 인터페이스에 바인딩하며 타임아웃 60초를 사용한다. 게임 API의 30초 전체 대기 제한과 HTTPX 타임아웃 · 재시도 구현은 후속 작업이다. WSGI에서는 AI 응답을 기다리는 동안 thread를 점유하므로 동시 요청량을 측정해 조정한다. 운영 DB의 설치 위치 · 계정 · 백업 구성은 배포 전에 확정해야 한다.
+
+운영 환경에서 `uv run --no-dev python manage.py check --deploy`를 실행한다. 로컬 개발 설정에서는 DEBUG · 보안 쿠키 · HTTPS 전환 · HSTS 관련 경고가 나온다. 실제 배포 때 DEBUG를 끄고 Nginx HTTPS 전환을 확인하며, HSTS 적용 여부는 도메인 구성이 확정된 뒤 결정한다. 이번 로컬 검증은 운영 배포 검증을 대신하지 않는다.
 
 #### 구성 (네이버 클라우드 일반 서버 한 대)
 ```
@@ -76,6 +129,10 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_read_timeout 60s;   # 채팅 30초 대기보다 길게
+    }
+
+    location /static/ {
+        alias /srv/adult-prince/backend/staticfiles/;  # 실제 배포 경로에 맞춘다
     }
 
     # Unity WebGL 빌드 (테스트 빌드 career-pilot-v007 은 비압축)
@@ -145,5 +202,5 @@ server {
 | 브라우저 콘솔에 Mixed Content 오류 | https 프론트에서 http 백엔드 · 빌드 주소 호출 | 백엔드에 SSL 적용 ([5-1 SSL](#ssl-https--백엔드-서버에서-직접-처리)) |
 
 ## 8. 민감정보 관리 체크
-- [ ] `.env` 가 `.gitignore` 에 있다
-- [ ] 코드·문서에 키 값이 없다
+- [x] `.env` 가 `.gitignore` 에 있다
+- [x] 코드·문서에 키 값이 없다

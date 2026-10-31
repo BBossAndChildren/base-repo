@@ -15,6 +15,8 @@
 | ID | 문자열 UUID (Unity 명세의 ID 는 Unity 형식 그대로) |
 | 문자 인코딩 | UTF-8 JSON |
 
+실행 기반 확인용 `GET /api/health`는 인증 없이 PostgreSQL `SELECT 1`을 실행한다. 성공 시 HTTP 200과 `{"code":200,"data":{"status":"ok","database":"ok"}}`, DB 오류 시 HTTP 503과 `{"code":503,"data":{"status":"unavailable","database":"unavailable"}}`를 반환한다. AI 연결은 검사하지 않는다. 실제 구현된 API의 OpenAPI는 `/api/schema/`, Swagger는 `/api/docs/`에서 확인한다. 아래 게임 API는 1차 설계안이며 이번 초기 세팅에서 구현하지 않는다.
+
 ### Base URL
 | 서버 | 환경 | 주소 |
 |------|------|------|
