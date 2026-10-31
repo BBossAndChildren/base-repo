@@ -1,8 +1,10 @@
 // 인트로 컴포넌트. 원본: Unity 담당 career-intro-react-v001 의 src/CareerIntro.jsx
-// 화면 · 문구 · 조작은 원본 그대로 두고 TypeScript 타입과 onError 알림만 더했다 (docs/development/05-ui-ux.md 화면 0)
+// v002(디자인 토큰 판): 화면 · 문구 · 조작은 원본 그대로 두고 TypeScript 타입과 onError 알림만 더했다 (docs/development/05-ui-ux.md 화면 0)
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { createIntroEngine, type IntroConfig, type IntroEngine, type IntroState } from './introEngine'
+import { toCSSVariables, type TokenPath } from '../../design/tokens/tokenVariables'
 import './CareerIntro.css'
+import './introGuard.css'
 
 const initial: IntroState = { time: 0, active: 0, playing: false, started: false, ended: false, loaded: 0, total: 71, ready: false, muted: false, error: null, room: null }
 
@@ -21,10 +23,12 @@ export interface CareerIntroProps {
   onError?: (message: string) => void
   className?: string
   style?: CSSProperties
+  /** 일부 디자인 토큰만 바꾸기 (예: { 'semantic.text.primary': '#fff' }). style 의 CSS 변수가 더 우선 */
+  tokens?: Partial<Record<TokenPath, string | number>>
 }
 
 /** Self-contained React + Three.js intro. assetBase must contain intro.json and models/. */
-export const CareerIntro = forwardRef<CareerIntroHandle, CareerIntroProps>(function CareerIntro({ assetBase = './intro-assets/', onComplete, onError, className = '', style }, ref) {
+export const CareerIntro = forwardRef<CareerIntroHandle, CareerIntroProps>(function CareerIntro({ assetBase = './intro-assets/', onComplete, onError, className = '', style, tokens }, ref) {
   const root = useRef<HTMLElement>(null)
   const engine = useRef<IntroEngine | null>(null)
   const completion = useRef(onComplete)
@@ -98,7 +102,7 @@ export const CareerIntro = forwardRef<CareerIntroHandle, CareerIntroProps>(funct
   const clock = '00:' + String(Math.floor(state.time)).padStart(2, '0') + ' / 00:24'
   const number = String(state.active + 1).padStart(2, '0')
   return (
-    <section ref={root} className={`career-intro ${capture ? 'capture' : ''} ${className}`} style={style} tabIndex={0} onKeyDown={handleKeys} aria-label="직업 공간 인트로">
+    <section ref={root} className={`career-intro ${capture ? 'capture' : ''} ${className}`} style={{ ...toCSSVariables(tokens), ...style }} tabIndex={0} onKeyDown={handleKeys} aria-label="직업 공간 인트로">
       <main data-intro="film" aria-label="전체 공간 인트로">
         <div className="atmosphere" />
         <div className="halo" />

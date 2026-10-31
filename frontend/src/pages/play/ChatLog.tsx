@@ -86,7 +86,7 @@ function ExperienceItem({
   return (
     <li className="exp-card" aria-labelledby={titleId}>
       <div className="exp-card-art" aria-hidden="true">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#E9B949" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z" />
         </svg>
       </div>

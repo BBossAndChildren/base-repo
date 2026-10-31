@@ -1,8 +1,8 @@
-/* 결말 화면 — docs/design/styles.css 12절 */
-.ending-hero { text-align: center; padding: var(--space-6) var(--space-5); background: linear-gradient(180deg, #2B3A67 0%, #3E4F86 100%); color: #fff; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
-.ending-hero h1 { color: #fff; }
+/* 결말 화면 — 색은 global.css 역할 변수, 머리 배경은 인트로 토큰의 atmosphere */
+.ending-hero { text-align: center; padding: var(--space-6) var(--space-5); background: var(--ci-component-atmosphere-background); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+.ending-hero h1 { color: var(--color-text); }
 .ending-hero p { font-family: var(--font-heading); font-size: var(--text-lg); max-width: 640px; margin: 0 auto var(--space-3); }
-.ending-hero .stars { position: absolute; inset: 0; pointer-events: none; }
+.ending-hero .stars { position: absolute; inset: 0; pointer-events: none; color: var(--color-star); }
 .ending-meta { font-size: var(--text-sm); opacity: .9; }
 .job-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 @media (max-width: 1023px) { .job-grid { grid-template-columns: 1fr; } }

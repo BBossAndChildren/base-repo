@@ -17,7 +17,7 @@ npm run dev                  # http://localhost:5173
 npm run lint        # oxlint, 경고도 실패로 처리
 npm run typecheck
 npm test            # Vitest
-npm run build
+npm run build       # npm run tokens(디자인 토큰 생성) 포함
 ```
 
 ## 환경변수
@@ -48,12 +48,19 @@ npm run build
 - 다른 위치의 빌드를 쓰려면 `UNITY_BUILD_DIR=<site 폴더 경로> npm run dev`
 - Unity 연결 코드는 빌드의 `frontend/client.js` 를 실행할 때 불러온다 (저장소에 복사하지 않음)
 
+## 디자인 토큰
+
+- 디자인은 인트로에서 뽑은 토큰을 쓴다 (`docs/design/README.md`). 원본은 `src/design/tokens/tokens.json`
+- `npm run tokens` 가 `src/design/tokens/tokens.css`(`--ci-*` 변수) · `tokenVariables.ts` · `src/pages/intro/CareerIntro.css` 를 만든다. **생성 파일은 직접 고치지 않는다**
+- 화면 CSS 는 `--ci-*` 대신 `src/styles/global.css` 의 역할 변수(`--color-*` · `--font-*`)를 쓴다. 새 색이 필요하면 역할 변수를 추가하고 `docs/design/README.md` 표와 대비를 함께 고친다
+- 글꼴 Pretendard 는 `index.html` 에서 jsDelivr 고정 버전으로 불러온다
+
 ## 인트로 (로컬 개발, FE11)
 
 - 처음 방문하면 `/` 에서 `/intro` 로 간다. 끝까지 보거나 [건너뛰기] 를 누르면 다음부터 생략한다 (localStorage `adult-prince.introSeen`). 다시 보려면 헤더 "인트로 다시 보기" 또는 이 값을 지운다
 - 에셋(`intro.json` + `models/` 71개, 약 238MB)은 Git 에 없다. Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 `frontend/public/intro-assets/` 에 둔다 (git 제외). 없으면 "인트로를 불러오지 못해…" 토스트 후 시작 화면으로 간다
 - 에셋을 `public/` 에 둔 채 `npm run build` 하면 `dist/` 에도 복사된다 (로컬에서만, Vercel 에는 에셋이 없다)
-- 코드: `src/pages/intro/` — `CareerIntro.tsx` · `introEngine.ts` · `CareerIntro.css` 는 원본을 그대로 옮긴 것이라 연출을 바꾸지 않는다. Three.js(`three@0.180.0`)는 인트로 화면에서만 따로 불러온다
+- 코드: `src/pages/intro/` — `CareerIntro.tsx` · `introEngine.ts` 는 원본(v002 토큰 판)을 옮긴 것이라 연출을 바꾸지 않는다. `CareerIntro.css` 는 생성 파일, `introGuard.css` 는 앱 전역 스타일 차단. Three.js(`three@0.180.0`)는 인트로 화면에서만 따로 불러온다
 
 ## 개발 전용 경로 (배포 빌드에는 없음)
 
@@ -72,6 +79,8 @@ npm run build
 | `src/components/` | 공통 컴포넌트 (버튼 · 토스트 · 모달 등) |
 | `src/pages/` | 화면 (인트로 · 시작 · 게임 · 결말 · 지난 기록) |
 | `src/lib/` | 환경변수 등 공통 유틸 |
+| `src/design/tokens/` | 디자인 토큰 원본 · 생성 파일 |
+| `src/styles/` | 전역 역할 변수 · 화면별 CSS |
 | `src/types/` | API · 도메인 타입 |
 
 ## 배포 (Vercel)

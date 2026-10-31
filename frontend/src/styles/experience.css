@@ -1,11 +1,11 @@
-/* 3D 체험 화면 — docs/design/styles.css 11절 */
+/* 3D 체험 화면 — 색은 global.css 역할 변수. Unity 배경색은 --color-bg 와 같은 #101e24 (05-ui-ux.md 4-1) */
 .exp-overlay { position: relative; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; min-height: 520px; }
 .exp-overlay.is-fullscreen { position: fixed; inset: 0; border-radius: 0; border: 0; z-index: 40; }
 .exp-topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-border); flex-wrap: wrap; }
 .exp-title { font-family: var(--font-heading); font-weight: 700; color: var(--color-ink); font-size: var(--text-lg); }
 .exp-stage { flex: 1; position: relative; margin: var(--space-4); border-radius: var(--radius-md); background: var(--color-bg); border: 2px dashed var(--color-border-strong); display: grid; place-items: center; text-align: center; padding: var(--space-5); min-height: 340px; }
 .exp-stage .iframe-label { position: absolute; top: var(--space-3); left: var(--space-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-xs); color: var(--color-text-muted); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 2px var(--space-2); }
-.exp-stage .fake-sound-btn { position: absolute; top: var(--space-3); right: var(--space-3); background: var(--color-ink); color: #fff; border-radius: var(--radius-pill); padding: var(--space-1) var(--space-3); font-size: var(--text-sm); }
+.exp-stage .fake-sound-btn { position: absolute; top: var(--space-3); right: var(--space-3); background: var(--color-ink); color: var(--color-on-ink); border-radius: var(--radius-pill); padding: var(--space-1) var(--space-3); font-size: var(--text-sm); }
 .exp-loading { width: min(320px, 100%); }
 .exp-loading .progress { margin: var(--space-3) 0 var(--space-2); }
 .sound-note { display: flex; gap: var(--space-3); align-items: flex-start; background: var(--color-warning-soft); color: var(--color-text); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin: 0 var(--space-4) var(--space-4); font-size: var(--text-sm); }
@@ -18,7 +18,7 @@
 
 
 /* 구현 추가: 실제 iframe 과 그 위의 안내 */
-.exp-stage.has-frame { padding: 0; border-style: solid; overflow: hidden; background: #14282d; }
+.exp-stage.has-frame { padding: 0; border-style: solid; overflow: hidden; background: var(--color-bg); }
 .exp-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.exp-stage-cover { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: var(--space-5); background: rgba(251, 246, 236, 0.94); }
+.exp-stage-cover { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: var(--space-5); background: rgba(16, 30, 36, 0.94); }
 .exp-overlay.is-fullscreen .exp-stage { min-height: 0; }

@@ -11,10 +11,7 @@ export function AppLayout() {
           <svg className="brand-star" viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z"
-              fill="#E9B949"
-              stroke="#2B3A67"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
+              fill="currentColor"
             />
           </svg>
           어른왕자
