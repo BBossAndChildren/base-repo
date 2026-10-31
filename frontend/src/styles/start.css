@@ -1,0 +1,15 @@
+/* 시작 화면 — 색은 global.css 역할 변수 */
+.hero { text-align: center; margin-bottom: var(--space-6); }
+.hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-2); }
+.hero p { color: var(--color-text-muted); font-size: var(--text-lg); }
+.resume-card { display: flex; align-items: center; gap: var(--space-4); justify-content: space-between; flex-wrap: wrap; border-color: var(--color-ink); background: var(--color-accent-soft); }
+.resume-card h2 { font-size: var(--text-lg); margin: 0; }
+.optional-block { border-top: 1px dashed var(--color-border); padding-top: var(--space-4); }
+.optional-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2); }
+.optional-head .field-label { font-size: var(--text-md); }
+.optional-skipped { opacity: .55; }
+.start-submit { margin-top: var(--space-6); }
+.start-submit p { text-align: center; margin-top: var(--space-2); }
+.tag-input { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
+.tag-input .input { flex: 1; min-width: 0; }
+@media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }

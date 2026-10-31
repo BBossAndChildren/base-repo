@@ -1,0 +1,7 @@
+/* 지난 기록 — 색은 global.css 역할 변수 */
+.history-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.history-item { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+.history-item h3 { font-size: var(--text-lg); margin: 0 0 var(--space-1); }
+.history-meta { font-size: var(--text-sm); color: var(--color-text-muted); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+@media (max-width: 640px) { .history-item { grid-template-columns: 1fr; } }
+

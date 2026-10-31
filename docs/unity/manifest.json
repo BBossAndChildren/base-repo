@@ -1,0 +1,1508 @@
+{
+  "schema_version": 3,
+  "package_id": "career-integration-listing",
+  "version": "v004",
+  "kind": "frontend_backend_listing_not_webgl_build",
+  "status": "packaged_with_scoped_actual_evidence_not_full_original_goal_completion",
+  "created_at": "2026-10-31T08:17:19.582328+00:00",
+  "counts": {
+    "rooms": 71,
+    "occupations": 552,
+    "scenarios": 552,
+    "roomScenarioCombinations": 555,
+    "scenarioObjectBindings": 1665,
+    "audioPlanned": 108,
+    "audioAvailable": 34,
+    "audioNotStarted": 74,
+    "audioAvailableWired": 30,
+    "audioLibraryOnly": 4,
+    "audioWiredMissing": 10,
+    "includedModelAssetVersions": 427
+  },
+  "protocol": {
+    "catalogSchemaVersion": 3,
+    "unityEnvelopeSchemaVersion": 1,
+    "protocol": "career-experience",
+    "realtimeProfile": "v002",
+    "reconciliationProfile": "v003",
+    "frontendClientVersion": "v003",
+    "registryVersion": "v004",
+    "audioSideChannel": "v001",
+    "backgroundPresentation": "v001"
+  },
+  "build_ids": {
+    "test": "career-suite-test-v009",
+    "production": "career-suite-integration-v005"
+  },
+  "historical_builds_note": "v006/older evidence and v007/v003 intermediate audio evidence are preserved separately; not final whole-build passes. v003 fullcanvas visual failure retained.",
+  "links": {
+    "testViewerUrl": "http://127.0.0.1:8212/career-suite-test-v009/",
+    "productionWebglZip": "career-suite-integration-v005.zip"
+  },
+  "production_archive_ref": {
+    "path": "unity/webgl/packages/career-suite-integration-v005.zip",
+    "bytes": 31267874,
+    "sha256": "1e0e6c4c9cad4ccc5bf1ebec0b4dd1c0b878c7db16c2e20906193f0b976298f9",
+    "crc_and_member_hash_review": "actual/current-builds/production-v005-package-inspection.json"
+  },
+  "rule_source": {
+    "path": "AGENTS.md",
+    "sha256": "e3b62910464f14e3095f90653c8c8feda638489012eb8d443031dbb5f0609629",
+    "snapshot_path": "contracts/CONTRACT-SNAPSHOT.md"
+  },
+  "source_refs": [
+    {
+      "source_path": "docs/machine/catalog/builds.json",
+      "included_path": "catalogs/builds.json",
+      "source_sha256": "218d18bb54c4a0f207f0d0652bbfe54f507d3651af3e39aa39f17aed416733b2",
+      "sha256": "218d18bb54c4a0f207f0d0652bbfe54f507d3651af3e39aa39f17aed416733b2",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-suite-bridge-v003.json",
+      "included_path": "catalogs/career-suite-bridge-v003.json",
+      "source_sha256": "20ba08bbfd43e79c7ca2bc2756620d8dfc50702ef41280f355050699c9a232be",
+      "sha256": "20ba08bbfd43e79c7ca2bc2756620d8dfc50702ef41280f355050699c9a232be",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/human/builds/career-suite-v002.md",
+      "included_path": "docs/career-suite-v002.md",
+      "source_sha256": "40331dc612525fb6194ef9b65fdd6d353c9fce77caa9196b4c7d7de4c8b455a7",
+      "sha256": "40331dc612525fb6194ef9b65fdd6d353c9fce77caa9196b4c7d7de4c8b455a7",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/human/builds/career-suite-update-v002.md",
+      "included_path": "UPDATES.md",
+      "source_sha256": "24e51378fbebfc3faec1e5e2c889fdc533ad0318669d5fec2c738fed4ea90b83",
+      "sha256": "24e51378fbebfc3faec1e5e2c889fdc533ad0318669d5fec2c738fed4ea90b83",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/human/builds/career-suite-test-v009.md",
+      "included_path": "docs/test-build-v009.md",
+      "source_sha256": "78518933338efc65a962fc7801f90ccc4617cfd87729919d9cfb975a0f8126a0",
+      "sha256": "78518933338efc65a962fc7801f90ccc4617cfd87729919d9cfb975a0f8126a0",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/human/builds/career-suite-integration-v005.md",
+      "included_path": "docs/production-build-v005.md",
+      "source_sha256": "2c9097618fec5ea2b82199d327f93a5c310d6455272985f8828ab4b9d7cf36cc",
+      "sha256": "2c9097618fec5ea2b82199d327f93a5c310d6455272985f8828ab4b9d7cf36cc",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/evidence/career-suite-integration-v005/package-inspection.json",
+      "included_path": "actual/current-builds/production-v005-package-inspection.json",
+      "source_sha256": "ea1cd9e569b613ed2a6b3cd4129679c8c5459de8aaa7c76aba0cb76548d87709",
+      "sha256": "ea1cd9e569b613ed2a6b3cd4129679c8c5459de8aaa7c76aba0cb76548d87709",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/human/integrations/career-suite-bridge-v003.md",
+      "included_path": "docs/bridge-v003.md",
+      "source_sha256": "e50b63cf360aaa769be1f555198baea8a4718ed1421ce59a41751850d1acaf3e",
+      "sha256": "e50b63cf360aaa769be1f555198baea8a4718ed1421ce59a41751850d1acaf3e",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-integration-registry-v004.json",
+      "included_path": "ids/career-integration-registry-v004.json",
+      "source_sha256": "605067be88dab1d7c90a423f1fd2992c0e72c80173bbeb904f28f3d31d1dd3bd",
+      "sha256": "605067be88dab1d7c90a423f1fd2992c0e72c80173bbeb904f28f3d31d1dd3bd",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-full-targets-v003.json",
+      "included_path": "ids/career-full-targets-v003.json",
+      "source_sha256": "c1c016df85cd27c572d6d019c2ffe3b1cec4f86241b0f369fc6b13c1b76e2a3d",
+      "sha256": "c1c016df85cd27c572d6d019c2ffe3b1cec4f86241b0f369fc6b13c1b76e2a3d",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-experience-descriptions-v001.json",
+      "included_path": "ids/career-experience-descriptions-v001.json",
+      "source_sha256": "91d8c007f77fb93eecd6c378ada4ca37b23bca8fa48736233994123b35320c06",
+      "sha256": "91d8c007f77fb93eecd6c378ada4ca37b23bca8fa48736233994123b35320c06",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-experience-descriptions-v001.csv",
+      "included_path": "ids/career-experience-descriptions-v001.csv",
+      "source_sha256": "07e8c9e8485d77e1fb991f3bd0782a68447fae1823d491f89f84dc5dd0641420",
+      "sha256": "07e8c9e8485d77e1fb991f3bd0782a68447fae1823d491f89f84dc5dd0641420",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-audio-runtime-v002.json",
+      "included_path": "audio/career-audio-runtime-v002.json",
+      "source_sha256": "9c74e1969b0b45f58155fc317ff8596da075df6afe2bd7989fb123bd7b24b14a",
+      "sha256": "9c74e1969b0b45f58155fc317ff8596da075df6afe2bd7989fb123bd7b24b14a",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-audio-use-map-v002.json",
+      "included_path": "audio/career-audio-use-map-v002.json",
+      "source_sha256": "e93c48094b818250610757515066ea102d2685ede46b23f10e1be2bf06812f33",
+      "sha256": "e93c48094b818250610757515066ea102d2685ede46b23f10e1be2bf06812f33",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-audio-wiring-v001.json",
+      "included_path": "audio/career-audio-wiring-v001.json",
+      "source_sha256": "7c44ecb545629264960cd3cf34f9a133b35e88610e0059532d3fd2cd7651c57c",
+      "sha256": "7c44ecb545629264960cd3cf34f9a133b35e88610e0059532d3fd2cd7651c57c",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-audio-assets-v002.csv",
+      "included_path": "audio/sound-effects-108-v002.csv",
+      "source_sha256": "24d6b72d0c1e6dae8331ad9134f52fdac08bd9eef595ba4ab2a802ee9c2f8b4c",
+      "sha256": "24d6b72d0c1e6dae8331ad9134f52fdac08bd9eef595ba4ab2a802ee9c2f8b4c",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "docs/machine/catalog/career-asset-reuse-report-v003.json",
+      "included_path": "catalogs/career-asset-reuse-report-v003.json",
+      "source_sha256": "c7803b2b2b5ab27ad0fc477af9988255d8e751b5cf3b7680e2d20c743b2c6ee5",
+      "sha256": "c7803b2b2b5ab27ad0fc477af9988255d8e751b5cf3b7680e2d20c743b2c6ee5",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-audio/v002/audio-manifest.json",
+      "included_path": "audio/audio-manifest.json",
+      "source_sha256": "507b7e6dec3cc7eb719ab5db99fc02a6036593127cc0566cc2660dab4433db11",
+      "sha256": "507b7e6dec3cc7eb719ab5db99fc02a6036593127cc0566cc2660dab4433db11",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/audio-ui.css",
+      "included_path": "frontend/audio-ui.css",
+      "source_sha256": "f4002a058038220a5030ffee3f7f6c6cc3fdcfe2d5403374374fb53e3b367ca9",
+      "sha256": "f4002a058038220a5030ffee3f7f6c6cc3fdcfe2d5403374374fb53e3b367ca9",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/audio-ui.js",
+      "included_path": "frontend/audio-ui.js",
+      "source_sha256": "ec6cc068a43f1c6986d7283f8ea5db0144b94d8afb47ad5a4f345e8fccc2edd8",
+      "sha256": "ec6cc068a43f1c6986d7283f8ea5db0144b94d8afb47ad5a4f345e8fccc2edd8",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/audio.d.ts",
+      "included_path": "frontend/audio.d.ts",
+      "source_sha256": "137cbaeb22ff633ce79232538d6c6e0bfd58548655472661ea5c81658e79552e",
+      "sha256": "137cbaeb22ff633ce79232538d6c6e0bfd58548655472661ea5c81658e79552e",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/audio.js",
+      "included_path": "frontend/audio.js",
+      "source_sha256": "ec835d855257f1958998a6966c750ecc4cf0736e302096e5e1516887e3df451f",
+      "sha256": "ec835d855257f1958998a6966c750ecc4cf0736e302096e5e1516887e3df451f",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/backend.d.ts",
+      "included_path": "frontend/backend.d.ts",
+      "source_sha256": "93678d6e5f3135a9c16fadc5a820f1fbc6c7deee536cc53ad4aa1baf0018a579",
+      "sha256": "93678d6e5f3135a9c16fadc5a820f1fbc6c7deee536cc53ad4aa1baf0018a579",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/backend.js",
+      "included_path": "frontend/backend.js",
+      "source_sha256": "43d525e1c4b4e2db5d57e0cd15a146a39150cf464a08f163d60b79b7eaf9ec44",
+      "sha256": "43d525e1c4b4e2db5d57e0cd15a146a39150cf464a08f163d60b79b7eaf9ec44",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/client.d.ts",
+      "included_path": "frontend/client.d.ts",
+      "source_sha256": "5c1ef8ae391bab8dcd44f83d65132804f454fa1fda2368628aeb153b323f7f4e",
+      "sha256": "5c1ef8ae391bab8dcd44f83d65132804f454fa1fda2368628aeb153b323f7f4e",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/client.js",
+      "included_path": "frontend/client.js",
+      "source_sha256": "425ba867e8e83d4b48c8755c5cf5f4e6d8a17a1c66351429d41893c3e6b94265",
+      "sha256": "425ba867e8e83d4b48c8755c5cf5f4e6d8a17a1c66351429d41893c3e6b94265",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/Experience.jsx",
+      "included_path": "frontend/Experience.jsx",
+      "source_sha256": "472b282e68aa5ee8d3c4ee5988b33313ec42586d10a3bf42d7141dfbafc7cc23",
+      "sha256": "472b282e68aa5ee8d3c4ee5988b33313ec42586d10a3bf42d7141dfbafc7cc23",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/integration-example.html",
+      "included_path": "frontend/integration-example.html",
+      "source_sha256": "9e85e49d41b3439513e919073bdae1d6231754e5f5c61edbcad3527288e7dd98",
+      "sha256": "9e85e49d41b3439513e919073bdae1d6231754e5f5c61edbcad3527288e7dd98",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/integration-example.jsx",
+      "included_path": "frontend/integration-example.jsx",
+      "source_sha256": "4c49d5c02590a30610ba8e5f63a13660fc3393ed99dbcd7fcbbefb5c02d4834e",
+      "sha256": "4c49d5c02590a30610ba8e5f63a13660fc3393ed99dbcd7fcbbefb5c02d4834e",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/package.json",
+      "included_path": "frontend/package.json",
+      "source_sha256": "1df65f14c37e8d75862395c2fd4167f80db60dd60924188c18eabbef8a6177a3",
+      "sha256": "1df65f14c37e8d75862395c2fd4167f80db60dd60924188c18eabbef8a6177a3",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/react-example.jsx",
+      "included_path": "frontend/react-example.jsx",
+      "source_sha256": "5df952a83845c55a7a1c0e9ae3e42c0d8f2915409d604adb420c44faae34aa4b",
+      "sha256": "5df952a83845c55a7a1c0e9ae3e42c0d8f2915409d604adb420c44faae34aa4b",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/README.md",
+      "included_path": "frontend/README.md",
+      "source_sha256": "c1768a0e4387806733e50e3be605dfee0c4d8356546e099b488111c4b16dc14d",
+      "sha256": "c1768a0e4387806733e50e3be605dfee0c4d8356546e099b488111c4b16dc14d",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/server.mjs",
+      "included_path": "frontend/server.mjs",
+      "source_sha256": "0543aefd13b370188024906b93aeb5eda53bf686f9393b739e04ad9808fc7170",
+      "sha256": "0543aefd13b370188024906b93aeb5eda53bf686f9393b739e04ad9808fc7170",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/suite-host.js",
+      "included_path": "frontend/suite-host.js",
+      "source_sha256": "fc503111f236552a122af91810c1ef7b23b9df80aba7cd17087fb8cd09d63459",
+      "sha256": "fc503111f236552a122af91810c1ef7b23b9df80aba7cd17087fb8cd09d63459",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/suite-ui.css",
+      "included_path": "frontend/suite-ui.css",
+      "source_sha256": "c0b54757760df25df33303f93b5cd2804a9c20cd2c233ae889b768934ee32db5",
+      "sha256": "c0b54757760df25df33303f93b5cd2804a9c20cd2c233ae889b768934ee32db5",
+      "transformed_for_package_links": false
+    },
+    {
+      "source_path": "web/career-preview/v003/vite.config.js",
+      "included_path": "frontend/vite.config.js",
+      "source_sha256": "eac1b43d7205133334587d2a405596e901c01c8acff186f957d9d67f73548ec0",
+      "sha256": "eac1b43d7205133334587d2a405596e901c01c8acff186f957d9d67f73548ec0",
+      "transformed_for_package_links": false
+    }
+  ],
+  "final_build_manifest_refs": [
+    {
+      "buildId": "career-suite-test-v009",
+      "path": "builds/career-suite-test-v009-supported-manifest.json",
+      "sha256": "284be4a78f1d29cec65c092c73422d4d9783517919110a4701208366d3ef1a5f"
+    },
+    {
+      "buildId": "career-suite-test-v009",
+      "path": "builds/career-suite-test-v009-ai-build-catalog.json",
+      "sha256": "16bc7f3efc4750f420a26599debfb07a430a4f6029e1cdca61be524d80088ac3"
+    },
+    {
+      "buildId": "career-suite-integration-v005",
+      "path": "builds/career-suite-integration-v005-supported-manifest.json",
+      "sha256": "4992f05c54ff08ed68be22f4a7c584cd0762640438c1202b9f71427ffd84c3e6"
+    },
+    {
+      "buildId": "career-suite-integration-v005",
+      "path": "builds/career-suite-integration-v005-ai-build-catalog.json",
+      "sha256": "5deb59799344b66e164c44639953afa339a01fdc087e42838a3ab6e5cabbb963"
+    }
+  ],
+  "actual_final_evidence": [
+    {
+      "buildId": "career-suite-test-v009",
+      "path": "actual/current-builds/test-v009-pan050-ui/summary-v001.json",
+      "scope": "PAN050359v002 actual3meshes/nativeHangul/6drags/full3steps,attempt3mistake0retry0nav4,37originalevents;11gameplayaudiokeys/36starts/endactive0; noall555/printer/gauge/reset/subjectiveaudioquality."
+    },
+    {
+      "buildId": "career-suite-integration-v005",
+      "path": "actual/current-builds/production-v005-react-audio/actual-react-audio-background.json",
+      "scope": "BoundedrealReact/audio/endcancel/oldrunreject/fullcanvascoverage/opaqueUI/roompersistence/29localACK. Creamexact; bluered-1/255rounding; strictexactRGBfailretained. Notnormalfullworkflow/all34replay."
+    },
+    {
+      "buildId": "career-suite-integration-v005",
+      "path": "actual/current-builds/production-v005-extracted-zip/actual-react-iframe.json",
+      "scope": "ActualextractedarchiveHTTPReactstart/3bindings/6outercreampixels/Endbeforework0attempt/5originals5localACK0pending/errors0."
+    }
+  ],
+  "validation": {
+    "fixed_tuples_and_jobs_descriptions": "pass555_both_finalbuilds_and_source",
+    "audio_file_hashes": "pass34_both_finalsites",
+    "frontend_source": "v003_canonical_files_match_both_finalsites_and_listing",
+    "build_source": "20targetedruntime_resource_jslibhashes_match_both_finalsnapshots",
+    "audio_library_all34": "actual_intermediate_v003_only",
+    "real_backend": "unverified",
+    "archive_integrity": "separate_external_zip_review_after_seal",
+    "primary_aliases": "pass4_aliases_each555_exact_finalbuildId_and_canonicaljobsDescriptions"
+  },
+  "known_limitations": [
+    "74soundsnotstarted; latestnoadditionalcostconstraint, nofurthergeneration/upgrades.",
+    "34available is not34gameplaywired:30sourcewired,4libraryonly;10emittedkeyshavenofile/nosubstitute.",
+    "All555fullworkflow/specialvariantsnotcompleted;554originalspecialbranchentriesremainnotimplemented.",
+    "Actualserviceauth/lease/fence/reconciliationnotverified; localACKnotproductionbackend.",
+    "Legacyclosed-navigationrawbusiness events and thintraypointerselectionlimitationsremainhistoricalknownissues.",
+    "Small390pxwidthscalesfixedGUItextvery small; no mobilelegibilitypass claimed."
+  ],
+  "source_authoring_flags_note": "Prebuild source currentBuildInclusion:false / unverified fields are authoring snapshots. Exact final supported-manifest defines included tuples; execution evidence remains scoped.",
+  "audio_binary_policy": "NoMP3/WAVinlisting; productionWebGLZIP contains all34 actualMP3s. audio/full-file-list.json lists exactbytes/hashes/locations.",
+  "historical_base": {
+    "path": "unity/webgl/packages/career-integration-listing-v003.zip",
+    "sha256": "4143f706f45e96c8395c7d51b156f997bc9fbb37ba4bbd4302eb1a1c8fb73a92"
+  },
+  "files": [
+    {
+      "path": "actual/audio-source/background-independent-review-v001.json",
+      "bytes": 1486,
+      "sha256": "c6b36040274a2ef334b68cc31f673c2378ec1c92dcec9c8f3d09e9ad9d4a4aca"
+    },
+    {
+      "path": "actual/audio-source/card-layout-independent-review-v001.json",
+      "bytes": 1625,
+      "sha256": "00995f492ccee7169b256451486c575528c08d3336e1ff66dfa01639b6ed87e8"
+    },
+    {
+      "path": "actual/audio-source/career-audio-controller-v001/inline-controller-tests.json",
+      "bytes": 2573,
+      "sha256": "51442a075f03fe72b6f9a777b6e26ba0748cb19fcb603327d252dd9bf55261cf"
+    },
+    {
+      "path": "actual/audio-source/career-audio-v001/corrected-estimate-and-starts-v001.json",
+      "bytes": 4371,
+      "sha256": "74dba019e7cf92b2bebb7a5535dbf6236d194301ea3686d42ed3c7a1094a9ee1"
+    },
+    {
+      "path": "actual/audio-source/career-audio-v001/existing-flow-state-v001.json",
+      "bytes": 38559,
+      "sha256": "e45c85c487afb4c8a40622969b1da163728e18106aaf68edea1ac9455454251d"
+    },
+    {
+      "path": "actual/audio-source/career-audio-v002/generation-first-batch.json",
+      "bytes": 6784,
+      "sha256": "4ed41c5410004ff6a3fcc01edb98deecce70e888edb8de820f9a61c39d65c0f5"
+    },
+    {
+      "path": "actual/audio-source/career-audio-v002/generation-service-stop-v001.json",
+      "bytes": 731,
+      "sha256": "7a32c7f50966c5375637da3b6086f66e27a2ec16a72039996314421c6c83a97d"
+    },
+    {
+      "path": "actual/audio-source/career-suite-audio-binding-source-v001.json",
+      "bytes": 2302,
+      "sha256": "3513b967899a13d382514baebdc9d9542c50d3564784480d7797b9bfd3904b2c"
+    },
+    {
+      "path": "actual/audio-source/career-suite-audio-source-probe-v001.json",
+      "bytes": 6338,
+      "sha256": "ff864647dfaccddfe559411154386cddb63c9f5719c8caec8a10c5731698c486"
+    },
+    {
+      "path": "actual/audio-source/career-suite-audio-source-probe-v002.json",
+      "bytes": 9584,
+      "sha256": "d6203866447967072e48af2b0851c72eb15111ed80bb66bb4764f3f7218beff3"
+    },
+    {
+      "path": "actual/audio-source/career-suite-audio-source-probe-v003.json",
+      "bytes": 13259,
+      "sha256": "0c119c2aaeb9f71ef57bf665aeadbb5b8f3b64c3d9d7a705247a1104b467d939"
+    },
+    {
+      "path": "actual/audio-source/career-suite-card-result-source-v001.json",
+      "bytes": 1785,
+      "sha256": "c432b2c4d3845c9eae6c23399acee4e9bc8a66553ec7b77b01bd9f0bf899308c"
+    },
+    {
+      "path": "actual/audio-source/career-suite-presentation-source-v002.json",
+      "bytes": 2509,
+      "sha256": "9e299998150169a4e053c638afca3f86b9c4505e192ec5dbe724af2412b5e188"
+    },
+    {
+      "path": "actual/audio-source/description-static-review-v001.json",
+      "bytes": 371,
+      "sha256": "191e0595de0670eb2e13580ec182d4c2796b23816d0b1b8107921bf18f46ce64"
+    },
+    {
+      "path": "actual/audio-source/static-file-review-v001.json",
+      "bytes": 8273,
+      "sha256": "290d3bef11056b6c6ad6f72e6b879df2d213a3d3eee3b3157a53f6960213c991"
+    },
+    {
+      "path": "actual/current-builds/build-usage-review-v001.json",
+      "bytes": 483,
+      "sha256": "72a2c0297fe27f264a91666cc4414645ea3eba3bab59dc41c8f62927a4ccf8db"
+    },
+    {
+      "path": "actual/current-builds/career-suite-integration-v005-build-result.json",
+      "bytes": 282,
+      "sha256": "b06ec863a63aeb70665693fea471784209115b5bc525a01e5041cbf2ce1f3243"
+    },
+    {
+      "path": "actual/current-builds/career-suite-integration-v005-site-overlay.json",
+      "bytes": 15182,
+      "sha256": "18bbb1aa01af2e867c2c84293fafb2d0fca3e9d1238e6ee9c40e4071dc4ea511"
+    },
+    {
+      "path": "actual/current-builds/career-suite-test-v009-build-result.json",
+      "bytes": 275,
+      "sha256": "cd8cd94f59b46bca5cd46541ec6f50ff2e69463056b449687f3d905d1f31e414"
+    },
+    {
+      "path": "actual/current-builds/career-suite-test-v009-site-overlay.json",
+      "bytes": 14692,
+      "sha256": "943c28594ddbb4424dd0dccfcd20cab8f19096de7c6fe2e32546e20591472f5e"
+    },
+    {
+      "path": "actual/current-builds/final-built-source-comparison-v001.json",
+      "bytes": 4603,
+      "sha256": "ad09bc8bba804fba7c432e938171d044e9018ca2116db9f06af6c8e65fb018b6"
+    },
+    {
+      "path": "actual/current-builds/final-overlay-static-review-v002.json",
+      "bytes": 783,
+      "sha256": "269d904a4d32d16a6ee1ba08d667744486bfe76c2a076d5fff7d07be01a2ba83"
+    },
+    {
+      "path": "actual/current-builds/production-v005-extracted-zip/actual-react-iframe.json",
+      "bytes": 49639,
+      "sha256": "af69170c17304797bd68666b566730d2ab1593d2c291f220c656a7981d249978"
+    },
+    {
+      "path": "actual/current-builds/production-v005-extracted-zip/webgl-only-pan050-cream.png",
+      "bytes": 42753,
+      "sha256": "0eb0e2ab1e1c334cddb5d5603af2ec4b4563b52622a0bf57f215882a16273a03"
+    },
+    {
+      "path": "actual/current-builds/production-v005-package-inspection.json",
+      "bytes": 13913,
+      "sha256": "ea1cd9e569b613ed2a6b3cd4129679c8c5459de8aaa7c76aba0cb76548d87709"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/actual-react-audio-background.json",
+      "bytes": 9856,
+      "sha256": "b7f49339823e71f9f0fc2f3f55046ca05213152eb720d80c059439b7f0f1c891"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/background-coverage-samples-v002.json",
+      "bytes": 2973,
+      "sha256": "12f470bf2231d23ca41ef757c09930f36844becc77935f9747b07e12f00049d2"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/background-pixel-samples.json",
+      "bytes": 2531,
+      "sha256": "c8036b92f799edf1ec97c78c2bd5edcd98bff82a9803ebcc62df7bcf5b10c5f7"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/webgl-only-pan050-blue-work.png",
+      "bytes": 38605,
+      "sha256": "c2e2b7407ffd04a8962ad9e4eccec626bd33960d265364bc8d9fa93b43268f15"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/webgl-only-pan050-cream.png",
+      "bytes": 46152,
+      "sha256": "f19cdc193873d62f49a3fc56ee05a7795602916d41b278b67b85028df987bfa9"
+    },
+    {
+      "path": "actual/current-builds/production-v005-react-audio/webgl-only-pan051-blue-clean.png",
+      "bytes": 41086,
+      "sha256": "8802dfa572d01706d6c1f857fd22584f0382b9ab752d3be5e75e6b192729c8e8"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/01-mid-drag.json",
+      "bytes": 62731,
+      "sha256": "fa8d83c1ded19b5b157ba103e301fc4af1721686f9e4775ff300cdf704c86577"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/01-mid-drag.png",
+      "bytes": 46556,
+      "sha256": "77287f55e1f2bd701bc38f8b47fcfa81b85c448f10f4d4fc61fbe91bca43369e"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/02-placed.json",
+      "bytes": 78418,
+      "sha256": "221fe6de1ca6624c0193c7a397b070dfe47e968a6be09bb16ffb6f8f39efcf8b"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/02-placed.png",
+      "bytes": 46709,
+      "sha256": "555bc527083577e109090ddcc158e5916205d1d57fd27ae7467352bff1d97bc0"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/03-reopen-preserved.json",
+      "bytes": 68180,
+      "sha256": "113e7d91abcfb6e3209883dc35eb59f85c73a6062d8bcf2548bb10bd01839988"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/04-saved-result.json",
+      "bytes": 110568,
+      "sha256": "71638a78cf82db5b73862ed8cdfcfd81b9a42a3cf89e1fbfd6c38519c21e7c54"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/04-saved-result.png",
+      "bytes": 48788,
+      "sha256": "d1c4170a408c99af1273a44bdb9157681b3ddc429bb78613f32a14402f9a46bd"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/05-paused.json",
+      "bytes": 78241,
+      "sha256": "3f853df01d77c75353eb7e5321fbc5100024fccd76d87efb1f66031e9de9da1f"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/06-completed.json",
+      "bytes": 190869,
+      "sha256": "62e066e8ac2642f38848174061374e4877efbaf8dfc93908f1e5bfd85730346b"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/06-completed.png",
+      "bytes": 47082,
+      "sha256": "98032d1869eb53778323b757ed6d7d7c220c8d77a89ccc1ee104db3beac76e97"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/07-ended.json",
+      "bytes": 435864,
+      "sha256": "96c228b3569d99dc80d4683e35cff5dfcd31ae84c944507f9cf9c157512dea7c"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/07-ended.png",
+      "bytes": 56061,
+      "sha256": "ed6926c62c27d8d6fd6628d9246b9d9d8330c2bd5b38c690fe99b7c23dd6842c"
+    },
+    {
+      "path": "actual/current-builds/test-v009-pan050-ui/summary-v001.json",
+      "bytes": 4984,
+      "sha256": "7fcdca97058da1cef80863e9b9484ca33782e708fa506753d13a15aea50950e6"
+    },
+    {
+      "path": "actual/earlier-builds/integration-v001-react-iframe.json",
+      "bytes": 46436,
+      "sha256": "920380a45d24077d62e2945b4fe5cb304f952148eafd75b3f45eef5831514b7a"
+    },
+    {
+      "path": "actual/earlier-builds/test-v002-pan060-completed-ended.json",
+      "bytes": 131000,
+      "sha256": "a5fcaf7e3204302679abc5fce2deda75b90155ebdef6f4d6c291b675cdfd0414"
+    },
+    {
+      "path": "actual/earlier-builds/test-v004-pan070-completed.json",
+      "bytes": 98637,
+      "sha256": "8f13f52b9b7f230c1efcf14a4cca43784edb115bd09c33c797fdad467d10dbfb"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/career-suite-integration-v003-build-result.json",
+      "bytes": 289,
+      "sha256": "9b121a97ef035e6381fc476a8d284e856a00c02b740a4551d472c6cf7187fdbb"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/career-suite-integration-v003-site-overlay.json",
+      "bytes": 15182,
+      "sha256": "7c237350037403ce4bf71f34ce2982cd785084767d1e6350cff04942772ad10f"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/career-suite-test-v007-build-result.json",
+      "bytes": 282,
+      "sha256": "e2d66cae1a1a0425542f8d255761d3e8155dcb6bd57d4604726ed1a90fe50031"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/career-suite-test-v007-site-overlay.json",
+      "bytes": 14692,
+      "sha256": "14de6d1fbf912f5fb2daf56264ebba312d838070ad95dc690facdb9cb8c8387d"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/final-overlay-static-review-v001.json",
+      "bytes": 782,
+      "sha256": "0c8a78ff8675401029e8035322e1d9bcc539fb151d4daaf12cbd114934a38ef7"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/production-react-audio-v003/actual-react-audio-background.json",
+      "bytes": 20431,
+      "sha256": "2aac73958d5ba62ba97b9e19319f003f460d9ce02186a92a8fb388cedd0fd252"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/production-react-audio-v003/README.md",
+      "bytes": 330,
+      "sha256": "52b9f30b498765b7af15fb97409f1325626a7c4341aa4f9b026876ca2e94cc0f"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/production-react-audio-v003/webgl-only-pan050-cream.png",
+      "bytes": 47097,
+      "sha256": "5bf27b35af6f336708775786cdf7d3963ed55a14b968bb3ffaf25c998bc66929"
+    },
+    {
+      "path": "actual/intermediate-audio-v007/production-react-audio-v003/webgl-only-pan051-blue.png",
+      "bytes": 35914,
+      "sha256": "589b3ff253d3b82d170d5b9204a9f21a48f7f34c6ea742b6136c28b5f4b5d4a9"
+    },
+    {
+      "path": "actual/previous-release-v006/integration-v002/actual-react-ended-full.png",
+      "bytes": 113044,
+      "sha256": "897a17a6dc0f1bdd9107af65ee17bede2184769f75fc257bbc11903fd7fefabe"
+    },
+    {
+      "path": "actual/previous-release-v006/integration-v002/actual-react-iframe.json",
+      "bytes": 47762,
+      "sha256": "3a3acaebad1828ed298b125581c1b4a08402751ce4f64af1421800c7460bce66"
+    },
+    {
+      "path": "actual/previous-release-v006/integration-v002/actual-react-playing.png",
+      "bytes": 56128,
+      "sha256": "2c9588b23947d44e4fe5948dc6ce7af95d7345fa0ac22905f7652310996a4165"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-001.json",
+      "bytes": 63313,
+      "sha256": "e53c4c066ddd3083d01a98a4840598fd8b95b87615139ac2026bc03c9beddaa4"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-002.json",
+      "bytes": 64411,
+      "sha256": "60a5a4b502a6c2c9991c7bee1084eaf1ecefddd03bbe6538d4650c4abe8d6cba"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-003.json",
+      "bytes": 64428,
+      "sha256": "94819189b8d0e98d2080df70d363ae465217aab50202b7f716de7da4553f3cf9"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-004.json",
+      "bytes": 64436,
+      "sha256": "c30070d09874ff692c968c1a70d1105fd19d8cfb2095a3b03c06304776e818b4"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-005.json",
+      "bytes": 64425,
+      "sha256": "3dc742dc65157cea510ee34b22858e3a6cf39232357e3f9feea724dc0c1b4d73"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-006.json",
+      "bytes": 64459,
+      "sha256": "bb61240d4975d87caf7d71a97d1f50a40d92b4601a6db36d211d935ee649ea06"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-007.json",
+      "bytes": 62272,
+      "sha256": "66403bd0d7926b4f195cb8a09dda26b9dcc09207f15b46e36390e6e9504ceb43"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-008.json",
+      "bytes": 63623,
+      "sha256": "c33bf8618473d99ded6b9d463eb13f8d67f125fe92c01272828da30a6d1ac670"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-009.json",
+      "bytes": 62236,
+      "sha256": "a3d29cab27a1d624e8609d94fec8f96bfec3367ac5d9970bd513060d072820d1"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-010.json",
+      "bytes": 63332,
+      "sha256": "d5cbf842fb8cbbe8265e69f7a433afd538a9cceeb91e56e050d0e16f03ffc5dd"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-011.json",
+      "bytes": 63355,
+      "sha256": "cb32f9c3efe70fb02c8aeda60bb755afc256e60bad1a64c4fc955f707a757695"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/batch-012.json",
+      "bytes": 41914,
+      "sha256": "a9fc2b95942763ae01ad15fdee7263be1b83b24d5adceaf9ce4e701445d098c8"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/api-launch-001-035/summary.json",
+      "bytes": 741152,
+      "sha256": "05eca2ca899d1113504121f9b2540df37c5aef11d20bb34f75c9d853fd0eff8e"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/db-ui-complete-v001.json",
+      "bytes": 250516,
+      "sha256": "dfab79497f9f720369f893fbb9daf87bbe7b2c20b65002a997e6c5c734f90624"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/db-ui-completed-v001.png",
+      "bytes": 31954,
+      "sha256": "f5ed3334aa29221ada19af91cbda5a36590211a9eaa3978e1f87c40e9b0d003d"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-036-v001.json",
+      "bytes": 22234,
+      "sha256": "f12a4eef1dcb6a830184201147c1cafc34ce685fdf63110b4faddc08e5472783"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-037-v001.json",
+      "bytes": 22755,
+      "sha256": "3d4612bf930781698b68e26323caae9146393f3a4cc25f879f7c03b393c0cfe9"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-038-v001.json",
+      "bytes": 22767,
+      "sha256": "d045e417888c0647a3fa1f503651d79b2268af355fe0a2f69533398ccda5a5ea"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-039-v001.json",
+      "bytes": 22775,
+      "sha256": "f660238d6c48d834c34ab6290827ba76c1022f171ce4a2cd74fda87ca71dbf75"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-040-v001.json",
+      "bytes": 23369,
+      "sha256": "f2caf7bd7bceb4b96b5fbd9046f6bf72dcbad1ab88b502840c5a51623fb7d47a"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-041-v001.json",
+      "bytes": 22195,
+      "sha256": "d8286dda8c4c43a6f5d4929d3b49efad352f472118766bfc4de065fc3fc64dd3"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-042-v001.json",
+      "bytes": 23366,
+      "sha256": "2c12cf17951cd604ff7662344a27f299135df817af0579b142efcacf81773281"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-043-v001.json",
+      "bytes": 23436,
+      "sha256": "e8e6dbc88126c3edb1df66aee4a2c30966ff69e243ffc9d7bc3ae1583dd46be8"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-044-v001.json",
+      "bytes": 23398,
+      "sha256": "bf9dd360ec9b47d9477f23f0abd6c524cbfa779ceef41f6e1905d4e56845d270"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-045-v001.json",
+      "bytes": 23405,
+      "sha256": "83db552c230f1f0ab4a7e6b83ef6228bd4f692f94fd4f0264be50a2324d2adbe"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-046-v001.json",
+      "bytes": 23387,
+      "sha256": "21a534d61d5c7b35e25b996a7898e20ae3a686f11352b0b7d57ea85b6f7ab35f"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-047-v001.json",
+      "bytes": 22118,
+      "sha256": "5d792be8404b95721756095d323d88fa35c253feb6726e01522554351fe19ae3"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-048-v001.json",
+      "bytes": 23056,
+      "sha256": "ab6a14b24b32159a60272220e2228a6e932218933c1bb237c10baf04d755cd2c"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-049-v001.json",
+      "bytes": 23035,
+      "sha256": "8f322eccc85128c2821c6d0bc57de27fdf02d37e8b44abd082637a23a9aa12f6"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-050-v001.json",
+      "bytes": 23098,
+      "sha256": "2e3f7215240e3e27b33cc5c3e34e93c474454014ae0a6b1618be5eeff8120d02"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-051-v001.json",
+      "bytes": 23087,
+      "sha256": "fece263b38174f6196a1c74429056f8bdf4f0e28ad472aa077cdfbbef2c3fa46"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-052-v001.json",
+      "bytes": 23026,
+      "sha256": "870a2aa43d1c3331b378995482c766391e6c535af5a3056f21004ea19fc776e1"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-053-v001.json",
+      "bytes": 22409,
+      "sha256": "454d076c6278a59e4054b3135cf8a9e6a6a9eec25e47f4e69af9bc669c6da117"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-054-v001.json",
+      "bytes": 23049,
+      "sha256": "f1bc0861fe6becd7bf3eab14eadb82af685e3ba7166499f411b29c7f8d30ae3b"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-055-v001.json",
+      "bytes": 23094,
+      "sha256": "7fa08b88948db16da5450532b0cd2eb32e4f7ff8869cf5821ddc33903dfd2d58"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-056-v001.json",
+      "bytes": 23053,
+      "sha256": "e0df6744ba37d9bcc97bb4074091ca0f59eb8c7ff4be5767bca541137b4867c1"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-057-v001.json",
+      "bytes": 22961,
+      "sha256": "eb5c46c6d27dbdac7ac35a5698c926d466cbd0b3c1d9b5910ee770284c16094d"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-058-v001.json",
+      "bytes": 23167,
+      "sha256": "d0969ceaf8e6e4b77990b5fbad8a51345129ac821c073add8ae339973a217ac1"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-059-v001.json",
+      "bytes": 22732,
+      "sha256": "21608c787afb5cfe1ef65d141b0ae280bdfa27365943fd2e7034dabc31a47c6d"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-060-v001.json",
+      "bytes": 22748,
+      "sha256": "bec10108a1c108f3b24afa8044a48c34452fc07dab1c705795f1440220cd1ace"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-061-v001.json",
+      "bytes": 22553,
+      "sha256": "0389e09741153426c2061151a43eac71437f9656605fd92735dcdfc716b1bcd6"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-062-v001.json",
+      "bytes": 22529,
+      "sha256": "57dda8ab93ca6b64848e93753ffe4629d4d1f6901adabfdf843c86280aa41bde"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-063-v001.json",
+      "bytes": 22565,
+      "sha256": "9c5cd2617945fd5c810d9cbafb0e53a33fce5e0fe47bb6e5285c4b32a005a665"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-064-v001.json",
+      "bytes": 22584,
+      "sha256": "4d2bbb7991e1aa774bb702e1dd91de1b2426a03a0381c2787f16352038cc355c"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-065-v001.json",
+      "bytes": 22728,
+      "sha256": "c11430330dfb82e4ef466ddeaf6112f93059bc8c79676e96f064720d56b7623e"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-066-v001.json",
+      "bytes": 22519,
+      "sha256": "ed224f9df514890631dcfd95f8f884b6ba3499cd2a59f3dcffa6d4851c8f74a4"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-067-v001.json",
+      "bytes": 22532,
+      "sha256": "bbdd0250a4729ca9f89fd7812561e680819e892f7e8fc479fb4c709d3e45230e"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-068-v001.json",
+      "bytes": 22605,
+      "sha256": "32bbb1ebf2cefed9211737603eca325b31e0c63b3045a07c77aa94b14300b8c7"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-069-v001.json",
+      "bytes": 22751,
+      "sha256": "cf427f271dc27fe558f6c7be7e83e0303d06968593fa1a9f1a6d89366394c513"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-070-v001.json",
+      "bytes": 22620,
+      "sha256": "d776688335f0c105df1fbcd6d380f2e41d1a291f3462001e65f1427e3c581618"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/api-runtime-pan-071-v001.json",
+      "bytes": 22447,
+      "sha256": "6c6b30acbc40e850781c1cc84b2b2eea2f2c08a687be4895e6412b99f6a54d24"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/http-room-runtime/summary-v001.json",
+      "bytes": 3739,
+      "sha256": "acbad9c01f8c6ee7690c575665e8ffe971287c46391895fd5c2b0c2dba57196a"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/printer-preparation-assembly.png",
+      "bytes": 46329,
+      "sha256": "17e9babcb78b758f962da0a90639387a1ec0465d9fce2e57847aa093f2ef36a5"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/printer-preparation-completed.png",
+      "bytes": 49645,
+      "sha256": "c96869d53f252be1d805b71880f8bd6c51372851c00fdcd337f8e6616c14dea2"
+    },
+    {
+      "path": "actual/previous-release-v006/test-v006/printer-preparation-v003-events.json",
+      "bytes": 164005,
+      "sha256": "81e3abd50ace558b04d77c32984cf8968b583b39183744495612b4a291441842"
+    },
+    {
+      "path": "actual/README.md",
+      "bytes": 702,
+      "sha256": "939b5292e4bf0c001103b16f397ecfa253af1d5a9df515c6c2239a3d83d5f77a"
+    },
+    {
+      "path": "adapter-validation/adapter-execution.json",
+      "bytes": 699,
+      "sha256": "54e5c0cb8a1c5ec5e76bdb5f90f661c18ce8494df8ef0796bb40f3a0cbd326f8"
+    },
+    {
+      "path": "adapter-validation/local-receiver-http.json",
+      "bytes": 745,
+      "sha256": "c9b166750bc80ad6c2b1d86e4b080c0773b0424963fc041361c3685b1953ce2b"
+    },
+    {
+      "path": "adapter-validation/outbox-compaction.json",
+      "bytes": 508,
+      "sha256": "c4a90b77524f6db22c65bf03ac585939b60c37b77002287e04015bf23e0917cf"
+    },
+    {
+      "path": "adapter-validation/post-terminal-local-http.json",
+      "bytes": 602,
+      "sha256": "08ae77ca2bb8d2a3c280370c08026b00b07c0a6c0d967c0dd71e2a4a4ed63196"
+    },
+    {
+      "path": "adapter-validation/post-terminal-quarantine.json",
+      "bytes": 496,
+      "sha256": "aef36022a9c9efe7bc7ee1193733dd9583611f1441c7b0300f7f6cad7de5cfdf"
+    },
+    {
+      "path": "audio/audio-manifest.json",
+      "bytes": 49482,
+      "sha256": "507b7e6dec3cc7eb719ab5db99fc02a6036593127cc0566cc2660dab4433db11"
+    },
+    {
+      "path": "audio/career-audio-runtime-v002.json",
+      "bytes": 10866463,
+      "sha256": "9c74e1969b0b45f58155fc317ff8596da075df6afe2bd7989fb123bd7b24b14a"
+    },
+    {
+      "path": "audio/career-audio-use-map-v002.json",
+      "bytes": 6215017,
+      "sha256": "e93c48094b818250610757515066ea102d2685ede46b23f10e1be2bf06812f33"
+    },
+    {
+      "path": "audio/career-audio-wiring-v001.json",
+      "bytes": 4460,
+      "sha256": "7c44ecb545629264960cd3cf34f9a133b35e88610e0059532d3fd2cd7651c57c"
+    },
+    {
+      "path": "audio/full-file-list.json",
+      "bytes": 7869,
+      "sha256": "c63d192c31d7ccd9e12381aa33f6b8e7e26c9d803dcdf19d84c9f16fe5597e3d"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-012/generation.json",
+      "bytes": 857,
+      "sha256": "01acf045656ba9e5c7cf15bbf71aee2e57309f3663f23061aa4e01aba4475b87"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-012/inspection.json",
+      "bytes": 2383,
+      "sha256": "70304c9610d3626a6211686297d693c0753f7be4c45759d1d59d61cdf52b55d1"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-012/SFX-012-v001.md",
+      "bytes": 1782,
+      "sha256": "3423d7ad1dc8381567d2c3ab71f34beefa61c9a52aef9ab2a8c9fb0c097ee973"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-013/generation.json",
+      "bytes": 856,
+      "sha256": "7f3f9ca719882944a58c8c163c5b602235296c4c63c51c4a5ea43914978ea7bd"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-013/inspection.json",
+      "bytes": 2404,
+      "sha256": "6da3edb21de5c92165f2a9ecb970f67fc013e3c0363bc03cdcff50f596aefc67"
+    },
+    {
+      "path": "audio/new-asset-records/SFX-013/SFX-013-v001.md",
+      "bytes": 1778,
+      "sha256": "049bd454ee22fbf0ac57e0625b977e581ce7e80a4f7e35fc1401424c493b8e49"
+    },
+    {
+      "path": "audio/sound-effects-108-v002.csv",
+      "bytes": 50609,
+      "sha256": "24d6b72d0c1e6dae8331ad9134f52fdac08bd9eef595ba4ab2a802ee9c2f8b4c"
+    },
+    {
+      "path": "audio/sound-provenance-v002.json",
+      "bytes": 230998,
+      "sha256": "6e2fd8bdafc8f1029f3ae8a0afaafb71961e1f186729f56e9aec488a57545a5c"
+    },
+    {
+      "path": "backend/README.md",
+      "bytes": 1732,
+      "sha256": "df8dd21fe467d060fd39c2496f7f7a2c2db483287feface3e0611f396b235676"
+    },
+    {
+      "path": "backend/service-configuration-required.json",
+      "bytes": 505,
+      "sha256": "74eb919f26fef48346e8e5ca20534b8494e3710682017cf22163c82f79d502be"
+    },
+    {
+      "path": "builds/career-suite-integration-v005-ai-build-catalog.json",
+      "bytes": 421350,
+      "sha256": "5deb59799344b66e164c44639953afa339a01fdc087e42838a3ab6e5cabbb963"
+    },
+    {
+      "path": "builds/career-suite-integration-v005-supported-manifest.json",
+      "bytes": 745247,
+      "sha256": "4992f05c54ff08ed68be22f4a7c584cd0762640438c1202b9f71427ffd84c3e6"
+    },
+    {
+      "path": "builds/career-suite-test-v009-ai-build-catalog.json",
+      "bytes": 417458,
+      "sha256": "16bc7f3efc4750f420a26599debfb07a430a4f6029e1cdca61be524d80088ac3"
+    },
+    {
+      "path": "builds/career-suite-test-v009-supported-manifest.json",
+      "bytes": 741355,
+      "sha256": "284be4a78f1d29cec65c092c73422d4d9783517919110a4701208366d3ef1a5f"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-integration-v002-supported-manifest.json",
+      "bytes": 481425,
+      "sha256": "dfe45d747ebc68dcf96c2bc0a4c067545c51152d8b25944c856d4b15750c0d88"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-integration-v003-ai-build-catalog.json",
+      "bytes": 421350,
+      "sha256": "923858a3b1c324bf23ec2cdca21e0d1c36d0848fa334ce1a39cda6c0db7b6bd7"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-integration-v003-supported-manifest.json",
+      "bytes": 745247,
+      "sha256": "b92ac4f2255fc1cb39c14eebeb21b0c8c2e3f6680299919676443f944cdc6138"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-test-v006-supported-manifest.json",
+      "bytes": 477533,
+      "sha256": "b075baaf80ba7be7e120bc68f81ecb89e9ea58904b70deaaea7920777bfada41"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-test-v007-ai-build-catalog.json",
+      "bytes": 417458,
+      "sha256": "1b763928394132ce173c34cbccb8071a729fdfecc12c73e95fdaca17d490850e"
+    },
+    {
+      "path": "builds/earlier-builds/career-suite-test-v007-supported-manifest.json",
+      "bytes": 741355,
+      "sha256": "d1a4828ffbdb1765258c7e5b04f11f045499ede39bd383d4971a4da2be5da7ab"
+    },
+    {
+      "path": "builds/production-ai-build-catalog.json",
+      "bytes": 421350,
+      "sha256": "5deb59799344b66e164c44639953afa339a01fdc087e42838a3ab6e5cabbb963"
+    },
+    {
+      "path": "builds/production-supported-manifest.json",
+      "bytes": 745247,
+      "sha256": "4992f05c54ff08ed68be22f4a7c584cd0762640438c1202b9f71427ffd84c3e6"
+    },
+    {
+      "path": "builds/test-ai-build-catalog.json",
+      "bytes": 417458,
+      "sha256": "16bc7f3efc4750f420a26599debfb07a430a4f6029e1cdca61be524d80088ac3"
+    },
+    {
+      "path": "builds/test-supported-manifest.json",
+      "bytes": 741355,
+      "sha256": "284be4a78f1d29cec65c092c73422d4d9783517919110a4701208366d3ef1a5f"
+    },
+    {
+      "path": "catalogs/builds.json",
+      "bytes": 591292,
+      "sha256": "218d18bb54c4a0f207f0d0652bbfe54f507d3651af3e39aa39f17aed416733b2"
+    },
+    {
+      "path": "catalogs/career-asset-reuse-report-v003.json",
+      "bytes": 16906807,
+      "sha256": "c7803b2b2b5ab27ad0fc477af9988255d8e751b5cf3b7680e2d20c743b2c6ee5"
+    },
+    {
+      "path": "catalogs/career-suite-bridge-v003.json",
+      "bytes": 3408,
+      "sha256": "20ba08bbfd43e79c7ca2bc2756620d8dfc50702ef41280f355050699c9a232be"
+    },
+    {
+      "path": "contracts/CONTRACT-SNAPSHOT.md",
+      "bytes": 36899,
+      "sha256": "698517f07b32ef6013abedb778307fc8e40106a53ed35c5164c3d47af3f3b0e7"
+    },
+    {
+      "path": "contracts/envelope-v001.types.ts",
+      "bytes": 4038,
+      "sha256": "f72d5165165bd7d42e9ba18c65dd9681ac85d806f75a5c04c5554cfb0fb51d50"
+    },
+    {
+      "path": "contracts/realtime-v002/realtime-contract.json",
+      "bytes": 2510,
+      "sha256": "73c66a9be721ef6b3879427bd61f3cd8ab872942123f5a0671d327c7849c84d9"
+    },
+    {
+      "path": "contracts/realtime-v002/realtime-events.example.json",
+      "bytes": 1776,
+      "sha256": "b6861912f6938863347c93d538ffd3f88d65f1c650f801cf1674b9d2f6f03207"
+    },
+    {
+      "path": "contracts/reconciliation-v003/acceptance-cases.json",
+      "bytes": 2736,
+      "sha256": "d2575a0bfc7be77fb5bf81ae3faaefec52e3c8774b168cc4ac73e907c4b8054e"
+    },
+    {
+      "path": "contracts/reconciliation-v003/interruption-contract.json",
+      "bytes": 1371,
+      "sha256": "7421099c80f8dfb7e13ceb67a085fc1ffc2d139b44ee5e5a973a65610f824b8f"
+    },
+    {
+      "path": "contracts/reconciliation-v003/reconcile-request.example.json",
+      "bytes": 420,
+      "sha256": "e0db9a83bf6929e1b1193d9784ee822726b047f413e7348987858445211b2d47"
+    },
+    {
+      "path": "contracts/reconciliation-v003/resolution-response.schema.json",
+      "bytes": 3827,
+      "sha256": "92dfac1e1f6bfe31d0e7c30c4806ce8d891f44e81a62b1e0606b6436d60a4ea5"
+    },
+    {
+      "path": "contracts/reconciliation-v003/resolution-responses.example.json",
+      "bytes": 13604,
+      "sha256": "6d0a3868cc9334b2e314d81a7a4567c1ebe0c7759ef68e5c5e16c692427accdc"
+    },
+    {
+      "path": "docs/asset-reuse-report-v003.md",
+      "bytes": 2438638,
+      "sha256": "1c51096c134270ea3bfbabb94d80cb705a0ca0965cf453f980a4db6cf2704f43"
+    },
+    {
+      "path": "docs/asset-scene-palette-review.json",
+      "bytes": 1110,
+      "sha256": "a09596eb33a324ca610e1d09aa60005deca3c00515a56a9c483751be883de3a2"
+    },
+    {
+      "path": "docs/audio-api-v001.md",
+      "bytes": 4574,
+      "sha256": "b2b34721f638a4efdca733e0480c4325a494e087a739a732511a524b5e1b3589"
+    },
+    {
+      "path": "docs/bridge-v002.md",
+      "bytes": 3953,
+      "sha256": "cdbc676e379ddda4d6b7d4161aafef9f0202e4aa5c840eef1cae4592a6cc84a5"
+    },
+    {
+      "path": "docs/bridge-v003.md",
+      "bytes": 2680,
+      "sha256": "e50b63cf360aaa769be1f555198baea8a4718ed1421ce59a41751850d1acaf3e"
+    },
+    {
+      "path": "docs/career-audio-use-map-v002.md",
+      "bytes": 190123,
+      "sha256": "f13938f80717697f40921fd0d7c86a27f5efb55e289e6597b3bab167029fe12e"
+    },
+    {
+      "path": "docs/career-audio-v002.md",
+      "bytes": 18450,
+      "sha256": "0d91e2203d808811877098313b0a5f1fe485c67c8bf1fb068cca3b9daf703418"
+    },
+    {
+      "path": "docs/career-experience-descriptions-v001.md",
+      "bytes": 266759,
+      "sha256": "66a50648516e478ea02044cbe7441fda6df2c58ed17a9b6122febd0d5a3d1919"
+    },
+    {
+      "path": "docs/career-suite-v002.md",
+      "bytes": 5690,
+      "sha256": "40331dc612525fb6194ef9b65fdd6d353c9fce77caa9196b4c7d7de4c8b455a7"
+    },
+    {
+      "path": "docs/frontend-final-byte-match.json",
+      "bytes": 1270,
+      "sha256": "cfae24c1f703b81a3b0d0230707169172d006ab9da14b2682bf3b9824eee7648"
+    },
+    {
+      "path": "docs/full-target-status-v003.md",
+      "bytes": 283946,
+      "sha256": "3263a2809f2299f34df0a075ee304f8164d6bd1b6b269b7f7cd391fec178b4f8"
+    },
+    {
+      "path": "docs/production-build-v002.md",
+      "bytes": 2009,
+      "sha256": "e69f4f83e816d4dd66297deec52482ff090032211187fa2d9cb3b02bddace29f"
+    },
+    {
+      "path": "docs/production-build-v005.md",
+      "bytes": 2372,
+      "sha256": "2c9097618fec5ea2b82199d327f93a5c310d6455272985f8828ab4b9d7cf36cc"
+    },
+    {
+      "path": "docs/progress-coalescing-v002.md",
+      "bytes": 2260,
+      "sha256": "7f56fda08bbc4de2eca5c2d75191fd280da4bbcc23f0d63d0f8406c5ba311efb"
+    },
+    {
+      "path": "docs/runtime-review-v001.md",
+      "bytes": 8890,
+      "sha256": "d28a492a6ce25394172488e2f27750ee8704077751a3254f62f577ba309dbb9e"
+    },
+    {
+      "path": "docs/sound-effects-production-v002.md",
+      "bytes": 2413,
+      "sha256": "75a8a017b485f15209b230d6f3b528aecefac5297796fa7e4717e5a2a6d20d83"
+    },
+    {
+      "path": "docs/test-build-v006.md",
+      "bytes": 1985,
+      "sha256": "1a05d40b024d9b2e52f99bb8d13807673957571a14648725d453c7c96ada8115"
+    },
+    {
+      "path": "docs/test-build-v009.md",
+      "bytes": 2359,
+      "sha256": "78518933338efc65a962fc7801f90ccc4617cfd87729919d9cfb975a0f8126a0"
+    },
+    {
+      "path": "docs/test-final-source-comparison.json",
+      "bytes": 7519,
+      "sha256": "20acdef4f27c4f2a1df8215d82e6d397f9836170bd51e7fccc51e5a9369e6995"
+    },
+    {
+      "path": "examples/end-request.example.json",
+      "bytes": 405,
+      "sha256": "d5a4bceff433807c324ffd16e1e57a1ff2d9720e4904fdcdd3da281dcc703879"
+    },
+    {
+      "path": "examples/start-request.example.json",
+      "bytes": 454,
+      "sha256": "168bb214a3e17d683f644357c2808b615c112195bddb126c2e57860686ad9648"
+    },
+    {
+      "path": "frontend/audio-ui.css",
+      "bytes": 1576,
+      "sha256": "f4002a058038220a5030ffee3f7f6c6cc3fdcfe2d5403374374fb53e3b367ca9"
+    },
+    {
+      "path": "frontend/audio-ui.js",
+      "bytes": 5965,
+      "sha256": "ec6cc068a43f1c6986d7283f8ea5db0144b94d8afb47ad5a4f345e8fccc2edd8"
+    },
+    {
+      "path": "frontend/audio.d.ts",
+      "bytes": 1849,
+      "sha256": "137cbaeb22ff633ce79232538d6c6e0bfd58548655472661ea5c81658e79552e"
+    },
+    {
+      "path": "frontend/audio.js",
+      "bytes": 10955,
+      "sha256": "ec835d855257f1958998a6966c750ecc4cf0736e302096e5e1516887e3df451f"
+    },
+    {
+      "path": "frontend/backend.d.ts",
+      "bytes": 1820,
+      "sha256": "93678d6e5f3135a9c16fadc5a820f1fbc6c7deee536cc53ad4aa1baf0018a579"
+    },
+    {
+      "path": "frontend/backend.js",
+      "bytes": 4960,
+      "sha256": "43d525e1c4b4e2db5d57e0cd15a146a39150cf464a08f163d60b79b7eaf9ec44"
+    },
+    {
+      "path": "frontend/client.d.ts",
+      "bytes": 3220,
+      "sha256": "5c1ef8ae391bab8dcd44f83d65132804f454fa1fda2368628aeb153b323f7f4e"
+    },
+    {
+      "path": "frontend/client.js",
+      "bytes": 14393,
+      "sha256": "425ba867e8e83d4b48c8755c5cf5f4e6d8a17a1c66351429d41893c3e6b94265"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-4lE-TEGs.js",
+      "bytes": 232679,
+      "sha256": "362d853f1bee55b084f92d9275848b61a7ba62abb105bae7a75381ac24d318e1"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-6i2J_5VS.js",
+      "bytes": 233677,
+      "sha256": "1e5c7e8c2c864b9a1b6fef332f42d274b97b7ccac061412ffd1ea9c3aec45022"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-BvFWauDf.js",
+      "bytes": 234751,
+      "sha256": "a8e28da645587cd0b7f5b829307c62768e0a54645385c1e4491dea8cdc2a402c"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-BXRuKEUC.js",
+      "bytes": 233330,
+      "sha256": "fe81a4c76b2278d3d7b4f61e2d76a2a0c7d9456779c4f19769adb4aee23cff25"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-CNCZLT0a.js",
+      "bytes": 233406,
+      "sha256": "6cae0ca1e37f5a03d87621b0611ed83441c0893abf86440ac3fba689dfc38d2c"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-DcxSCjpk.js",
+      "bytes": 233106,
+      "sha256": "c0d19da81698386553327595e5a0f54c2d88b05f5bd6aac09274f8046cbd284d"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-DywPIVmM.js",
+      "bytes": 233549,
+      "sha256": "d9af7967a936f07a79310ec85d47c40b9af43f070b80020db089986b48cd8feb"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-gAoNDf2I.js",
+      "bytes": 234856,
+      "sha256": "4a52ef4c3b4d2e1431aa486857d64303b50ecc53568e594a500a15d0ef63f4d9"
+    },
+    {
+      "path": "frontend/compiled/assets/integration-example-MG8pPo0A.js",
+      "bytes": 234107,
+      "sha256": "cf4abed23dac679c3f9303f9e81c4d39766268fe4411f867402578c831099c49"
+    },
+    {
+      "path": "frontend/compiled/integration-example.html",
+      "bytes": 340,
+      "sha256": "37c0cb7e34c6a7ad1b14f293506fbec78b27b1d12920076b026be27c06dfe7d2"
+    },
+    {
+      "path": "frontend/environment.d.ts",
+      "bytes": 536,
+      "sha256": "bec4e9f73949ccc04f37aed404800bb83898955509ea0155695acc88f16d6952"
+    },
+    {
+      "path": "frontend/Experience.jsx",
+      "bytes": 1504,
+      "sha256": "472b282e68aa5ee8d3c4ee5988b33313ec42586d10a3bf42d7141dfbafc7cc23"
+    },
+    {
+      "path": "frontend/integration-example.html",
+      "bytes": 310,
+      "sha256": "9e85e49d41b3439513e919073bdae1d6231754e5f5c61edbcad3527288e7dd98"
+    },
+    {
+      "path": "frontend/integration-example.jsx",
+      "bytes": 6472,
+      "sha256": "4c49d5c02590a30610ba8e5f63a13660fc3393ed99dbcd7fcbbefb5c02d4834e"
+    },
+    {
+      "path": "frontend/package.json",
+      "bytes": 137,
+      "sha256": "1df65f14c37e8d75862395c2fd4167f80db60dd60924188c18eabbef8a6177a3"
+    },
+    {
+      "path": "frontend/progress.types.ts",
+      "bytes": 504,
+      "sha256": "68d248d1fcd4f66083d1703e046041ffa18d7b5fb8c23a6aa10d76bbafa6d004"
+    },
+    {
+      "path": "frontend/react-example.jsx",
+      "bytes": 2412,
+      "sha256": "5df952a83845c55a7a1c0e9ae3e42c0d8f2915409d604adb420c44faae34aa4b"
+    },
+    {
+      "path": "frontend/README.md",
+      "bytes": 8579,
+      "sha256": "c1768a0e4387806733e50e3be605dfee0c4d8356546e099b488111c4b16dc14d"
+    },
+    {
+      "path": "frontend/server.mjs",
+      "bytes": 4406,
+      "sha256": "0543aefd13b370188024906b93aeb5eda53bf686f9393b739e04ad9808fc7170"
+    },
+    {
+      "path": "frontend/suite-host.js",
+      "bytes": 13642,
+      "sha256": "fc503111f236552a122af91810c1ef7b23b9df80aba7cd17087fb8cd09d63459"
+    },
+    {
+      "path": "frontend/suite-ui.css",
+      "bytes": 1331,
+      "sha256": "c0b54757760df25df33303f93b5cd2804a9c20cd2c233ae889b768934ee32db5"
+    },
+    {
+      "path": "frontend/vite.config.js",
+      "bytes": 528,
+      "sha256": "eac1b43d7205133334587d2a405596e901c01c8acff186f957d9d67f73548ec0"
+    },
+    {
+      "path": "ids/career-experience-descriptions-v001.csv",
+      "bytes": 345784,
+      "sha256": "07e8c9e8485d77e1fb991f3bd0782a68447fae1823d491f89f84dc5dd0641420"
+    },
+    {
+      "path": "ids/career-experience-descriptions-v001.json",
+      "bytes": 2573605,
+      "sha256": "91d8c007f77fb93eecd6c378ada4ca37b23bca8fa48736233994123b35320c06"
+    },
+    {
+      "path": "ids/career-full-targets-v003.json",
+      "bytes": 2875440,
+      "sha256": "c1c016df85cd27c572d6d019c2ffe3b1cec4f86241b0f369fc6b13c1b76e2a3d"
+    },
+    {
+      "path": "ids/career-integration-registry-v004.json",
+      "bytes": 983735,
+      "sha256": "605067be88dab1d7c90a423f1fd2992c0e72c80173bbeb904f28f3d31d1dd3bd"
+    },
+    {
+      "path": "ids/room-scenario-ids.csv",
+      "bytes": 142260,
+      "sha256": "a4a3402a316d6b8fff52da307810816673b4b35225355028c64f6e4192078afb"
+    },
+    {
+      "path": "ids/room-scenario-ids.json",
+      "bytes": 341687,
+      "sha256": "951747212d948d1af8b85e7d788dafc6e1b21805a8729b10ec516b8b5827538d"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4818,
+      "sha256": "038422dc777f299abd7d3cb31ed65f4a9741e1777a561165c0a05fcf06f6572e"
+    },
+    {
+      "path": "UPDATES.md",
+      "bytes": 7938,
+      "sha256": "24e51378fbebfc3faec1e5e2c889fdc533ad0318669d5fec2c738fed4ea90b83"
+    }
+  ],
+  "primary_build_aliases": [
+    {
+      "role": "production",
+      "buildId": "career-suite-integration-v005",
+      "path": "builds/production-supported-manifest.json",
+      "namedPath": "builds/career-suite-integration-v005-supported-manifest.json",
+      "sha256": "4992f05c54ff08ed68be22f4a7c584cd0762640438c1202b9f71427ffd84c3e6"
+    },
+    {
+      "role": "production",
+      "buildId": "career-suite-integration-v005",
+      "path": "builds/production-ai-build-catalog.json",
+      "namedPath": "builds/career-suite-integration-v005-ai-build-catalog.json",
+      "sha256": "5deb59799344b66e164c44639953afa339a01fdc087e42838a3ab6e5cabbb963"
+    },
+    {
+      "role": "test",
+      "buildId": "career-suite-test-v009",
+      "path": "builds/test-supported-manifest.json",
+      "namedPath": "builds/career-suite-test-v009-supported-manifest.json",
+      "sha256": "284be4a78f1d29cec65c092c73422d4d9783517919110a4701208366d3ef1a5f"
+    },
+    {
+      "role": "test",
+      "buildId": "career-suite-test-v009",
+      "path": "builds/test-ai-build-catalog.json",
+      "namedPath": "builds/career-suite-test-v009-ai-build-catalog.json",
+      "sha256": "16bc7f3efc4750f420a26599debfb07a430a4f6029e1cdca61be524d80088ac3"
+    }
+  ],
+  "review_correction": {
+    "reason": "Pre-review bare aliases incorrectly retained v002/v006. Corrected before delivery; old manifests moved to builds/earlier-builds.",
+    "preserved_archive": "unity/webgl/packages/career-integration-listing-v004-pre-review.zip",
+    "preserved_archive_sha256": "fa4f401a0a6a7b2656c9fd95a10527301f02ba9f822fa91d877d0a0d87d92813",
+    "not_delivered_pre_review": true
+  }
+}

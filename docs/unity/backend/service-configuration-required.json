@@ -1,0 +1,17 @@
+{
+  "schema_version": 3,
+  "status": "not_supplied_not_integrated",
+  "required_from_service": [
+    "eventEndpoint",
+    "reconcileEndpoint",
+    "heartbeatEndpoint",
+    "interruptionEndpoint",
+    "authentication_and_CSRF_CORS_contract",
+    "storage_ACK_contract",
+    "ownership_lease_fence_and_new_start_admission",
+    "raw_event_lookup_and_retention"
+  ],
+  "actual_endpoint_values": null,
+  "actual_authentication_values": null,
+  "production_backend_validation": "unverified"
+}

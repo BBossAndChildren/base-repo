@@ -1,0 +1,209 @@
+{
+  "schema_version": 3,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Backend experience resolution response v003",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "protocol",
+    "type",
+    "producer",
+    "policyVersion",
+    "reconcileRequestId",
+    "resolutionId",
+    "revision",
+    "resolvedAt",
+    "sessionId",
+    "experienceId",
+    "roomId",
+    "buildId",
+    "scenarioId",
+    "scenarioVersion",
+    "scenarioRunId",
+    "lifecycleStatus",
+    "code",
+    "source",
+    "unityEndReceived",
+    "unityEndEventId",
+    "lastObserved",
+    "process",
+    "result",
+    "context",
+    "evidence",
+    "supersedesRevision"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "protocol": {
+      "const": "career-experience-resolution"
+    },
+    "type": {
+      "const": "experience.reconciled"
+    },
+    "producer": {
+      "const": "backend"
+    },
+    "policyVersion": {
+      "const": "v003"
+    },
+    "reconcileRequestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resolutionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "resolvedAt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "experienceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "roomId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "buildId": {},
+    "scenarioId": {},
+    "scenarioVersion": {},
+    "scenarioRunId": {},
+    "lifecycleStatus": {
+      "enum": [
+        "pending_reconciliation",
+        "deferred_active",
+        "interrupted",
+        "not_started",
+        "ended"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "enum": [
+        "backend_policy",
+        "unity_end"
+      ]
+    },
+    "unityEndReceived": {
+      "type": "boolean"
+    },
+    "unityEndEventId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lastObserved": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "process": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "result": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "required": [
+        "assessmentStatus",
+        "assessmentCode",
+        "ruleVersion",
+        "reasonCodes",
+        "evidenceEventIds",
+        "interpretation",
+        "limitations"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "startObserved",
+        "newStartRequested",
+        "oldLeaseStatus",
+        "fenceConfirmed",
+        "terminalScenarioEventId"
+      ]
+    },
+    "supersedesRevision": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "const": "backend_policy"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "unityEndReceived": {
+            "const": false
+          },
+          "unityEndEventId": {
+            "type": "null"
+          },
+          "process": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "lifecycleStatus": {
+            "const": "ended"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "const": "unity_end"
+          },
+          "unityEndReceived": {
+            "const": true
+          },
+          "unityEndEventId": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

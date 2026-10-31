@@ -1,0 +1,29 @@
+# 로컬 API 검증 전용. 실제 GPU 서버를 사용하려면 이 파일을 적용하지 않는다.
+services:
+  backend:
+    environment:
+      AI_API_BASE_URL: http://mock-ai:9000
+      AI_SERVER_KEY: ${MOCK_AI_KEY:?Run python3 scripts/prepare_mock_env.py first}
+      GAME_GUIDELINES_PATH: /app/backend/apps/game/tests/fixtures/mock-guidelines.md
+      GAME_SCENARIO_PATH: /app/backend/apps/game/tests/fixtures/mock-scenario.md
+      GAME_BUILD_CATALOG_PATH: /app/backend/apps/game/tests/fixtures/mock-catalog.json
+    depends_on:
+      mock-ai:
+        condition: service_healthy
+
+  mock-ai:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+      target: runtime
+    env_file:
+      - .env
+    environment:
+      MOCK_AI_ENABLED: "True"
+      AI_SERVER_KEY: ${MOCK_AI_KEY:?Run python3 scripts/prepare_mock_env.py first}
+    command: ["python", "manage.py", "run_mock_ai", "--bind", "0.0.0.0", "--port", "9000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/health', timeout=5).close()"]
+      interval: 5s
+      timeout: 6s
+      retries: 10

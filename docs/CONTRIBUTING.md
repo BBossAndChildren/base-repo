@@ -18,6 +18,7 @@
 ```
 main       ← 배포 브랜치. 직접 push 금지. develop → main PR 로만 병합 (긴급 수정은 hotfix/ 가 main 에서 분기)
  └ develop ← 통합 브랜치. 코드는 직접 push 금지(작업 브랜치 → develop PR). docs/ 문서 수정만 직접 push 허용
+    ├ docs  ← 문서 장기 브랜치. 머지 후에도 삭제하지 않고 계속 쓴다. docs → develop PR 은 merge commit
     ├ feature/be-auth
     ├ feature/fe-login
     └ refactor/fe-structure
@@ -36,6 +37,7 @@ main       ← 배포 브랜치. 직접 push 금지. develop → main PR 로만 
 - 이름은 `<접두어>/<작업-요약>`, 요약은 영문 소문자 + 하이픈(kebab-case)
 - 접두어는 커밋 타입과 맞춘다 (`feature/` ↔ `feat`, `refactor/` ↔ `refactor`)
 - **hotfix 는 main 머지 후 반드시 `main → develop` 반영** — 빠지면 다음 릴리스에서 버그가 되살아난다
+- **`docs` 는 장기 브랜치** — 접두어 브랜치(`docs/<요약>`)와 달리 머지 후에도 계속 쓴다. 작업 전 `git pull origin docs` 후 `git merge origin/develop` 으로 develop 변경을 받아 둔다 (rebase 금지). `docs → develop` PR 은 Squash 하지 않는다 (4-4)
 
 ### 2-1. GitHub 보호 규칙
 
@@ -67,7 +69,7 @@ main       ← 배포 브랜치. 직접 push 금지. develop → main PR 로만 
 | 요소 | 규칙 |
 |------|------|
 | `type` | `feat` `fix` `hotfix` `refactor` `docs` `test` `style` `chore` |
-| `scope` | `be`(백엔드) · `fe`(프론트) 두 가지만. 어느 쪽도 아니면 생략 (`docs: 내용`) |
+| `scope` | `be`(백엔드 `backend/` · AI 서버) · `fe`(프론트 `frontend/`) 두 가지만. 어느 쪽도 아니면 생략 (`docs: 내용`) |
 | 내용 | 한국어, 50자 이내, 마침표 없음 |
 | `#이슈번호` | 연결된 이슈가 있으면 끝에 `#5` 형식(앞자리 0 없음). 이슈 없는 문서·설정 작업은 생략 |
 | 본문 | 제목만으로 이유가 드러나지 않으면 빈 줄 뒤에 작성 |
@@ -103,12 +105,14 @@ composition 상태를 확인해 조합 중 Enter 는 무시하도록 변경.
 |-------------|------|------|
 | `feature/*` `refactor/*` `fix/*` `docs/*` `chore/*` `test/*` | `develop` | 일반 작업 |
 | `hotfix/*` | `main` | 머지 후 `main → develop` 반영 |
+| `docs` (장기 브랜치) | `develop` | merge commit 으로 머지, 브랜치는 삭제하지 않음 |
 | (PR 없음) `docs/` 문서만 수정 | `develop` 직접 push | 코드·설정이 섞이면 브랜치 + PR |
 | `develop` (릴리스) | `main` | 배포 시점, 태그 `v1.0.0`. 머지 후 `main → develop` 동기화 PR |
 
 ### 4-3. 크기와 범위
 - 1 PR = 1 기능/1 목적. 변경 400줄 이하 권장 (문서·lock 파일 제외)
 - 다른 기능 수정이 섞이면 PR 을 나눈다
+- 모노레포: 한 PR 에 `frontend/` 와 `backend/` 변경을 섞지 않는다. 문서(`docs/`)는 `docs` 브랜치로 따로 올린다 (API 를 바꾸는 코드 PR 은 03 등 관련 문서를 같은 PR 에서 함께 고칠 수 있다)
 - 작업 중 공유는 Draft PR, 준비되면 Ready for review
 
 ### 4-4. 리뷰와 머지
@@ -118,11 +122,11 @@ composition 상태를 확인해 조합 중 Enter 는 무시하도록 변경.
 | 리뷰·승인 | **필수 아님**. 필요하면 리뷰어를 지정해 의견을 받을 수 있다 |
 | 머지 조건 | 테스트 통과 + 충돌 없음 + 체크리스트 완료 |
 | 머지 주체 | PR 작성자가 직접 머지 |
-| 머지 방식 | **모든 PR 은 Squash and merge 로 통일** (작업 → develop, hotfix → main, 릴리스 develop → main, 동기화 main → develop 모두). Squash 커밋 제목은 PR 제목(커밋 컨벤션 형식)을 그대로 쓴다 |
-| 머지 후 | 연결 이슈 자동 종료 확인. 브랜치 삭제 여부는 팀이 정한다 |
+| 머지 방식 | 머지 후 버리는 브랜치(작업 → develop, hotfix → main)는 **Squash and merge** (`gh pr merge --squash`). Squash 커밋 제목은 PR 제목(커밋 컨벤션 형식)을 그대로 쓴다. 계속 쓰는 브랜치끼리의 PR(릴리스 develop → main, 동기화 main → develop, `docs → develop`)은 **Create a merge commit** (`gh pr merge --merge`) — 절대 Squash 하지 않는다 |
+| 머지 후 | 연결 이슈 자동 종료 확인 (develop 머지는 자동 종료되지 않으므로 직접 닫는다). 작업 브랜치 삭제 여부는 팀이 정한다. `main` `develop` `docs` 는 삭제하지 않는다 |
 
-> 저장소 Settings → General → Pull Requests 에서 **Allow squash merging 만 켜고** merge commit · rebase merging 은 끈다.
-> Squash 는 base 에 새 커밋을 만들기 때문에, 릴리스·동기화 후에는 `develop` 과 `main` 의 이력이 갈라진다. 릴리스 PR 머지 직후 `main → develop` 동기화 PR 을 만들어 내용을 맞춘다.
+> 저장소 Settings → General → Pull Requests 에서 **Allow squash merging 과 Allow merge commits 를 켜고** rebase merging 은 끈다.
+> Squash 는 base 에 PR 커밋을 합친 새 커밋을 만들고 원래 커밋은 base 이력에 남지 않는다. 계속 쓰는 브랜치를 Squash 로 머지하면 내용은 같아도 이력이 갈라져, 다음 PR 에 이미 반영한 커밋이 다시 차이로 잡힌다. 그래서 계속 쓰는 브랜치끼리는 merge commit 을 쓴다.
 
 ### 4-5. 리뷰 코멘트 머리말 (리뷰를 남길 때)
 

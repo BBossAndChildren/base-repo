@@ -1,0 +1,102 @@
+/* 게임 화면 — 색은 global.css 역할 변수 (docs/design/README.md) */
+.play { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-5); max-width: 1200px; margin: 0 auto; padding: var(--space-5); align-items: start; }
+/* 채팅 영역은 화면 높이에 맞추고 대화 목록만 안에서 스크롤한다. 입력칸 · 힌트는 항상 화면 안 (05 화면 2 · 7절, #128) */
+.chat { min-width: 0; display: flex; flex-direction: column; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); height: calc(100vh - var(--header-h) - 2 * var(--space-5)); height: calc(100dvh - var(--header-h) - 2 * var(--space-5)); min-height: 360px; overflow: hidden; }
+.chat-log { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); list-style: none; margin: 0; }
+.chat-log > * { flex: none; }
+.chat-log:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.msg { max-width: 78%; }
+.msg-narrator { max-width: 100%; align-self: stretch; background: var(--color-surface-2); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); font-family: var(--font-heading); font-size: var(--text-lg); color: var(--color-text); }
+.msg-narrator .msg-speaker { font-family: var(--font-body); }
+.msg-speaker { display: block; font-size: var(--text-xs); font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-1); }
+.msg-npc { align-self: flex-start; display: flex; gap: var(--space-3); }
+.avatar { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-ink); display: grid; place-items: center; font-weight: 700; font-size: var(--text-sm); }
+.bubble { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); line-height: 1.6; }
+.msg-npc .bubble { background: var(--color-surface); border: 1px solid var(--color-border); border-top-left-radius: 4px; }
+.msg-user { align-self: flex-end; text-align: left; }
+.msg-user .msg-speaker { text-align: right; }
+.msg-user .bubble { background: var(--color-accent-soft); color: var(--color-text); border-top-right-radius: 4px; }
+.msg-system { align-self: center; font-size: var(--text-xs); color: var(--color-text-muted); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 2px var(--space-3); }
+.msg-system strong { color: var(--color-ink); }
+.msg-loading .bubble { display: inline-flex; gap: var(--space-2); align-items: center; color: var(--color-text-muted); }
+
+.exp-card { align-self: stretch; border: 2px solid var(--color-ink); border-radius: var(--radius-lg); background: linear-gradient(160deg, var(--color-accent-soft) 0%, var(--color-surface) 60%); padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; }
+.exp-card-art { width: 64px; height: 64px; border-radius: var(--radius-md); background: var(--color-ink); color: var(--color-on-ink); display: grid; place-items: center; }
+.exp-card h3 { font-size: var(--text-lg); margin: 0 0 var(--space-1); }
+.exp-card p { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--text-sm); }
+.exp-meta { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
+
+.chat-footer { flex: none; border-top: 1px solid var(--color-border); padding: var(--space-3) var(--space-4) var(--space-4); }
+/* 대기 중인 선택 (자금 부족 · 기간 진행 확인 · 제안, 05 9절 · #134) */
+.choices { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); max-height: 40vh; overflow-y: auto; }
+.choice { border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-surface-2); padding: var(--space-3); }
+.choice-text { margin: 0 0 var(--space-2); font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+.choice-options { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.hints { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-3); }
+.hints-label { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 700; }
+.composer { display: flex; gap: var(--space-2); }
+.composer .input { min-width: 0; flex: 1; }
+.composer .input { min-height: 48px; border-radius: var(--radius-pill); padding: 0 var(--space-5); }
+.composer .btn { min-height: 48px; }
+.composer-status { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-2); min-height: 1.2em; }
+
+.status-panel { position: sticky; top: calc(var(--header-h) + var(--space-5)); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.status-head { background: var(--color-ink); color: var(--color-on-ink); padding: var(--space-4) var(--space-5); }
+.status-head .label { font-size: var(--text-xs); opacity: .85; }
+.status-age { font-family: var(--font-heading); font-size: var(--text-3xl); font-weight: 700; line-height: 1.1; }
+.status-year { font-size: var(--text-sm); opacity: .9; }
+.status-body { padding: var(--space-4) var(--space-5) var(--space-5); }
+.status-profile { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); }
+.placeholder-box { border: 1px dashed var(--color-border-strong); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,0.04) 8px 16px); }
+.placeholder-title { font-size: var(--text-sm); font-weight: 700; color: var(--color-text-muted); margin-bottom: var(--space-3); }
+.skeleton-row { display: grid; grid-template-columns: 56px 1fr 28px; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2); font-size: var(--text-xs); color: var(--color-text-muted); }
+.skeleton { height: 10px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
+.skeleton-label { height: 10px; width: 40px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
+/* 자금 · 빚 · 주거 (원화) */
+.status-money { margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+.status-money-row { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-sm); border-radius: var(--radius-sm); }
+.status-money-row dt { color: var(--color-text-muted); }
+.status-money-row dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-text); text-align: right; }
+/* 상태 막대 (건강 · 에너지 · 스트레스 · 성적/자기계발, 0~100) */
+.status-meters { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.status-meter { display: grid; grid-template-columns: 56px 1fr 32px; gap: var(--space-2); align-items: center; font-size: var(--text-sm); border-radius: var(--radius-md); }
+.status-meter-label { color: var(--color-text-muted); }
+.status-meter-track { height: 10px; border-radius: var(--radius-pill); background: var(--color-surface-2); border: 1px solid var(--color-border); overflow: hidden; }
+.status-meter-fill { display: block; height: 100%; border-radius: var(--radius-pill); background: var(--color-accent); transition: width .4s ease-out; }
+.status-meter-fill.is-energy { background: var(--color-success); }
+.status-meter-fill.is-stress { background: var(--color-warning); }
+.status-meter-fill.is-development { background: var(--color-ink); }
+.status-meter-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--color-text); }
+@media (prefers-reduced-motion: reduce) { .status-meter-fill { transition: none; } }
+.is-changed { animation: pulse 1.6s ease-out 1; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(181,237,206,.7); } 100% { box-shadow: 0 0 0 14px rgba(181,237,206,0); } }
+
+/* 모바일 상단 접이식 상태 막대 */
+.status-bar { display: none; }
+@media (max-width: 1023px) {
+  .play { grid-template-columns: minmax(0, 1fr); padding: 0 0 var(--space-4); gap: 0; }
+  .status-panel { display: none; }
+  .status-bar { display: block; position: sticky; top: var(--header-h); z-index: 15; background: var(--color-ink); color: var(--color-on-ink); }
+  .status-bar summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4); cursor: pointer; min-height: 48px; }
+  .status-bar summary::-webkit-details-marker { display: none; }
+  .status-bar summary .chev { transition: transform .2s; }
+  .status-bar[open] summary .chev { transform: rotate(180deg); }
+  .status-bar .status-age-inline { font-family: var(--font-heading); font-size: var(--text-xl); font-weight: 700; }
+  .status-bar .status-bar-body { background: var(--color-surface); color: var(--color-text); padding: var(--space-4); border-bottom: 1px solid var(--color-border); }
+  /* 접힌 상태 막대(48px) 아래 남은 높이 */
+  .chat { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; height: calc(100vh - var(--header-h) - 48px); height: calc(100dvh - var(--header-h) - 48px); min-height: 320px; }
+  .chat-log { padding: var(--space-4); }
+  .msg { max-width: 90%; }
+  .exp-card { grid-template-columns: 1fr; }
+  .exp-card-art { display: none; }
+  .chat-footer { background: var(--color-surface); }
+}
+
+
+/* 구현 추가: 접힌 3D 안내 카드 · 인생 종료 안내 */
+.exp-card-declined { align-self: center; font-size: var(--text-xs); color: var(--color-text-muted); }
+.chat-ended { align-self: stretch; text-align: center; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); background: var(--color-bg); }
+.chat-ended p { margin-bottom: var(--space-3); }
+@media (prefers-reduced-motion: reduce) { .is-changed { animation: none; } }
+.job-kicker { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
+.status-actions { margin-top: var(--space-4); display: flex; justify-content: flex-end; }

@@ -1,0 +1,16 @@
+# docker compose -f compose.yaml -f compose.gateway.yaml up -d --build
+services:
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "127.0.0.1:${GATEWAY_PORT:-8080}:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # 기본: 저장소의 backend/deploy/assets/ (git · Docker 이미지 제외, 06-deployment.md 5-2 · 5-2-1)
+      - ${INTRO_ASSET_DIR:-./deploy/assets/intro-assets}:/srv/intro-assets:ro
+      - ${UNITY_BUILD_DIR:-./deploy/assets/builds}:/srv/builds:ro
+      - static_files:/srv/static:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

@@ -1,0 +1,102 @@
+{
+  "schema_version": 3,
+  "kind": "required_cases_not_executed",
+  "cases": [
+    {
+      "caseId": "REC-001",
+      "input": "timeout_only",
+      "expected": "pending_reconciliation",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-002",
+      "input": "tab_hidden_or_paused",
+      "expected": "no_terminal_inference",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-003",
+      "input": "new_start_old_lease_alive",
+      "expected": "deferred_active",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-004",
+      "input": "new_start_liveness_unknown",
+      "expected": "pending_reconciliation",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-005",
+      "input": "new_start_expired_and_fenced_started",
+      "expected": "interrupted",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-006",
+      "input": "new_start_expired_no_start_evidence",
+      "expected": "not_started",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-007",
+      "input": "known_scenario_completed_without_end",
+      "expected": "preserve_scenario_result_and_missing_end_separately",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-008",
+      "input": "same_request_same_payload",
+      "expected": "same_resolution_id_revision_response",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-009",
+      "input": "same_request_different_payload",
+      "expected": "conflict_error",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-010",
+      "input": "concurrent_heartbeat_and_reconcile",
+      "expected": "atomic_single_owner_decision",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-011",
+      "input": "end_received_during_reconcile",
+      "expected": "verified_end_wins",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-012",
+      "input": "late_verified_end",
+      "expected": "append_revision_preserve_old",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-013",
+      "input": "post_fence_invalid_writer",
+      "expected": "quarantine_no_new_run_mutation",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-014",
+      "input": "foreign_owner_or_id_mismatch",
+      "expected": "reject_no_write",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-015",
+      "input": "no_next_visit",
+      "expected": "remain_unresolved",
+      "runtimeStatus": "unverified"
+    },
+    {
+      "caseId": "REC-016",
+      "input": "backend_or_unity_end_duplicates",
+      "expected": "no_counter_increment",
+      "runtimeStatus": "unverified"
+    }
+  ]
+}

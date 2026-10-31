@@ -1,0 +1,51 @@
+name: Auto Assign Issue/PR Author
+
+# 목적: 이슈/PR 등록 시 담당자(Assignee)가 비어 있으면 자동으로 작성자를 지정합니다.
+# GitHub은 "Assignee 미지정 시 등록 자체를 막는" 기능을 제공하지 않으므로,
+# 등록 직후 담당자를 자동으로 채워 넣는 방식으로 "항상 담당자가 존재함"을 보장합니다.
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign author when no assignee is set
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const item = context.payload.issue || context.payload.pull_request;
+            if (!item) {
+              core.info('No issue/PR payload found, skipping.');
+              return;
+            }
+
+            if (item.assignees && item.assignees.length > 0) {
+              core.info(`Already has ${item.assignees.length} assignee(s), skipping.`);
+              return;
+            }
+
+            const author = item.user.login;
+
+            // Bot 계정이 올린 이슈/PR(예: dependabot)은 자동 할당 대상에서 제외
+            if (item.user.type === 'Bot') {
+              core.info(`Author ${author} is a bot, skipping auto-assign.`);
+              return;
+            }
+
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: item.number,
+              assignees: [author],
+            });
+
+            core.info(`Assigned author ${author} to #${item.number}`);

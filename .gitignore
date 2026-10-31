@@ -1,0 +1,36 @@
+.DS_Store
+
+# 환경변수 · 비밀값
+.env
+.env.*
+!.env.example
+
+# Unity 테스트용 WebGL 빌드 (수십 MB, 최종은 백엔드 서버에서 제공) — 저장소에 올리지 않는다
+docs/unity/webgl/
+
+# frontend
+node_modules/
+dist/
+.vercel/
+
+# backend
+.venv/
+__pycache__/
+*.pyc
+staticfiles/
+media/
+
+# 로컬 테스트 수신기 기록 (Unity 연결 코드 server.mjs)
+local-receiver-data/
+# Python / local configuration
+*.py[cod]
+.env
+.env.*
+!.env.example
+.ruff_cache/
+*.egg-info/
+backend/.local/
+backend/staticfiles/
+backend/dist/
+# 배포용 정적 에셋 (인트로 모델 71개 · Unity 빌드). git 에 넣지 않고 서버에 따로 복사한다 (06 5-2 · 5-2-1)
+backend/deploy/assets/

@@ -1,0 +1,44 @@
+{
+  "schema_version": 3,
+  "profileVersion": "v003",
+  "status": "specification_only",
+  "unityEnvelopeUnchanged": true,
+  "serverProtocol": "career-experience-resolution",
+  "serverType": "experience.reconciled",
+  "serverSchemaVersion": 1,
+  "producer": "backend",
+  "policyVersion": "v003",
+  "defaults": {
+    "endResponseWaitMs": 5000,
+    "heartbeatIntervalMs": 30000,
+    "leaseExpiryMs": 120000
+  },
+  "trigger": "explicit_new_play_start_for_authenticated_owner",
+  "requiredGuards": [
+    "same_authenticated_owner",
+    "old_experience_no_verified_end",
+    "old_lease_expired",
+    "atomic_lease_fence_and_resolution",
+    "preserve_known_scenario_terminal_result"
+  ],
+  "states": [
+    "pending_reconciliation",
+    "deferred_active",
+    "interrupted",
+    "not_started",
+    "ended"
+  ],
+  "interruptionCode": "END_RESPONSE_MISSING_ON_RESTART",
+  "userAbandonmentInferred": false,
+  "mistakeIncrement": 0,
+  "retryIncrement": 0,
+  "lateEndPolicy": "validated_original_end_creates_next_resolution_revision; preserve history; never update newer experience",
+  "backendEndpoint": null,
+  "endpointNote": "Backend team binds the specified request/response to its authenticated API; no deployed endpoint claimed.",
+  "sourceRefs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "e3b62910464f14e3095f90653c8c8feda638489012eb8d443031dbb5f0609629"
+    }
+  ]
+}

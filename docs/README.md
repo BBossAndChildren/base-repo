@@ -1,0 +1,36 @@
+# 문서 안내
+
+> 어떤 문서가 어디에 있는지 정리한 지도다. 새 문서를 만들 때는 아래 기준으로 위치를 정한다.
+
+```
+docs/
+├─ README.md          ← 이 문서 (폴더 지도)
+├─ CONTRIBUTING.md    ← 협업 규칙: 브랜치 · 커밋 · PR · 머지 · 라벨
+├─ 00-idea.md         ← 아이디어 원문. 모든 문서의 출발점
+├─ development/       ← 개발 설계 문서 (어떻게 만드는가)
+├─ game/              ← 게임 콘텐츠 문서 (무엇을 플레이하는가) — 시나리오 작가 담당
+├─ unity/             ← Unity 3D 체험 연동 자료 (Unity 담당 전달물). 누가 무엇을 쓰는지는 unity/USAGE.md
+└─ design/            ← 디자인 토큰 (Unity 담당 전달물, 앱 전체 디자인의 원본). design/README.md
+
+저장소 최상위: frontend/ (웹 프론트) · backend/ (Django) · docs/ (이 폴더). AI 서버는 별도 저장소.
+```
+
+| 폴더 | 들어가는 것 | 들어가지 않는 것 | 시작점 |
+|------|-------------|------------------|--------|
+| `development/` | 기능 목록, 사용자 흐름, 구조, API, DB, 화면 설계, 배포, 검증, 결정 기록 | 게임 스토리·규칙·대사 | [FILL-GUIDE.md](development/FILL-GUIDE.md) |
+| `game/` | 세계관, 게임 시나리오, 게임 규칙·밸런스, AI 프롬프트 설계와 버전 기록 | API·DB·배포 같은 구현 설계 | [README.md](game/README.md) |
+| `design/` | 디자인 토큰 전달물 · 앱 역할 변수 연결표 · 명도 대비 | 화면 구성 · 문구 (→ `development/05-ui-ux.md`) | [README.md](design/README.md) |
+
+## 헷갈리기 쉬운 것
+
+백엔드 구현·테스트 순서와 API별 진행 현황은 [development/backend.md](development/backend.md)를 따른다.
+
+| 이런 내용이면 | 여기에 |
+|---------------|--------|
+| 사용자가 가입하고 게임을 시작하기까지의 **화면 흐름** | `development/01-user-flow.md` |
+| 게임 안에서 벌어지는 **이야기 · 진행 단계** | `game/` |
+| AI 프롬프트를 **호출하는 API** (요청·응답 형식) | `development/03-api.md` |
+| `game/` 문서를 **프롬프트에 넣는 순서 · 파일 읽기 규칙** | `development/10-prompt-assembly.md` |
+| AI 프롬프트의 **내용 · 의도 · 버전 변화** | `game/` (시나리오 작가 담당) |
+| 게임 규칙을 **어떤 데이터로 저장하는지** | `development/04-database.md` |
+| 게임 규칙 **자체** (점수, 승패 조건) | `game/` |
