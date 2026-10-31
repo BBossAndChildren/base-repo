@@ -7,28 +7,33 @@
 | 도구 | 버전 | 고정 방법 |
 |------|------|-----------|
 | Python | 3.12.13 | `backend/.python-version` |
-| uv | 프로젝트 의존성 설치 도구 | `uv sync --locked` + `backend/uv.lock` |
+| uv | 0.10.9 (이미지 빌드 도구) | 컨테이너에서 `uv sync --locked --no-dev --no-install-project` + `backend/uv.lock` |
 | PostgreSQL | 15 계열 | 직접 설치 또는 `backend/compose.yaml` |
-| Docker Compose | v2 (선택) | 개발용 DB를 컨테이너로 실행할 때만 필요 |
+| Docker · Docker Compose | Compose v2 | 백엔드 · DB 컨테이너 실행. 소스 직접 실행도 가능 |
 
 ## 2. 설치
 ### 백엔드
+기존 스택(Django · DRF · PostgreSQL · HTTPX · Gunicorn WSGI)을 유지한다. 개발할 때는 기본 Compose에 개발 설정을 덧붙인다.
+
 ```bash
 cd backend
-uv sync --locked
-uv run python scripts/init_local_env.py
-# PostgreSQL을 직접 설치했다면 .env의 DB_*를 해당 DB에 맞춘다.
-# Docker를 쓴다면 아래 명령으로 DB를 만든다.
-docker compose up -d --wait db
-uv run python manage.py migrate
-uv run python manage.py runserver 127.0.0.1:8000
+# .env가 없을 때 한 번만 실행한다. 기존 파일은 그대로 사용한다.
+python3 scripts/init_local_env.py
+docker compose -f compose.yaml -f compose.dev.yaml up --build -d --wait
+docker compose logs --tail=50 backend
 ```
 
-`init_local_env.py`는 개발 전용 비밀값을 생성하고 `.env`에만 저장한다. 기존 `.env`는 덮어쓰지 않는다. `.env.example`을 직접 복사했다면 비어 있는 필수 값을 채워야 한다. AI 서버 주소와 내부 키는 실제 AI 연동 구현 전까지 비워 둬도 된다. 설치된 패키지 목록은 `uv.lock`에 고정한다.
+`init_local_env.py`는 개발 전용 비밀값을 생성하고 `.env`에만 저장한다. 기존 `.env`는 덮어쓰지 않는다. `.env.example`을 직접 복사했다면 비어 있는 필수 값을 채워야 한다. AI 서버 주소와 내부 키는 실제 AI 연동 구현 전까지 비워 둬도 된다. 패키지 목록은 기존 `uv.lock`을 사용한다. Python 패키지가 바뀌면 이미지를 다시 빌드한다.
 
-Docker DB는 `127.0.0.1`에만 공개한다. `docker compose stop db`로 중지하고, 다시 시작할 때 `docker compose up -d --wait db`를 쓴다. 기존 볼륨이 있으면 `.env`의 DB 계정 · 비밀번호를 바꿔도 DB 내부 계정은 자동 변경되지 않는다. 개발용 계정과 운영용 계정은 별도로 준비한다.
+기본 `compose.yaml`은 Gunicorn WSGI로 실행하고 DEBUG를 끈다. `compose.dev.yaml`을 추가하면 개발 서버와 DEBUG를 켜고 `apps/` · `config/` · `scripts/` · `manage.py` · `docs/game/` 수정이 반영된다. 컨테이너 안의 Python 가상환경은 호스트 가상환경과 분리한다.
 
-이 작업 환경에서는 설치되어 있던 PostgreSQL 15.17을 `backend/.local/postgres`에 별도 초기화했다. 저장소 루트에서 `pg_ctl -D backend/.local/postgres -l backend/.local/postgres.log -o '-h 127.0.0.1 -p 5432 -k /private/tmp' start`로 시작하고, `pg_ctl -D backend/.local/postgres stop`으로 중지한다. 이 폴더와 실제 데이터는 Git에서 제외한다. 같은 포트에서 Docker DB와 동시에 실행하지 않는다.
+개발용 `apps/`는 컨테이너에서 생성한 migration도 호스트에 남도록 쓰기를 허용한다. 나머지 소스 연결과 게임 문서는 읽기 전용이다. Linux에서 호스트 폴더 쓰기 권한이 다르면 migration 생성은 호스트의 `uv run python manage.py makemigrations`로 실행한다.
+
+컨테이너에서는 DB 주소를 `db:5432`로 덮어쓴다. 기본 Compose는 DB를 호스트에 공개하지 않으며, 개발 설정에서만 `127.0.0.1:5433`으로 공개한다. 호스트 DB 도구로 조회할 때는 `.env`의 계정 · DB 이름과 호스트 포트를 사용한다.
+
+기존에 초기화한 `backend/.local/postgres`와 호스트 5432의 DB는 보존한다. Docker의 `postgres_data` 볼륨은 별도 DB이므로 기존 데이터가 필요하면 PostgreSQL dump/restore로 옮긴다. 이전 과정은 자동 실행하지 않는다. 기존 볼륨의 DB 계정 · 비밀번호는 `.env` 수정만으로 바뀌지 않는다.
+
+중지는 `docker compose -f compose.yaml -f compose.dev.yaml stop`으로 한다. DB 볼륨은 유지된다. 호스트에서 직접 실행하려면 `uv sync --locked` 후 `.env`의 `DB_HOST` · `DB_PORT`를 접속할 DB에 맞추고 `uv run python manage.py runserver 127.0.0.1:8000`을 사용한다.
 ### AI 서버
 ```bash
 ```
@@ -52,47 +57,57 @@ Docker DB는 `127.0.0.1`에만 공개한다. `docker compose stop db`로 중지�
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | 백엔드 도메인 |
 | `CSRF_TRUSTED_ORIGINS` | 백엔드 | | 신뢰하는 프론트 출처 (쉼표 구분) |
 | `WEB_CONCURRENCY` · `GUNICORN_THREADS` | 백엔드 | | 초기값 worker 2 · thread 4, 부하 측정 후 조정 |
+| `GUNICORN_BIND` | 백엔드 | | 직접 실행은 기본 로컬 주소, 컨테이너는 전체 인터페이스의 8000. 호스트 공개 범위는 Compose가 제한 |
+| `BACKEND_PORT` | Compose | | 백엔드 호스트 포트, 기본 8000 (127.0.0.1에만 공개) |
+| `POSTGRES_HOST_PORT` | 개발 Compose | | DB 호스트 포트, 기본 5433. 컨테이너 내부는 항상 5432 |
+| `HEALTHCHECK_HOST` | 백엔드 컨테이너 | | 상태 확인 요청의 Host, 기본 localhost. `ALLOWED_HOSTS`에 허용된 이름을 지정 |
 | `VITE_API_BASE_URL` | 프론트 (Vercel) | ✅ | 백엔드 주소 (변수 이름은 프론트 도구에 맞춘다) |
 | | | | |
 
 ## 4. 로컬 실행 확인
 ```bash
 cd backend
-uv run python manage.py check
-uv run python manage.py migrate --check
-uv run python manage.py test
+docker compose exec backend python manage.py check
+docker compose exec backend python manage.py migrate --check
+docker compose exec backend python manage.py test
+docker compose exec backend python manage.py spectacular --validate --fail-on-warn > /dev/null
+docker compose exec backend id
+curl --fail http://127.0.0.1:8000/api/health
+
+# 소스 lint · 포맷 · Python 패키지 빌드 (호스트 개발 도구)
+uv sync --locked
 uv run ruff check .
 uv run ruff format --check .
-mkdir -p .local
-uv run python manage.py spectacular --validate --fail-on-warn --file .local/openapi.yaml
-uv run python manage.py collectstatic --noinput
 uv build
-curl --fail http://127.0.0.1:8000/api/health
 ```
 
-Swagger: `http://127.0.0.1:8000/api/docs/`. DB가 연결되면 상태 확인은 200, 연결되지 않으면 503이다. AI 서버 상태는 검사하지 않는다. 테스트는 실제 PostgreSQL에 임시 테스트 DB를 생성하므로 **개발용 계정에만** CREATEDB 권한이 필요하다. 게임 테이블은 아직 만들지 않았으며 현재 migration은 Django contenttypes 기본 테이블만 생성한다.
+Swagger: `http://127.0.0.1:8000/api/docs/`. `docker compose ps`에서 백엔드 · DB가 healthy인지 확인한다. DB가 연결되면 상태 확인은 200, 연결되지 않으면 503이다. AI 서버 상태는 검사하지 않는다. 테스트는 실제 PostgreSQL에 임시 테스트 DB를 생성하므로 **개발용 계정에만** CREATEDB 권한이 필요하다. 게임 테이블은 아직 만들지 않았으며 현재 migration은 Django contenttypes 기본 테이블만 생성한다. 런타임 컨테이너에는 Ruff 등 개발 도구를 설치하지 않는다.
 
 `uv build`는 Python sdist · wheel을 `backend/dist/`에 생성한다. 정적 파일과 빌드 산출물은 Git에서 제외한다.
 
 ## 5. 배포
 ### 5-1. 백엔드 (game/ 마크다운 · 3D 빌드 · 빌드 카탈로그 JSON 포함)
 
-백엔드 폴더에서 의존성과 운영 환경변수를 준비한 뒤 실행한다. 이번 작업은 로컬 세팅이며 실제 네이버 클라우드 배포는 수행하지 않는다.
+백엔드 폴더에서 운영용 `.env`를 준비한 뒤 기본 Compose만 사용한다. 기존 스택의 Gunicorn WSGI가 컨테이너에서 실행되며 Nginx · HTTPS는 호스트가 담당한다. 아래는 단일 서버에서 PostgreSQL도 함께 실행하는 구성이다. 실제 네이버 클라우드 배포는 아직 수행하지 않는다.
 
 ```bash
-uv sync --locked --no-dev
-uv run --no-dev python manage.py migrate
-uv run --no-dev python manage.py collectstatic --noinput
-uv run --no-dev gunicorn -c gunicorn.conf.py config.wsgi:application
+docker compose up --build -d --wait
+# 호스트 Nginx가 제공할 정적 파일을 이미지에서 복사한다.
+mkdir -p staticfiles
+docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 ```
 
-`gunicorn.conf.py`는 로컬 인터페이스에 바인딩하며 타임아웃 60초를 사용한다. 게임 API의 30초 전체 대기 제한과 HTTPX 타임아웃 · 재시도 구현은 후속 작업이다. WSGI에서는 AI 응답을 기다리는 동안 thread를 점유하므로 동시 요청량을 측정해 조정한다. 운영 DB의 설치 위치 · 계정 · 백업 구성은 배포 전에 확정해야 한다.
+Compose는 호스트 `127.0.0.1:8000`만 공개한다. Gunicorn은 컨테이너 내부에서 8000으로 수신하며 타임아웃 60초를 사용한다. DB가 healthy가 되면 migration · 정적 파일 수집 후 서버를 시작하며, 서버 명령은 `exec`로 실행해 종료 신호를 전달한다. 여러 서버로 확장할 때는 migration을 별도 배포 단계로 분리해야 한다.
 
-운영 환경에서 `uv run --no-dev python manage.py check --deploy`를 실행한다. 로컬 개발 설정에서는 DEBUG · 보안 쿠키 · HTTPS 전환 · HSTS 관련 경고가 나온다. 실제 배포 때 DEBUG를 끄고 Nginx HTTPS 전환을 확인하며, HSTS 적용 여부는 도메인 구성이 확정된 뒤 결정한다. 이번 로컬 검증은 운영 배포 검증을 대신하지 않는다.
+`staticfiles/`는 컨테이너의 `static_files` 볼륨과 별개인 호스트 복사본이다. 이미지를 바꿨다면 다시 복사하고 Nginx alias 경로를 실제 배포 위치에 맞춘다. `.dockerignore`는 `.env` · 가상환경 · 로컬 DB · 수집 결과 · Unity 바이너리를 이미지에서 제외한다. 작가가 관리하는 `docs/game/`은 이미지에 포함하므로 운영 반영 때 다시 빌드한다. 직업 JSON과 실제 AI 연결은 아직 구현 전이다.
+
+게임 API의 30초 전체 대기 제한과 HTTPX 타임아웃 · 재시도 구현은 후속 작업이다. WSGI에서는 AI 응답을 기다리는 동안 thread를 점유하므로 동시 요청량을 측정해 조정한다. 운영 DB 계정 · 백업 구성은 배포 전에 확정해야 한다. PostgreSQL 컨테이너의 named volume은 영구 저장 위치이며 백업을 대신하지 않는다.
+
+운영 환경에서 `docker compose exec backend python manage.py check --deploy`를 실행한다. 기본 Compose는 DEBUG를 끄며, Nginx HTTPS 전환과 HSTS 적용 여부는 도메인 구성이 확정된 뒤 확인한다. `HEALTHCHECK_HOST`는 `ALLOWED_HOSTS`에 포함된 이름을 지정한다. 로컬의 `ALLOWED_HOSTS`에는 localhost가 들어 있다. 이번 컨테이너 검증은 실제 운영 배포 검증을 대신하지 않는다.
 
 #### 구성 (네이버 클라우드 일반 서버 한 대)
 ```
-브라우저 ── https ──▶ Nginx (443, SSL) ─┬─ /api/     ──▶ Gunicorn (127.0.0.1:8000, Django)
+브라우저 ── https ──▶ Nginx (443, SSL) ─┬─ /api/     ──▶ 호스트 127.0.0.1:8000 → Gunicorn 컨테이너 → PostgreSQL 컨테이너
                                         └─ /builds/  ──▶ 서버 폴더 /srv/builds/ (Nginx 가 직접 내려줌)
 ```
 
