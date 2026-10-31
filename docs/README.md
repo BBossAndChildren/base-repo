@@ -19,6 +19,8 @@ docs/
 
 ## 헷갈리기 쉬운 것
 
+백엔드 구현·테스트 순서와 API별 진행 현황은 [development/backend.md](development/backend.md)를 따른다.
+
 | 이런 내용이면 | 여기에 |
 |---------------|--------|
 | 사용자가 가입하고 게임을 시작하기까지의 **화면 흐름** | `development/01-user-flow.md` |
