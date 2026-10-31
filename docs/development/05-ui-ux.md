@@ -162,7 +162,7 @@
 | 종료 | 종료 응답을 받고 저장 확인까지 받은 뒤 iframe 을 제거한다 |
 | 배경색 | `backgroundColor="#101e24"` (`--color-bg` 와 같은 값). prop 또는 `client.setPresentation({ backgroundColor })`. 불투명 6자리만. 페이지 바깥 배경은 CSS 로 따로 |
 | 효과음 | 브라우저는 **iframe 안을 클릭해야** 소리를 켠다. 바깥 시작 버튼 클릭만으로는 보장되지 않으니 게임 화면 안의 효과음 켜기 버튼을 안내한다 |
-| CSP | Vercel 에 CSP 를 설정한다면 `frame-src` 에 `https://*.trycloudflare.com` 을 허용한다 |
+| CSP | Vercel 에 CSP 를 설정한다면 `frame-src` 에 `https://*.trycloudflare.com` 을 허용한다. 함께 필요한 것: `connect-src` 에 `https://*.trycloudflare.com` (API · 3D 빌드의 `client.js` · `supported-manifest.json` · 인트로 에셋 `intro.json` · GLB), `script-src` 에 `https://*.trycloudflare.com` (빌드의 `client.js` 를 실행 시 불러옴), `style-src` · `font-src` 에 `https://cdn.jsdelivr.net` (Pretendard). 현재는 CSP 를 설정하지 않았다 |
 | 주소 변경 | 백엔드 주소는 터널 주소라 바뀔 수 있다. 바뀌면 Vercel 환경변수만 바꾸고 재배포한다 ([06 터널 주소가 바뀌었을 때](06-deployment.md#터널-주소가-바뀌었을-때)) |
 
 ## 5. 결과 코드별 사용자 메시지
