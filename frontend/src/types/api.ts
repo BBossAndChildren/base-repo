@@ -39,8 +39,12 @@ export interface PlayState {
   [key: string]: unknown
 }
 
+/** 메시지 형식 (03 메시지 형식) */
+export type MessageRole = 'user' | 'npc' | 'narrator'
+
 export interface ChatMessage {
-  /** "narrator" · NPC 이름 · 사용자 */
+  role: MessageRole
+  /** 화면에 보일 이름 (NPC 이름 · 플레이어 이름 · "나레이션") */
   speaker: string
   text: string
 }
@@ -147,6 +151,7 @@ export interface MyPlaysResponse {
 // 1-7
 export interface PlayResume {
   playId: string
+  sessionId: string
   state: PlayState
   messages: ChatMessage[]
   ended: boolean

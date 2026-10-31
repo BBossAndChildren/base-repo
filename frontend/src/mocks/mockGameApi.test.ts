@@ -59,7 +59,9 @@ describe('mockGameApi', () => {
     expect(turn.messages.length).toBeGreaterThan(0)
     expect(turn.experience).toBeNull()
     const resumed = await api.getPlay(play.playId)
-    expect(resumed.messages.map((m) => m.text)).toContain('안녕')
+    expect(resumed.messages).toContainEqual({ role: 'user', speaker: '민준', text: '안녕' })
+    expect(resumed.sessionId).toBe(play.sessionId)
+    expect(turn.messages.every((m) => m.role !== 'user')).toBe(true)
   })
 
   it('세 턴마다 나이 변화가 stateChanges 로 온다', async () => {

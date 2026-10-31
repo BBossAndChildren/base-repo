@@ -96,7 +96,8 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
   it('내 플레이 화면에 들어가면 불러오고 이어하기 대상으로 기억한다', async () => {
     const playId = await createPlay()
     renderApp(`/play/${playId}`)
-    expect(await screen.findByText(/15세/)).toBeInTheDocument()
+    const panel = await screen.findByRole('complementary', { name: '내 상태' })
+    expect(within(panel).getByText('15세')).toBeInTheDocument()
     expect(getLastPlayId()).toBe(playId)
   })
 
