@@ -136,11 +136,13 @@
   "code": 200,
   "data": {
     "playId": "uuid",
+    "sessionId": "uuid",
     "state": { },
     "messages": [ { "speaker": "narrator", "text": "..." } ]
   }
 }
 ```
+- `sessionId` 는 Unity 연동에 쓰는 플레이 단위 ID. 프론트는 이 플레이의 모든 3D 체험에 같은 값을 쓴다
 - `state` 는 플레이어 기록의 현재 값 ([10 5절](10-prompt-assembly.md#5-플레이어-기록-항목)) <!-- TODO: 필드 확정 -->
 
 실패

@@ -59,14 +59,35 @@ flowchart LR
 > 프롬프트 조립과 3D 체험 추천 흐름 상세: [10-prompt-assembly.md](10-prompt-assembly.md)
 
 ## 3. 디렉터리 구조
+
+> **모노레포:** 프론트 · 백엔드 · 문서를 `base-repo` 하나에 둔다. AI 서버는 별도 저장소 ([12 결정 14](12-decisions.md)).
+
 ```
-<!-- 프로젝트 트리 -->
+base-repo/
+├─ AGENTS.md · CLAUDE.md        ← 저장소 공통 AI 작업 규칙
+├─ .github/                     ← 이슈 · PR 템플릿, 워크플로
+├─ docs/                        ← 설계 문서 (docs 브랜치에서 관리)
+│  ├─ development/  game/  unity/
+├─ frontend/                    ← 웹 프론트 (Vercel Root Directory)
+│  ├─ AGENTS.md · CLAUDE.md     ← 프론트 작업 때 꼭 읽을 문서
+│  └─ <!-- TODO: 프론트 프로젝트 구조 -->
+├─ backend/                     ← Django 백엔드 (서버에서 실행)
+│  ├─ AGENTS.md · CLAUDE.md     ← 백엔드 작업 때 꼭 읽을 문서
+│  └─ <!-- TODO: Django 프로젝트 구조 -->
+└─ scripts/                     ← 저장소 관리 스크립트 (라벨 생성 등)
+
+(별도 저장소) ai-server/        ← Qwen + RAG
 ```
 
 ### 컴포넌트 역할
-| 파일 / 폴더 | 역할 |
-|-------------|------|
-| | |
+| 파일 / 폴더 | 역할 | 라벨 · scope |
+|-------------|------|:---:|
+| `frontend/` | 화면 · Unity 체험 연결 · 백엔드 API 호출 | `fe` |
+| `backend/` | API · DB · 프롬프트 조립 · 3D 이벤트 저장 · 빌드 제공 | `be` |
+| AI 서버 저장소 | 대화 생성 · 3D 추천 · 직업 RAG | `be` |
+| `docs/` | 설계 문서 · Unity 전달물 · 게임 콘텐츠 | (생략, `docs:`) |
+| `docs/unity/frontend/` | Unity 연결 코드 원본 — **참고만 하고** `frontend/` 로 복사하지 않는다 | — |
+| `docs/game/` | 시나리오 · 가이드라인 — 백엔드가 읽어 매 AI 요청에 넣는다 (배포 때 서버에 함께 있어야 함) | — |
 
 ## 4. 핵심 기술 결정: <!-- 예: 인증 방식 JWT vs 세션 -->
 ### 결론

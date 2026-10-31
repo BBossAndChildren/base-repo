@@ -77,10 +77,12 @@
 **① 코드 받기**
 ```bash
 cd ~
-git clone <백엔드 저장소 주소> backend    # TODO: 저장소 주소
-cd backend
+git clone https://github.com/BBossAndChildren/base-repo.git
+cd base-repo/backend
 ```
+- 모노레포라 백엔드 코드는 `base-repo/backend/` 에 있다. 백엔드가 읽는 지침 문서 `base-repo/docs/game/` 도 함께 받아진다
 - 비공개 저장소면 GitHub 토큰 · 배포 키가 필요하다. 토큰 값은 문서 · 코드에 쓰지 않는다
+- 배포 브랜치: <!-- TODO: develop 또는 main 중 어느 브랜치를 서버에 받을지 -->
 
 **② Python 환경 · 패키지 · 설정**
 ```bash
@@ -170,7 +172,7 @@ cloudflared tunnel --url http://127.0.0.1:80
 
 #### 코드 업데이트할 때
 ```bash
-cd ~/backend && git pull
+cd ~/base-repo && git pull && cd backend
 source .venv/bin/activate && pip install -r requirements.txt && python manage.py migrate
 tmux attach -t backend    # Ctrl+C 로 Gunicorn 종료 후 ③ 명령 다시 실행
 ```
@@ -202,6 +204,7 @@ tmux attach -t backend    # Ctrl+C 로 Gunicorn 종료 후 ③ 명령 다시 실
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
 - 백엔드 → AI 서버 호출에는 항상 `X-Internal-Key` 를 붙이고, AI 서버는 키가 없거나 틀리면 401 로 거부한다 (값은 `AI_SERVER_KEY`)
 - **Nginx 는 필요 없다.** API 하나만 있으므로 앱 포트로 바로 연결한다
+- AI 서버 코드는 **별도 저장소**다. AI 담당은 base-repo 를 함께 열어 두거나 submodule 로 연결하고, 그 저장소 `AGENTS.md` 에 꼭 읽을 문서([03 2부](03-api.md#2부-백엔드--ai-서버) · [10](10-prompt-assembly.md))를 적는다
 
 #### 먼저 확인: 백엔드에서 사설망으로 닿는가
 ```bash
@@ -226,7 +229,8 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 - 터널 주소가 바뀌면 백엔드 `.env` 의 `AI_SERVER_URL` 만 바꾸고 Gunicorn 을 재시작한다 (프론트는 바꿀 것 없음)
 
 ### 5-4. 웹 프론트 — Vercel
-- Vercel 에 프론트 저장소를 연결해 배포한다. **https 는 Vercel 이 자동으로 처리한다**
+- Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
+- `docs/` 만 바뀐 커밋으로 재배포되지 않게 Ignored Build Step 을 설정한다 (예: `git diff --quiet HEAD^ HEAD -- frontend/`)
 - 환경변수 `VITE_API_BASE_URL` 에 현재 터널 주소를 넣는다
 - SPA 라우팅이면 새로고침 404 를 막는 rewrites 설정 <!-- TODO: 프론트 구조 확정 후 -->
 - Vercel 주소가 정해지면 백엔드 `CORS_ALLOWED_ORIGINS` 와 Nginx `frame-ancestors` 에 등록한다

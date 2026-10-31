@@ -9,7 +9,7 @@
 | 파일 | 내용 | 프론트 | 백엔드 | AI |
 |------|------|:---:|:---:|:---:|
 | `README.md` · `UPDATES.md` · `manifest.json` | Unity 담당 전달 안내 · 변경 사항 · 파일 목록 | ✅ | ✅ | |
-| `frontend/Experience.jsx` · `client.js` · `client.d.ts` | React 에 붙이는 Unity 연결 컴포넌트 · 클라이언트 · 타입 | ✅ | | |
+| `frontend/Experience.jsx` · `client.js` · `client.d.ts` | React 에 붙이는 Unity 연결 컴포넌트 · 클라이언트 · 타입 (**참고용** — 저장소의 `frontend/` 로 복사하지 않고 이를 참고해 프론트 코드를 작성) | ✅ | | |
 | `frontend/backend.js` · `backend.d.ts` | 우리 백엔드 API 를 부르는 어댑터 (이벤트 · 정산 · 생존 신호 · 미수신 기록) | ✅ | 형식 참고 | |
 | `frontend/audio.js` · `audio-ui.*` · `audio.d.ts` | 효과음 재생기 | ✅ | | |
 | `frontend/environment.d.ts` · `progress.types.ts` | 타입 | ✅ | | |
