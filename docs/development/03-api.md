@@ -225,17 +225,28 @@
 ### 1-5. 결말 · 추천 직업
 `GET /api/v1/plays/{playId}/result` · 인증: `X-Player-Id`
 
+> 인생이 끝난 플레이(`ended: true`)만. 처음 요청 때 만들어 `plays.ending` 에 저장하고, 이후에는 저장된 값을 준다. 만드는 방식: [10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5)
+
 응답 (성공)
 ```json
 {
   "code": 200,
   "data": {
-    "ending": "...",
-    "recommendedJobs": [ { "job": "연구원", "reason": "...", "nextSteps": [ "..." ] } ]
+    "ending": "이번 인생 요약 …",
+    "recommendedJobs": [
+      { "job": "행사기획자", "isNew": false, "reason": "동아리 행사 준비 체험을 끝까지 해냈고 …", "work": "하는 일 …", "nextSteps": ["…", "…"] },
+      { "job": "사서", "isNew": true, "reason": "책 이야기에 관심을 보였지만 아직 경험하지 않은 일 …", "work": "…", "nextSteps": ["…"] }
+    ]
   }
 }
 ```
-<!-- TODO: 추천 시점 · 판단 기준 · 표현 방식은 00-idea 13장 미정 항목 -->
+- `isNew: true` 는 아직 경험하지 않은 새 직업 (다음 플레이 권유)
+
+실패
+| code | 조건 |
+|------|------|
+| 409 | 아직 끝나지 않은 플레이 |
+| 502 · 504 | AI 서버 실패 · 시간 초과 |
 
 ### 1-6. 지난 플레이 기록
 `GET /api/v1/players/me/plays` · 인증: `X-Player-Id`
@@ -305,6 +316,7 @@
 |--------|------|------|--------|
 | POST | `/ai/v1/chat` | 대화 생성 | |
 | POST | `/ai/v1/experience-recommendation` | 3D 체험 추천 | |
+| POST | `/ai/v1/ending` | 결말 · 추천 직업 생성 | |
 
 ## 2. AI 서버
 
@@ -331,13 +343,18 @@
     "messages": [ { "speaker": "친구 민수", "text": "뭔 소리야, 너 학생이잖아." } ],
     "stateChanges": [ { "field": "relationship.민수", "to": 52, "reason": "..." } ],
     "hints": [ "..." ],
-    "experienceNeeded": false,
+    "branch": null,
     "lifeEnded": false
   }
 }
 ```
 - `stateChanges` 는 **제안**이다. 백엔드가 확인한 뒤 반영한다 ([10 3절](10-prompt-assembly.md#3-ai-응답-처리))
-- `experienceNeeded: true` 면 백엔드가 [2-2](#2-2-3d-체험-추천) 를 호출한다
+- `branch` 는 **AI 가 "지금이 3D 체험을 할 분기"라고 판단할 때만** 채운다. 평소에는 `null`
+```json
+"branch": { "topic": "진로 결정 - 행사 기획 동아리 제안", "jobs": ["행사기획자"], "reason": "친구가 행사 준비를 함께 하자고 제안함" }
+```
+- 백엔드는 `branch` 가 있으면 이를 감지해 후보를 고르고([10 4-1-1](10-prompt-assembly.md#4-1-1-후보-20개-고르는-방식-be7)) [2-2](#2-2-3d-체험-추천) 를 호출한다. 결과를 채팅 응답의 `experience` 로 프론트에 주고, 프론트는 이를 감지해 3D 체험을 렌더한다
+- `topic` 은 분기 주제, `jobs` 는 AI 가 떠올린 관련 직업(없으면 빈 배열), `reason` 은 사용자에게 보여 줄 수 있는 분기 이유
 
 실패
 | code | 조건 | 백엔드 처리 |
@@ -351,6 +368,7 @@
 ```json
 {
   "candidates": [ { "buildId": "…", "roomId": "PAN-002", "scenarioId": "…", "scenarioVersion": "v002", "jobs": ["행사기획자"], "description": "…" } ],
+  "branch": { "topic": "…", "jobs": ["…"], "reason": "…" },
   "situation": "현재 인생 상황 요약",
   "player": { }
 }
@@ -379,6 +397,26 @@
 |------|------|-------------|
 | 형식 오류 · 카탈로그에 없는 값 | 응답 ID 가 카탈로그에 없음 | 3D 건너뛰기 (프론트에 `notice`) |
 | 4xx · 5xx | AI 서버 실패 | 1회 다시 요청 → 또 실패하면 3D 건너뛰기 |
+
+### 2-3. 결말 생성
+`POST /ai/v1/ending` · 인증: `X-Internal-Key`
+
+요청
+```json
+{
+  "guidelines": "가이드라인 문서 원문",
+  "player": { },
+  "candidates": [ { "job": "행사기획자", "score": 7, "evidence": ["3D 체험 완료: career-net-951-experience", "대화: 행사 준비가 재밌다"] } ],
+  "experiencedJobs": ["행사기획자"]
+}
+```
+- `candidates` 는 백엔드가 점수를 매긴 상위 5개 ([10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5))
+
+응답 (성공)
+```json
+{ "code": 200, "data": { "ending": "…", "recommendedJobs": [ { "job": "…", "isNew": false, "reason": "…", "work": "…", "nextSteps": ["…"] } ] } }
+```
+- 추천은 3개, 그중 1개 이상 `isNew: true`. 직업 정보는 RAG 근거
 
 ---
 
