@@ -11,7 +11,7 @@ let samplePlay: Promise<PlayResume> | null = null
 function createSamplePlay(): Promise<PlayResume> {
   samplePlay ??= (async () => {
     const started = await gameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
-    for (const message of ['응 나 과학자임', '실험하는 게 재밌어', '축제 체험 해 볼래']) await gameApi.sendTurn(started.playId, { message })
+    for (const message of ['응 나 과학자임', '실험하는 게 재밌어', '축제 체험 해 볼래']) await gameApi.sendTurn(started.playId, { requestId: crypto.randomUUID(), message })
     return gameApi.getPlay(started.playId)
   })()
   // 실패하면 다음 방문 때 다시 만든다
