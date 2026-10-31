@@ -38,7 +38,8 @@
 | 3D 인트로 | Three.js (`three`) + GLTFLoader | 0.180 | Unity 담당이 준 인트로(`career-intro-react-v001`)가 r180 기준. 인트로 화면에서만 따로 나눠 불러온다 ([05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택)) |
 | 빌드 | Vite | 8.3 | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
 | 언어 | TypeScript | 7.0 (strict) | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
-| 스타일 | 일반 CSS (CSS 변수) | — | 디자인 시안 `docs/design/styles.css` 를 그대로 옮김, 별도 라이브러리 없음 |
+| 스타일 | 일반 CSS (CSS 변수) + 디자인 토큰 | — | 인트로에서 뽑은 토큰(`src/design/tokens/tokens.json`)을 `npm run tokens` 로 CSS 변수로 만들어 씀, 별도 라이브러리 없음 ([docs/design/](../design/README.md)) |
+| 글꼴 | Pretendard (jsDelivr CDN) | 고정 버전 | 토큰의 글꼴. Google Fonts 에 없음 |
 | API mock | 직접 만든 mock (`src/mocks/`) | — | 백엔드 게임 API 구현 전 개발용. `VITE_USE_MOCK=true` 면 사용 |
 | 검사 | oxlint · Vitest · Testing Library | 1.89 · 5.0 · 16.3 | lint(경고도 실패) · 자동 테스트 |
 
@@ -78,7 +79,7 @@ base-repo/
 ├─ .github/                     ← 이슈 · PR 템플릿, 워크플로
 ├─ .dockerignore                ← 백엔드 이미지에서 제외할 파일
 ├─ docs/                        ← 설계 문서 (docs 브랜치에서 관리)
-│  ├─ development/  game/  unity/
+│  ├─ development/  game/  unity/  design/
 ├─ frontend/                    ← 웹 프론트 (Vercel Root Directory)
 │  ├─ AGENTS.md · CLAUDE.md     ← 프론트 작업 때 꼭 읽을 문서
 │  ├─ vercel.json               ← Vercel 빌드 · SPA 주소 처리 · docs 만 바뀌면 배포 건너뜀
@@ -91,7 +92,8 @@ base-repo/
 │     ├─ pages/                 ← intro · start · play · result · history 화면
 │     │  └─ intro/              ← 인트로 (CareerIntro · Three.js 엔진, 원본 career-intro-react-v001)
 │     ├─ lib/experience/        ← Unity 체험 실행 (연결 코드는 빌드에서 불러옴)
-│     ├─ styles/                ← 화면별 CSS
+│     ├─ design/tokens/         ← 디자인 토큰 원본(tokens.json) · 생성된 CSS 변수
+│     ├─ styles/                ← 화면별 CSS (토큰 역할 변수 사용)
 │     └─ types/                 ← API · Unity 타입
 ├─ backend/                     ← Django 백엔드 (서버에서 실행, 아래 상세)
 │  ├─ AGENTS.md · CLAUDE.md     ← 백엔드 작업 때 꼭 읽을 문서

@@ -2,22 +2,25 @@
 
 > 스택: **React + Vite + TypeScript** (`frontend/`, Vercel 배포) · 스타일: 일반 CSS + CSS 변수 (`frontend/src/styles/`)
 > 배포 주소: https://base-repo-ck83.vercel.app/ (현재 mock 모드)
-> 디자인 시안: [docs/design/](../design/) (검토용 시안)
+> 디자인: [docs/design/](../design/README.md) — 인트로에서 뽑은 디자인 토큰을 앱 전체에 쓴다 (확정, [12 결정 26](12-decisions.md))
 > 백엔드 게임 API 가 구현되기 전까지 **mock(가짜 응답)** 으로 개발한다. mock 응답은 [03-api.md](03-api.md) 예시를 따르고, 백엔드가 준비되면 주소만 바꾼다
 > 기능 번호: [features.md 3절](features.md#3-웹-프론트-fe) · 흐름: [01-user-flow.md](01-user-flow.md)
 
 ## 1. 디자인 시스템
 ### 폰트
-- 제목: Gowun Batang · 본문: Noto Sans KR (Google Fonts)
+- 제목 · 본문 모두 **Pretendard** (jsDelivr CDN 고정 버전). 대체: Malgun Gothic · 시스템 글꼴
 ### 디자인 토큰
-> 전체 목록: `frontend/src/styles/global.css` 의 `:root` (시안 `docs/design/styles.css` 와 같음)
+> 토큰 원본: `frontend/src/design/tokens/tokens.json` (전달물 [docs/design/src/tokens/tokens.json](../design/src/tokens/tokens.json) 과 같은 파일). `npm run tokens` 가 `--ci-*` CSS 변수를 만들고, 화면은 `frontend/src/styles/global.css` 의 역할 변수(`--color-*`)를 쓴다. 전체 연결표 · 명도 대비: [docs/design/README.md](../design/README.md#앱-역할-변수--토큰)
 
-| 토큰 | 값 | 용도 |
+| 역할 변수 | 값 | 용도 |
 |------|----|------|
-| `--color-bg` | `#FBF6EC` | 페이지 배경. 3D 체험의 Unity 배경색(`backgroundColor`)도 같은 값 |
-| `--color-text` | `#22283A` | 본문 |
-| `--color-accent` | `#B8502A` | 버튼 · 강조 |
-| `--color-danger` | `#B3261E` | 오류 |
+| `--color-bg` | `#101e24` | 페이지 배경. 3D 체험의 Unity 배경색(`backgroundColor`)도 같은 값 |
+| `--color-surface` | `#1a282d` | 카드 · 헤더 · 입력칸 |
+| `--color-text` | `#edf7ef` | 본문 · 제목 |
+| `--color-accent` · `--color-on-accent` | `#d9efdb` · `#18362e` | 주요 버튼 (민트 면 + 진한 초록 글자) |
+| `--color-focus` | `#b5edce` | 포커스 · 강조 |
+| `--color-danger` | `#ff8a80` | 오류 |
+- 화면은 어두운 테마 하나만 쓴다. 색만으로 상태를 구분하지 않는다 (아이콘 · 숫자 함께)
 ### 지원 브라우저
 - 데스크톱 최신 Chrome · Edge (Unity WebGL 테스트 기준)
 - 모바일 · 다른 브라우저는 Unity 쪽에서 아직 검증되지 않았다. 모바일에서 3D 체험이 무거우면 텍스트로 계속하는 안내를 보여 준다 <!-- TODO: 모바일 지원 범위 -->
@@ -157,7 +160,7 @@
 | 전송 큐 | `createOutbox({ send: adapter.sendEvent })`. 백엔드가 `stored: true` 를 줄 때만 저장 성공 |
 | 생존 신호 · 정산 | 체험 중 30초마다 `heartbeat`, 새 체험 시작 전 이전 체험 `reconcile`, 종료 5초 무응답 시 `markPending` |
 | 종료 | 종료 응답을 받고 저장 확인까지 받은 뒤 iframe 을 제거한다 |
-| 배경색 | `backgroundColor="#RRGGBB"` prop 또는 `client.setPresentation({ backgroundColor })`. 불투명 6자리만. 페이지 바깥 배경은 CSS 로 따로 |
+| 배경색 | `backgroundColor="#101e24"` (`--color-bg` 와 같은 값). prop 또는 `client.setPresentation({ backgroundColor })`. 불투명 6자리만. 페이지 바깥 배경은 CSS 로 따로 |
 | 효과음 | 브라우저는 **iframe 안을 클릭해야** 소리를 켠다. 바깥 시작 버튼 클릭만으로는 보장되지 않으니 게임 화면 안의 효과음 켜기 버튼을 안내한다 |
 | CSP | Vercel 에 CSP 를 설정한다면 `frame-src` 에 `https://*.trycloudflare.com` 을 허용한다 |
 | 주소 변경 | 백엔드 주소는 터널 주소라 바뀔 수 있다. 바뀌면 Vercel 환경변수만 바꾸고 재배포한다 ([06 터널 주소가 바뀌었을 때](06-deployment.md#터널-주소가-바뀌었을-때)) |

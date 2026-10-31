@@ -96,5 +96,6 @@ API 키 · 비밀번호 · VPN 계정 · 토큰은 코드 · 문서 · 커밋에
 | [11-open-issues.md](docs/development/11-open-issues.md) | 미확정 항목 |
 | [12-decisions.md](docs/development/12-decisions.md) | 결정 근거 |
 | [game/](docs/game/README.md) | 게임 콘텐츠 (시나리오 작가) |
+| [design/](docs/design/README.md) | 디자인 토큰 · 색 대비 |
 | [unity/USAGE.md](docs/unity/USAGE.md) | Unity 자료 사용처 |
 | [CONTRIBUTING.md](docs/CONTRIBUTING.md) | 협업 규칙 |

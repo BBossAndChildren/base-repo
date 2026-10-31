@@ -50,6 +50,7 @@
 | 재개 응답의 `sessionId` | 플레이 재개(1-7) 응답에도 `sessionId` 를 준다 (다른 기기에서 이어 할 때 3D 연동용) | [03 1-7](03-api.md#1-7-플레이-재개) |
 | 메시지 `role` | 메시지에 `role`(user · npc · narrator) 추가. 재개 때 내 말과 NPC 말을 구분 | [03 메시지 형식](03-api.md#메시지-형식) |
 | Unity 연결 코드 사용 | 빌드의 `frontend/client.js` 를 실행 시 불러옴, 빌드 서버 `/builds/` CORS 허용 | [05 4-1](05-ui-ux.md#4-1-3d-체험-연결-unity) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) · [12 결정 23](12-decisions.md) |
+| 디자인 | 인트로 디자인 토큰을 앱 전체에 적용, 기존 그림책 시안 폐기, Pretendard | [docs/design/](../design/README.md) · [05 1절](05-ui-ux.md#1-디자인-시스템) · [12 결정 26](12-decisions.md) |
 | 인트로 (FE11) | Unity 담당 인트로를 원본 그대로 흡수, 첫 방문만 + 건너뛰기, 에셋은 서버 `/intro-assets/` | [05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택) · [06 5-2-1](06-deployment.md#5-2-1-인트로-에셋) · [12 결정 25](12-decisions.md) |
 
 ### 2026-10-31 상세 기획 확정
