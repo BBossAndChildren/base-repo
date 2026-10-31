@@ -8,10 +8,22 @@ import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
-import { StatusBar, StatusPanel } from './StatusPanel'
+import { StatusBar, StatusPanel, type StatusField, type StatusValues } from './StatusPanel'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
 
-const AGE_HIGHLIGHT_MS = 1600
+const CHANGE_HIGHLIGHT_MS = 1600
+
+const STATUS_FIELDS: StatusField[] = ['age', 'funds', 'energy']
+
+function pickStatus(state: PlayResume['state']): StatusValues {
+  return {
+    age: state.age,
+    funds: typeof state.funds === 'number' ? state.funds : undefined,
+    energy: typeof state.energy === 'number' ? state.energy : undefined,
+  }
+}
+
+const NO_CHANGES: ReadonlySet<StatusField> = new Set()
 
 interface PlayViewProps {
   play: PlayResume
@@ -34,8 +46,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const navigate = useNavigate()
   const { resetPlayer } = usePlayer()
   const [items, setItems] = useState<TimelineItem[]>(() => messagesToTimeline(play.messages))
-  const [age, setAge] = useState(play.state.age)
-  const [ageChanged, setAgeChanged] = useState(false)
+  const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state))
+  const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
   const [hints, setHints] = useState<string[]>([])
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
@@ -43,19 +55,24 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [activeExperience, setActiveExperience] = useState<{ cardId: string; offer: ExperienceOffer } | null>(null)
 
   useEffect(() => {
-    if (!ageChanged) return
-    const timer = setTimeout(() => setAgeChanged(false), AGE_HIGHLIGHT_MS)
+    if (changed.size === 0) return
+    const timer = setTimeout(() => setChanged(NO_CHANGES), CHANGE_HIGHLIGHT_MS)
     return () => clearTimeout(timer)
-  }, [ageChanged])
+  }, [changed])
 
   function applyTurn(turn: TurnResponse) {
     const added: TimelineItem[] = messagesToTimeline(turn.messages)
+    const updates: Partial<StatusValues> = {}
     for (const change of turn.stateChanges) {
-      if (change.field === 'age' && typeof change.to === 'number') {
-        setAge(change.to)
-        setAgeChanged(true)
-        added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
-      }
+      const field = change.field as StatusField
+      if (!STATUS_FIELDS.includes(field) || typeof change.to !== 'number') continue
+      updates[field] = change.to
+      if (field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
+    }
+    const changedFields = Object.keys(updates) as StatusField[]
+    if (changedFields.length > 0) {
+      setStatus((prev) => ({ ...prev, ...updates }))
+      setChanged(new Set(changedFields))
     }
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
     if (turn.notice) toast.show({ message: turn.notice.message })
@@ -118,7 +135,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
 
   return (
     <>
-      <StatusBar age={age} ageChanged={ageChanged} />
+      <StatusBar values={status} changed={changed} />
       <div className="play">
         <section className="chat" aria-label="이야기">
           <ChatLog items={items} waiting={waiting} onStartExperience={startExperience} onDeclineExperience={declineExperience} />
@@ -135,7 +152,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
             <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} disabled={waiting} waiting={waiting} />
           )}
         </section>
-        <StatusPanel age={age} ageChanged={ageChanged} />
+        <StatusPanel values={status} changed={changed} />
       </div>
       {activeExperience && <ExperienceOverlay playId={play.playId} sessionId={play.sessionId} offer={activeExperience.offer} onClose={closeExperience} />}
     </>

@@ -44,6 +44,15 @@
 .skeleton-row { display: grid; grid-template-columns: 56px 1fr 28px; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2); font-size: var(--text-xs); color: var(--color-text-muted); }
 .skeleton { height: 10px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
 .skeleton-label { height: 10px; width: 40px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
+/* 상태 막대 (자금 · 에너지, 0~100) */
+.status-meters { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.status-meter { display: grid; grid-template-columns: 56px 1fr 32px; gap: var(--space-2); align-items: center; font-size: var(--text-sm); border-radius: var(--radius-md); }
+.status-meter-label { color: var(--color-text-muted); }
+.status-meter-track { height: 10px; border-radius: var(--radius-pill); background: var(--color-surface-2); border: 1px solid var(--color-border); overflow: hidden; }
+.status-meter-fill { display: block; height: 100%; border-radius: var(--radius-pill); background: var(--color-accent); transition: width .4s ease-out; }
+.status-meter-fill.is-energy { background: var(--color-success); }
+.status-meter-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--color-text); }
+@media (prefers-reduced-motion: reduce) { .status-meter-fill { transition: none; } }
 .is-changed { animation: pulse 1.6s ease-out 1; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(233,185,73,.8); } 100% { box-shadow: 0 0 0 14px rgba(233,185,73,0); } }
 

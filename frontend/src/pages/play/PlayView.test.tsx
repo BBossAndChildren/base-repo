@@ -12,10 +12,11 @@ import type { PlayResume } from '../../types/api'
 import { PlayView } from './PlayView'
 import { avatarLetter, declineOpenOffers, type TimelineItem } from './timeline'
 
-async function setup(options: { onStartExperience?: () => void } = {}) {
+async function setup(options: { onStartExperience?: () => void; mapState?: (state: PlayResume['state']) => PlayResume['state'] } = {}) {
   await ensurePlayerId(mockGameApi)
   const started = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
-  const play: PlayResume = await mockGameApi.getPlay(started.playId)
+  const resumed: PlayResume = await mockGameApi.getPlay(started.playId)
+  const play: PlayResume = options.mapState ? { ...resumed, state: options.mapState(resumed.state) } : resumed
   const user = userEvent.setup()
   render(
     <PlayerContext.Provider value={{ playerId: 'p', resetPlayer: vi.fn() }}>
@@ -47,13 +48,28 @@ describe('PlayView', () => {
     clearPlayerId()
   })
 
-  it('나레이션 · NPC 메시지를 구분해 보여 주고, 상태 패널에 나이만 표시한다', async () => {
+  it('나레이션 · NPC 메시지를 구분해 보여 주고, 상태 패널에 나이 · 자금 · 에너지를 표시한다', async () => {
     await setup()
     expect(within(log()).getByText('나레이션')).toBeInTheDocument()
     expect(within(log()).getByText('친구 민수')).toBeInTheDocument()
     const panel = screen.getByRole('complementary', { name: '내 상태' })
     expect(within(panel).getByText('15세')).toBeInTheDocument()
-    expect(within(panel).getByText('게임 상태 (작가 확정 후 표시)')).toBeInTheDocument()
+    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '50')
+    expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '70')
+  })
+
+  it('받은 항목만 막대로 보여 주고, 범위 밖 값은 0~100 으로 맞춘다', async () => {
+    await setup({ mapState: (state) => ({ age: state.age, funds: 140 }) })
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '100')
+    expect(within(panel).queryByRole('meter', { name: '에너지' })).not.toBeInTheDocument()
+  })
+
+  it('자금 · 에너지가 모두 없으면 자리 표시를 보여 준다', async () => {
+    await setup({ mapState: (state) => ({ age: state.age }) })
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    expect(within(panel).getByText('자금 · 에너지 (서버 연결 후 표시)')).toBeInTheDocument()
+    expect(within(panel).queryByRole('meter')).not.toBeInTheDocument()
   })
 
   it('보내면 내 말이 오른쪽에 붙고, 응답과 힌트가 온다', async () => {
@@ -97,7 +113,9 @@ describe('PlayView', () => {
     await say('둘')
     await say('셋')
     expect(await within(log()).findByText('시간이 흘렀어요 · 16세')).toBeInTheDocument()
-    expect(within(screen.getByRole('complementary', { name: '내 상태' })).getByText('16세')).toBeInTheDocument()
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    expect(within(panel).getByText('16세')).toBeInTheDocument()
+    expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '65')
   })
 
   it('오류가 나면 보낸 말을 입력칸에 되돌리고 토스트로 안내한다', async () => {

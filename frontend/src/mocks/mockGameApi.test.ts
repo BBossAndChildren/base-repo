@@ -64,12 +64,16 @@ describe('mockGameApi', () => {
     expect(turn.messages.every((m) => m.role !== 'user')).toBe(true)
   })
 
-  it('세 턴마다 나이 변화가 stateChanges 로 온다', async () => {
+  it('세 턴마다 나이 · 에너지 변화가 stateChanges 로 온다', async () => {
     const play = await startGame()
     await api.sendTurn(play.playId, { message: '1' })
     await api.sendTurn(play.playId, { message: '2' })
     const third = await api.sendTurn(play.playId, { message: '3' })
-    expect(third.stateChanges).toEqual([{ field: 'age', from: 15, to: 16 }])
+    expect(play.state).toMatchObject({ funds: 50, energy: 70 })
+    expect(third.stateChanges).toEqual([
+      { field: 'age', from: 15, to: 16 },
+      { field: 'energy', from: 70, to: 65 },
+    ])
   })
 
   it('"체험" 이면 3D 체험 분기를 준다', async () => {
