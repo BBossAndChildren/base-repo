@@ -250,7 +250,7 @@
 ### 1-5. 결말 · 추천 직업
 `GET /api/v1/plays/{playId}/result` · 인증: `X-Player-Id`
 
-> 인생이 끝난 플레이(`ended: true`)만. 처음 요청 때 만들어 `plays.ending` 에 저장하고, 이후에는 저장된 값을 준다. 만드는 방식: [10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5)
+> 인생이 끝난(캐릭터가 사망한) 플레이(`ended: true`)만. 처음 요청 때 만들어 `plays.ending` 에 저장하고, 이후에는 저장된 값을 준다. `ending` 은 **살아온 인생을 읊어 주는 회고**다. 만드는 방식: [10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5)
 
 응답 (성공)
 ```json
@@ -266,6 +266,7 @@
 }
 ```
 - `isNew: true` 는 아직 경험하지 않은 새 직업 (다음 플레이 권유)
+- `generatedBy: "backend"` 는 AI 결말 API 가 없거나 실패해 **백엔드가 저장된 기록으로 만든 결말**일 때만 붙는다 (AI 가 만든 결말에는 없음). 이렇게 저장된 결말은 다음 조회 때 AI 결말을 다시 시도해 성공하면 교체한다
 - `basis` 는 추천 근거 종류: `experience`(3D 체험) · `conversation`(대화) · `interest`(흥미 기록) · `dreamJob`(희망 직업). 백엔드가 [10 7절](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5) 점수 근거에서 채운다. 화면의 "3D 체험함" 같은 표시에 쓴다
 
 실패
