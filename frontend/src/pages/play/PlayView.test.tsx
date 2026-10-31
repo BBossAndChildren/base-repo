@@ -258,6 +258,19 @@ describe('PlayView', () => {
     spy.mockRestore()
   })
 
+  it('채팅 중 네트워크 오류(Cloudflare 가 바꾼 502 · 504)는 응답 지연으로 안내하고, 다시 보내면 같은 requestId (05 5절)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(0, 'NETWORK'))
+    const { say, input, user } = await setup()
+    await say('안녕')
+    expect(await screen.findByText('응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.')).toBeInTheDocument()
+    expect(screen.queryByText('연결이 끊겼어요. 인터넷 연결을 확인해 주세요.')).not.toBeInTheDocument()
+    expect(input).toHaveValue('안녕')
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await waitFor(() => expect(spy).toHaveBeenCalledTimes(2))
+    expect(spy.mock.calls[1][1].requestId).toBe(spy.mock.calls[0][1].requestId)
+    spy.mockRestore()
+  })
+
   it('이미 끝난 플레이에 보내면 결말 화면으로 간다', async () => {
     const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(409, 'ALREADY_ENDED'))
     const { say } = await setup()
