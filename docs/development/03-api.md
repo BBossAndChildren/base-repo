@@ -270,8 +270,9 @@
 
 응답 (성공)
 ```json
-{ "code": 200, "data": { "playId": "uuid", "state": { }, "messages": [ ], "ended": false } }
+{ "code": 200, "data": { "playId": "uuid", "sessionId": "uuid", "state": { }, "messages": [ ], "ended": false } }
 ```
+- `sessionId` 는 게임 시작(1-2) 때 받은 값과 같다. 다른 기기 · 브라우저에서 이어 해도 3D 체험에 같은 `sessionId` 를 쓸 수 있게 돌려준다
 - 재접속만으로는 진행 중이던 3D 체험을 정산하지 않는다 (정산은 [1-8](#1-8-종료-응답-없는-체험-정산))
 
 ### 1-8. 종료 응답 없는 체험 정산
