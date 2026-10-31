@@ -9,7 +9,7 @@
 | 파일 | 내용 | 프론트 | 백엔드 | AI |
 |------|------|:---:|:---:|:---:|
 | `README.md` · `UPDATES.md` · `manifest.json` | Unity 담당 전달 안내 · 변경 사항 · 파일 목록 | ✅ | ✅ | |
-| `frontend/Experience.jsx` · `client.js` · `client.d.ts` | React 에 붙이는 Unity 연결 컴포넌트 · 클라이언트 · 타입 (**참고용** — 저장소의 `frontend/` 로 복사하지 않고 이를 참고해 프론트 코드를 작성) | ✅ | | |
+| `frontend/Experience.jsx` · `client.js` · `client.d.ts` | React 에 붙이는 Unity 연결 컴포넌트 · 클라이언트 · 타입 (규칙 원문. 실제 실행 코드는 **빌드의 `site/frontend/client.js` 를 프론트가 실행할 때 불러온다** — 저장소의 `frontend/` 로 복사하지 않음) | ✅ | | |
 | `frontend/backend.js` · `backend.d.ts` | 우리 백엔드 API 를 부르는 어댑터 (이벤트 · 정산 · 생존 신호 · 미수신 기록) | ✅ | 형식 참고 | |
 | `frontend/audio.js` · `audio-ui.*` · `audio.d.ts` | 효과음 재생기 | ✅ | | |
 | `frontend/environment.d.ts` · `progress.types.ts` | 타입 | ✅ | | |
@@ -33,4 +33,4 @@
 ## 정리 기록
 
 - 2026-10-31: 받은 패키지에서 검수 증거(`actual/` · `adapter-validation/`), 효과음 메타데이터(`audio/`, 실제 mp3 는 빌드 `site/audio/` 에 있음), 에셋 보고서(`catalogs/`), 이전 빌드 목록과 같은 내용의 버전 이름 사본(`builds/earlier-builds/` · `builds/career-suite-*`), 빌드된 테스트 화면(`frontend/compiled/`), 다른 형식의 ID 목록(`ids/` 나머지), Unity 내부 기록(`docs/` 나머지)을 제거했다. Unity 원본 README 에는 이 파일들이 언급돼 있다
-- `webgl/` 은 아직 예전 빌드(`career-pilot-v007`)다. 새 빌드 `career-suite-integration-v005.zip` 으로 교체 예정 ([11 F8](../development/11-open-issues.md#f-확인이-필요한-질문))
+- `webgl/` 은 최종 빌드 `career-suite-integration-v005` 로 교체했다 (2026-10-31, Git 제외)
