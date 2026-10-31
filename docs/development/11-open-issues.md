@@ -38,7 +38,7 @@
 | `sessionId` 발급 | 백엔드가 게임 시작 때 발급 | [03 1-2](03-api.md#1-2-게임-시작) |
 | `docs/game/` 파일 약속 | 백엔드가 파일 이름 · 역할을 정하고 작가가 내용을 채움. 게임 상태 필드는 작가가 `03-rules.md` 에 정함 | [10 1](10-prompt-assembly.md#1-콘텐츠-파일-읽기-규칙) · [game/README](../game/README.md) |
 | 결말 · 추천 방식 | 근거 점수 상위 5개 → AI 가 추천 3개(새 직업 1개 이상) + 결말 (1차안) | [10 7](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5) · [03 2-3](03-api.md#2-3-결말-생성) |
-| 프론트 스택 | React + Vite + TypeScript, 백엔드 API 준비 전까지 mock, 상태 패널은 우선 나이만 | [05](05-ui-ux.md) · [02 1](02-architecture.md#1-기술-스택) |
+| 프론트 스택 | React + Vite + TypeScript, 백엔드 API 준비 전까지 mock, 상태 패널은 나이 + 자금 · 에너지 (백엔드가 줄 때) | [05](05-ui-ux.md) · [02 1](02-architecture.md#1-기술-스택) |
 | 결말 API 미종료 오류 | 409 `NOT_ENDED` 를 따로 둔다 (`ALREADY_ENDED` 와 구분) | [03 결과 코드](03-api.md#결과-코드-목록) |
 | 3D 안내 카드 정보 | `experience` 에 `title` · `jobs` · `reason` 추가. [다음에 할게요] 로 건너뛸 수 있음 (API 호출 없음) | [03 1-3](03-api.md#1-3-채팅-한-턴) · [05 화면 2](05-ui-ux.md#화면-2-게임-playplayid) |
 | 결말 추천 근거 표시 | `recommendedJobs[].basis` 추가, 결말 생성 중 로딩 화면 | [03 1-5](03-api.md#1-5-결말--추천-직업) · [05 화면 4](05-ui-ux.md#화면-4-결말-playplayidresult) |
@@ -73,6 +73,6 @@
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |
 |---|------|----|
-| F10 | **게임 상태 필드** — `docs/game/03-rules.md` | 작가가 작성함 (`age` · `elapsedDays` · `funds` · `energy` · `ability` · 관계 · 흥미). 프론트는 지금 나이만 표시하고, 백엔드가 `state` 에 담아 주면 자금 · 에너지 표시를 추가한다 (03-rules 의 "연동 후 표시 제안"). 03 1-3 `state` 필드 TODO 는 백엔드가 확정 |
+| F10 | **게임 상태 필드** — `docs/game/03-rules.md` | 작가가 작성함 (`age` · `elapsedDays` · `funds` · `energy` · `ability` · 관계 · 흥미). 프론트는 나이와 자금 · 에너지 표시를 구현함 (#59, 백엔드가 `state` · `stateChanges` 에 `funds` · `energy` 를 담아 주면 표시). 03 1-3 `state` 필드 TODO 는 백엔드가 확정 |
 | F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | |
 | F7 | 백엔드 저장소 주소 · AI 서버 사설 IP · 포트 · OS (06 의 TODO) | |
