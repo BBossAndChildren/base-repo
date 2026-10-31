@@ -112,7 +112,7 @@ npm run lint && npm run typecheck && npm test && npm run build   # PR 전 확인
 | `DB_HOST` · `DB_PORT` | 백엔드 | ✅ | PostgreSQL 주소와 포트 |
 | `DB_NAME` · `DB_USER` · `DB_PASSWORD` | 백엔드 | ✅ | DB 이름 · 접속 계정 · 비밀번호 |
 | `DB_SSLMODE` | 백엔드 | | 기본 prefer. 운영 DB의 TLS 구성에 맞춰 설정 |
-| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI API 주소 — **같은 GPU 서버의 내부 주소** (`http://<내부 호스트>:<포트>`, 이식 때 확정). 로컬 검증은 `compose.mock.yaml` 의 모의 AI |
+| `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI API 주소. GPU 서버에서 AI 를 호스트 Python 으로 실행하면 **`http://host.docker.internal:8010`** (백엔드 컨테이너가 `extra_hosts` 로 호스트를 이 이름으로 찾는다, [5-3](#5-3-ai-서버-gpu-서버)). 컨테이너 안의 `127.0.0.1` 은 컨테이너 자신이라 쓰지 않는다. 로컬 검증은 `compose.mock.yaml` 의 모의 AI |
 | `AI_SERVER_KEY` | 백엔드 · AI API | ✅ | 백엔드 → AI API 내부 호출 키 (헤더 `X-Internal-Key`). 같은 서버의 두 프로세스에 같은 값, 브라우저에 넣지 않음 |
 | `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | Vercel 프론트 주소 (쉼표 구분): `https://base-repo-zeta.vercel.app,https://base-repo-ck83.vercel.app` (11 F11). 로컬 개발은 `http://localhost:5173` 등을 더한다. `scripts/init_local_env.py` 가 이 값으로 `.env` 를 만든다 |
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | `.trycloudflare.com,localhost,127.0.0.1` (터널 주소가 바뀌어도 되도록 앞에 점) |
@@ -332,6 +332,14 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 배치 확인 | `python3 backend/scripts/check_intro_assets.py backend/deploy/assets/intro-assets` → "인트로 에셋 71개 확인" (2026-11-01 로컬 배치 · 확인 완료, 서버 복사는 배포 때) |
 
 ### 5-3. AI 서버 (GPU 서버)
+> **GPU 단일 서버 — 현재 적용 (2026-11-01)**
+> - AI API(`BBossAndChildren/AI` 의 `ai_server`, Qwen3-4B, 현재 `/ai/v1/chat` 만)는 **호스트의 Python(uvicorn)** 으로, 백엔드는 **Docker** 로 돈다
+> - 연결 경로: 백엔드 컨테이너 → `host.docker.internal` (compose `extra_hosts: host-gateway`) → 호스트 AI
+> - AI 는 **Docker 내부망 주소에만** 연다: `uvicorn ai_server.app:create_app --factory --host 172.17.0.1 --port 8010 --workers 1`. 외부 인터페이스 · 공개 포트는 열지 않는다 (`172.17.0.1` 은 `ip -4 addr show docker0` 로 확인)
+> - 백엔드 `.env`: `AI_API_BASE_URL=http://host.docker.internal:8010`, `AI_SERVER_KEY=<AI 서버와 같은 값>` → `docker compose -f compose.yaml -f compose.gateway.yaml up -d --force-recreate backend`
+> - 연결 확인 (키 · 모델 없이): `docker compose -f compose.yaml -f compose.gateway.yaml exec backend python -c "import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:8010/openapi.json', timeout=5).status)"` → `200`
+> - 한계: AI 는 한 번에 한 추론만(겹치면 503 `AI_BUSY`), 추천 · 결말 API 는 아직 없어 결말 화면은 오류가 난다
+
 > **GPU 단일 서버에서는** AI API 가 Django 와 같은 서버에서 돈다. 아래 "사설망으로 닿는가" 확인과 AI 전용 터널은 **이전 배포안(두 서버)** 의 절차라 쓰지 않는다. `AI_API_BASE_URL` 은 같은 서버의 내부 주소다. 단일 GPU 는 한 번에 한 추론만 처리해 겹친 요청은 503 이 될 수 있다 ([02](02-architecture.md#1-기술-스택))
 
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
