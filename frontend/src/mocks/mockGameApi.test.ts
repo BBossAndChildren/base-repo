@@ -62,6 +62,16 @@ describe('mockGameApi', () => {
     await expect(api.sendTurn(play.playId, { requestId, message: '다른 말' })).rejects.toMatchObject({ type: 'REQUEST_CONFLICT' })
   })
 
+  it('일시정지 중에는 새 턴이 PLAY_PAUSED, 같은 값을 다시 보내도 버전이 오르지 않는다', async () => {
+    const play = await startGame()
+    const first = await api.setPaused(play.playId, true)
+    const again = await api.setPaused(play.playId, true)
+    expect(again.stateVersion).toBe(first.stateVersion)
+    await expect(api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '안녕' })).rejects.toMatchObject({ type: 'PLAY_PAUSED' })
+    expect((await api.setPaused(play.playId, false)).paused).toBe(false)
+    await expect(api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '안녕' })).resolves.toBeTruthy()
+  })
+
   it('모르는 게스트면 UNKNOWN_PLAYER', async () => {
     setPlayerId('not-registered')
     await expect(api.startPlay(START)).rejects.toMatchObject({ type: 'UNKNOWN_PLAYER' })
@@ -90,7 +100,7 @@ describe('mockGameApi', () => {
     await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '1' })
     await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '2' })
     const third = await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '3' })
-    expect(play.state).toMatchObject({ funds: 50, energy: 70 })
+    expect(play.state).toMatchObject({ funds: 0, debt: 0, health: 80, energy: 70, stress: 20 })
     expect(third.stateChanges).toEqual([
       { field: 'age', from: 15, to: 16 },
       { field: 'energy', from: 70, to: 65 },

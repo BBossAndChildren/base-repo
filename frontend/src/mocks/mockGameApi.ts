@@ -19,6 +19,7 @@ interface MockPlay {
   /** requestId → 저장한 응답 (같은 ID · 같은 입력이면 그대로 돌려준다) */
   requests: Map<string, { message: string; response: TurnResponse }>
   stateVersion: number
+  paused: boolean
   playId: string
   playerId: string
   sessionId: string
@@ -101,12 +102,25 @@ export const mockGameApi: GameApi = {
     const play: MockPlay = {
       requests: new Map(),
       stateVersion: 1,
+      paused: false,
       playId: uuid(),
       playerId,
       sessionId: uuid(),
       profile: body,
-      // 시작값은 docs/game/03-rules.md (자금 50 · 에너지 70)
-      state: { age: body.age, elapsedDays: 0, funds: 50, energy: 70 },
+      // 시작값은 백엔드 initial_state 와 같은 모양 (03 게임 상태와 턴 확장): 미배정 자산 0원 · 건강 80 · 에너지 70 · 스트레스 20
+      state: {
+        age: body.age,
+        elapsedDays: 0,
+        funds: 0,
+        debt: 0,
+        health: 80,
+        energy: 70,
+        stress: 20,
+        housing: { type: 'unknown', deposit: 0, depositPaid: false, monthlyRent: 0, livingCost: 0 },
+        development: { kind: ['초등학생', '중학생', '고등학생', '대학생'].includes(body.situation) ? 'grades' : 'selfDevelopment', value: null, previousGrades: null },
+        relationship: {},
+        interests: Object.fromEntries((body.interests ?? []).map((field) => [field, null])),
+      },
       messages: [
         {
           role: 'narrator',
@@ -132,13 +146,25 @@ export const mockGameApi: GameApi = {
       state: { ...play.state },
       messages: [...play.messages],
       ended: play.ended,
-      paused: false,
+      paused: play.paused,
       stateVersion: play.stateVersion,
       activePlaySeconds: 0,
       scene: null,
       pendingChoices: [],
       lastTurnId: null,
     }
+  },
+
+  async setPaused(playId, paused) {
+    await wait()
+    const play = ownPlay(playId)
+    if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
+    // 같은 값을 다시 보내면 버전을 올리지 않는다 (03)
+    if (play.paused !== paused) {
+      play.paused = paused
+      play.stateVersion += 1
+    }
+    return { state: { ...play.state }, paused: play.paused, stateVersion: play.stateVersion, activePlaySeconds: 0 }
   },
 
   async sendTurn(playId, body) {
@@ -151,6 +177,7 @@ export const mockGameApi: GameApi = {
     if (previous && previous.message !== message) throw new ApiError(409, 'REQUEST_CONFLICT')
     if (previous) return previous.response
     if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
+    if (play.paused) throw new ApiError(409, 'PLAY_PAUSED')
     if (message.includes('오류')) throw new ApiError(502, 'AI_UNAVAILABLE')
     if (message.includes('느려')) throw new ApiError(504, 'TIMEOUT')
     if (message.includes('충돌')) throw new ApiError(409, 'STATE_CONFLICT')

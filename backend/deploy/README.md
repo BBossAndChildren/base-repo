@@ -1,6 +1,6 @@
 # 정적 에셋 게이트웨이 (BE14·BE15)
 
-`nginx.conf`는 `/api/`를 Django로 전달하고 `/builds/`, `/intro-assets/`를 읽기 전용으로 제공한다. 프론트 허용 출처는 현재 개발 문서의 Vercel 주소다. 주소가 바뀌면 CORS와 frame-ancestors를 함께 갱신한다.
+`nginx.conf`는 `/api/`를 Django로 전달하고 `/builds/`, `/intro-assets/`를 읽기 전용으로 제공한다. 프론트 허용 출처는 `map $http_origin $frontend_origin` 목록(현재 `https://base-repo-zeta.vercel.app` · `https://base-repo-ck83.vercel.app`)이며, 목록에 있는 출처만 `Access-Control-Allow-Origin`으로 돌려준다. `frame-ancestors`도 같은 두 주소다. 주소가 바뀌면 이 목록 · `frame-ancestors` · Django `.env`의 `CORS_ALLOWED_ORIGINS`(쉼표 구분)를 함께 갱신한다 (`docs/development/11-open-issues.md` F11).
 
 실제 Unity 전달물 `intro.json`과 `models/PAN-001.glb`~`PAN-071.glb`를 `/srv/intro-assets/`에 배치한다. 이 파일은 저장소에 넣지 않는다. 원본 파일이 없는 경우 설정 테스트 통과를 실제 배치 완료로 표시하지 않는다.
 

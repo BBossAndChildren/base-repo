@@ -40,6 +40,10 @@ from .serializers import (
 from .state import initial_state
 from .turns import run_turn
 
+# Swagger 요청 예시용 ID (실제 값은 게임 시작 응답 sessionId · 프론트가 만든 체험 ID)
+SAMPLE_SESSION_ID = "3f6c1d2a-8b4e-4c1f-9a7d-2e5b6c7d8e9f"
+SAMPLE_EXPERIENCE_ID = "exp-5a0c8b3d"
+
 
 def api_responses(success_serializer, *errors):
     return {
@@ -130,6 +134,10 @@ class ResumeView(PlayerRequiredView):
             "진행 중 턴은 상태 버전으로 충돌을 확인합니다."
         ),
         request=PauseInputSerializer,
+        examples=[
+            OpenApiExample("일시정지", value={"paused": True}, request_only=True),
+            OpenApiExample("이어 하기", value={"paused": False}, request_only=True),
+        ],
         responses=api_responses(PauseResponseSerializer, 400, 401, 404, 409),
     )
     def patch(self, request, play_id):
@@ -255,9 +263,17 @@ class HeartbeatView(PlayerRequiredView):
         summary="체험 생존 신호",
         description=(
             "Unity 어댑터가 30초마다 호출합니다. lease를 120초 갱신합니다. "
-            "응답은 {code,data}로 감싸지 않습니다."
+            "응답은 {code,data}로 감싸지 않습니다. sessionId는 게임 시작(1-2) 응답 값, "
+            "experienceId는 프론트가 체험을 시작할 때 만든 ID입니다."
         ),
         request=HeartbeatInputSerializer,
+        examples=[
+            OpenApiExample(
+                "생존 신호",
+                value={"sessionId": SAMPLE_SESSION_ID, "experienceId": SAMPLE_EXPERIENCE_ID},
+                request_only=True,
+            )
+        ],
         responses=api_responses(HeartbeatResponseSerializer, 400, 401, 404, 409),
     )
     def post(self, request, play_id):
@@ -276,9 +292,23 @@ class PendingView(PlayerRequiredView):
         summary="종료 응답 미수신 기록",
         description=(
             "종료 응답이 5초 동안 없으면 pending_reconciliation으로 기록합니다. "
-            "체험 종료를 확정하지 않으며 응답은 감싸지 않습니다."
+            "체험 종료를 확정하지 않으며 응답은 감싸지 않습니다. requestId는 Unity 종료 호출에 "
+            "썼던 값 그대로이며 reason은 END_RESPONSE_TIMEOUT 고정입니다."
         ),
         request=PendingInputSerializer,
+        examples=[
+            OpenApiExample(
+                "종료 응답 5초 미수신",
+                value={
+                    "sessionId": SAMPLE_SESSION_ID,
+                    "experienceId": SAMPLE_EXPERIENCE_ID,
+                    "roomId": "PAN-002",
+                    "requestId": "end-7c2f1e0a",
+                    "reason": "END_RESPONSE_TIMEOUT",
+                },
+                request_only=True,
+            )
+        ],
         responses=api_responses(PendingResponseSerializer, 400, 401, 404, 409),
     )
     def post(self, request, play_id):
@@ -294,9 +324,31 @@ class EventView(PlayerRequiredView):
         summary="Unity 이벤트 저장",
         description=(
             "Unity 이벤트 객체를 그대로 받습니다. DB 저장 후 ACK를 반환하고 "
-            "(sessionId,eventId) 중복을 제거합니다. 응답은 감싸지 않습니다."
+            "(sessionId,eventId) 중복을 제거합니다. 응답은 감싸지 않습니다. 필드는 Unity "
+            "실시간 계약(docs/unity/contracts/realtime-v002)이 정하며, 같은 이벤트를 저장 확인 "
+            "전까지 그대로 재전송합니다."
         ),
         request=EventInputSerializer,
+        examples=[
+            OpenApiExample(
+                "물건 선택 (요약)",
+                value={
+                    "schemaVersion": 1,
+                    "protocol": "career-experience",
+                    "type": "object.selected",
+                    "eventId": "evt-0001",
+                    "sequence": 1,
+                    "sessionId": SAMPLE_SESSION_ID,
+                    "experienceId": SAMPLE_EXPERIENCE_ID,
+                    "buildId": "career-suite-integration-v005",
+                    "roomId": "PAN-002",
+                    "scenarioId": "career-net-951-experience",
+                    "scenarioVersion": "v002",
+                    "data": {"objectId": "copier"},
+                },
+                request_only=True,
+            )
+        ],
         responses=api_responses(EventAckResponseSerializer, 400, 401, 404, 409),
     )
     def post(self, request, play_id):
@@ -311,9 +363,28 @@ class ReconcileView(PlayerRequiredView):
         summary="종료 미수신 체험 정산",
         description=(
             "새 체험 시작 전에 Unity v003 정산 요청 원본을 받습니다. "
-            "Unity experience.reconciled 객체를 감싸지 않고 반환합니다."
+            "Unity experience.reconciled 객체를 감싸지 않고 반환합니다. reconcileRequestId는 "
+            "재전송 동안 유지하고, experienceId는 종료 응답을 받지 못한 이전 체험, "
+            "newExperienceId는 곧 시작할 체험입니다."
         ),
         request=ReconcileInputSerializer,
+        examples=[
+            OpenApiExample(
+                "새 체험 시작 전 정산",
+                value={
+                    "schemaVersion": 1,
+                    "protocol": "career-experience-resolution",
+                    "action": "reconcile_experience",
+                    "reconcileRequestId": "reconcile-0001",
+                    "sessionId": SAMPLE_SESSION_ID,
+                    "experienceId": SAMPLE_EXPERIENCE_ID,
+                    "roomId": "PAN-002",
+                    "trigger": "NEW_PLAY_START",
+                    "newExperienceId": "exp-6b1d9c4e",
+                },
+                request_only=True,
+            )
+        ],
         responses=api_responses(ResolutionResponseSerializer, 400, 401, 404, 409),
     )
     def post(self, request, play_id):

@@ -1,6 +1,7 @@
 import type {
   CreatePlayerResponse,
   MyPlaysResponse,
+  PauseResponse,
   PlayResult,
   PlayResume,
   StartPlayRequest,
@@ -17,6 +18,8 @@ export interface GameApi {
   startPlay(body: StartPlayRequest): Promise<StartPlayResponse>
   /** 1-7 플레이 재개 */
   getPlay(playId: string): Promise<PlayResume>
+  /** 일시정지 · 재개 (PATCH 1-7 리소스) */
+  setPaused(playId: string, paused: boolean): Promise<PauseResponse>
   /** 1-3 채팅 한 턴 */
   sendTurn(playId: string, body: TurnRequest): Promise<TurnResponse>
   /** 1-5 결말 · 추천 직업 */

@@ -12,11 +12,12 @@ import type { PlayResume } from '../../types/api'
 import { PlayView } from './PlayView'
 import { avatarLetter, declineOpenOffers, type TimelineItem } from './timeline'
 
-async function setup(options: { onStartExperience?: () => void; mapState?: (state: PlayResume['state']) => PlayResume['state'] } = {}) {
+async function setup(options: { onStartExperience?: () => void; mapState?: (state: PlayResume['state']) => PlayResume['state']; mapPlay?: (play: PlayResume) => PlayResume } = {}) {
   await ensurePlayerId(mockGameApi)
   const started = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
   const resumed: PlayResume = await mockGameApi.getPlay(started.playId)
-  const play: PlayResume = options.mapState ? { ...resumed, state: options.mapState(resumed.state) } : resumed
+  const mapped: PlayResume = options.mapState ? { ...resumed, state: options.mapState(resumed.state) } : resumed
+  const play: PlayResume = options.mapPlay ? options.mapPlay(mapped) : mapped
   const user = userEvent.setup()
   render(
     <PlayerContext.Provider value={{ playerId: 'p', resetPlayer: vi.fn() }}>
@@ -30,7 +31,8 @@ async function setup(options: { onStartExperience?: () => void; mapState?: (stat
       </ToastProvider>
     </PlayerContext.Provider>,
   )
-  const input = screen.getByLabelText('하고 싶은 말이나 행동')
+  // 일시정지로 시작하면 입력칸이 없다
+  const input = screen.queryByLabelText('하고 싶은 말이나 행동') as HTMLElement
   const say = async (text: string) => {
     await user.clear(input)
     await user.type(input, text)
@@ -48,27 +50,47 @@ describe('PlayView', () => {
     clearPlayerId()
   })
 
-  it('나레이션 · NPC 메시지를 구분해 보여 주고, 상태 패널에 나이 · 자금 · 에너지를 표시한다', async () => {
+  it('나레이션 · NPC 메시지를 구분하고, 상태 패널에 나이 · 원화 자금 · 빚(0원도) · 건강 · 에너지 · 스트레스를 표시한다', async () => {
     await setup()
     expect(within(log()).getByText('나레이션')).toBeInTheDocument()
     expect(within(log()).getByText('친구 민수')).toBeInTheDocument()
     const panel = screen.getByRole('complementary', { name: '내 상태' })
     expect(within(panel).getByText('15세')).toBeInTheDocument()
-    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '50')
+    expect(within(panel).getByText('자금').nextElementSibling).toHaveTextContent('0원')
+    expect(within(panel).getByText('빚').nextElementSibling).toHaveTextContent('0원')
+    expect(within(panel).getByRole('meter', { name: '건강' })).toHaveAttribute('aria-valuenow', '80')
     expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '70')
+    expect(within(panel).getByRole('meter', { name: '스트레스' })).toHaveAttribute('aria-valuenow', '20')
+    // 자금을 0~100 막대로 그리지 않는다 (05 화면 2)
+    expect(within(panel).queryByRole('meter', { name: '자금' })).not.toBeInTheDocument()
+    // 주거 미배정 · 성적 미확인이면 보이지 않는다
+    expect(within(panel).queryByText('주거')).not.toBeInTheDocument()
+    expect(within(panel).queryByRole('meter', { name: '성적' })).not.toBeInTheDocument()
   })
 
-  it('받은 항목만 막대로 보여 주고, 범위 밖 값은 0~100 으로 맞춘다', async () => {
-    await setup({ mapState: (state) => ({ age: state.age, funds: 140 }) })
+  it('원화는 천 단위로, 주거 · 성적은 해당할 때만, 막대 값은 0~100 으로 맞춘다', async () => {
+    await setup({
+      mapState: (state) => ({
+        ...state,
+        funds: 1234567,
+        debt: 3000000,
+        energy: 140,
+        housing: { type: 'monthlyRent', deposit: 5000000, depositPaid: true, monthlyRent: 450000, livingCost: 600000 },
+        development: { kind: 'grades', value: 72, previousGrades: null },
+      }),
+    })
     const panel = screen.getByRole('complementary', { name: '내 상태' })
-    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '100')
-    expect(within(panel).queryByRole('meter', { name: '에너지' })).not.toBeInTheDocument()
+    expect(within(panel).getByText('자금').nextElementSibling).toHaveTextContent('1,234,567원')
+    expect(within(panel).getByText('빚').nextElementSibling).toHaveTextContent('3,000,000원')
+    expect(within(panel).getByText('주거').nextElementSibling).toHaveTextContent('월세 · 월 1,050,000원')
+    expect(within(panel).getByRole('meter', { name: '성적' })).toHaveAttribute('aria-valuenow', '72')
+    expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '100')
   })
 
-  it('자금 · 에너지가 모두 없으면 자리 표시를 보여 준다', async () => {
+  it('상태 값이 하나도 없으면 자리 표시를 보여 준다', async () => {
     await setup({ mapState: (state) => ({ age: state.age }) })
     const panel = screen.getByRole('complementary', { name: '내 상태' })
-    expect(within(panel).getByText('자금 · 에너지 (서버 연결 후 표시)')).toBeInTheDocument()
+    expect(within(panel).getByText('자금 · 건강 · 에너지 (서버 연결 후 표시)')).toBeInTheDocument()
     expect(within(panel).queryByRole('meter')).not.toBeInTheDocument()
   })
 
@@ -205,6 +227,35 @@ describe('PlayView', () => {
     await waitFor(() => expect(getPlay).toHaveBeenCalledTimes(1))
     expect(input).toHaveValue('충돌')
     getPlay.mockRestore()
+  })
+
+  it('[일시정지] 하면 입력을 잠그고, [이어 하기] 로 다시 입력할 수 있다 (05 화면 2 · 07 B17)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'setPaused')
+    const { user, play } = await setup()
+    await user.click(screen.getAllByRole('button', { name: '일시정지' })[0])
+    expect(await screen.findByText('일시정지 중이에요. 이어 하려면 아래 버튼을 눌러 주세요.')).toBeInTheDocument()
+    expect(screen.queryByLabelText('하고 싶은 말이나 행동')).not.toBeInTheDocument()
+    expect(spy).toHaveBeenLastCalledWith(play.playId, true)
+    expect((await mockGameApi.getPlay(play.playId)).paused).toBe(true)
+    await user.click(screen.getByRole('button', { name: '이어 하기' }))
+    expect(await screen.findByLabelText('하고 싶은 말이나 행동')).toBeInTheDocument()
+    expect(spy).toHaveBeenLastCalledWith(play.playId, false)
+    spy.mockRestore()
+  })
+
+  it('다시 접속했을 때 재개 응답이 일시정지면 일시정지 화면으로 시작한다', async () => {
+    await setup({ mapPlay: (play) => ({ ...play, paused: true }) })
+    expect(screen.getByRole('button', { name: '이어 하기' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '일시정지' })).not.toBeInTheDocument()
+  })
+
+  it('보냈는데 PLAY_PAUSED 면 안내하고 일시정지 화면으로 바꾼다 (입력 문장은 유지)', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockRejectedValueOnce(new ApiError(409, 'PLAY_PAUSED'))
+    const { say } = await setup()
+    await say('안녕')
+    expect(await screen.findByText('일시정지를 해제해 주세요.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '이어 하기' })).toBeInTheDocument()
+    spy.mockRestore()
   })
 
   it('이미 끝난 플레이에 보내면 결말 화면으로 간다', async () => {

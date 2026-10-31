@@ -2,26 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiError, gameApi } from '../../api'
 import { usePlayer } from '../../app/playerContext'
-import { useToast } from '../../components'
+import { Button, useToast } from '../../components'
 import type { ExperienceOffer, PlayResume, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
-import { StatusBar, StatusPanel, type StatusField, type StatusValues } from './StatusPanel'
+import { StatusBar, StatusPanel } from './StatusPanel'
+import { changedStatusFields, pickStatus, type StatusField, type StatusValues } from './statusModel'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
 
 const CHANGE_HIGHLIGHT_MS = 1600
-
-const STATUS_FIELDS: StatusField[] = ['age', 'funds', 'energy']
-
-function pickStatus(state: PlayResume['state']): StatusValues {
-  return {
-    age: state.age,
-    funds: typeof state.funds === 'number' ? state.funds : undefined,
-    energy: typeof state.energy === 'number' ? state.energy : undefined,
-  }
-}
 
 const NO_CHANGES: ReadonlySet<StatusField> = new Set()
 
@@ -55,6 +46,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [ended, setEnded] = useState(play.ended)
+  const [paused, setPaused] = useState(play.paused === true)
+  const [pausing, setPausing] = useState(false)
   const [activeExperience, setActiveExperience] = useState<{ cardId: string; offer: ExperienceOffer } | null>(null)
   // 실패한 문장과 그때의 requestId. 같은 문장을 다시 보내면 재사용한다 (05 화면 2)
   const failedRequest = useRef<{ message: string; requestId: string } | null>(null)
@@ -67,17 +60,16 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
 
   function applyTurn(turn: TurnResponse) {
     const added: TimelineItem[] = messagesToTimeline(turn.messages)
-    const updates: Partial<StatusValues> = {}
+    const updates: Partial<Record<StatusField, number>> = {}
     for (const change of turn.stateChanges) {
-      const field = change.field as StatusField
-      if (!STATUS_FIELDS.includes(field) || typeof change.to !== 'number') continue
-      updates[field] = change.to
-      if (field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
+      if (change.field.includes('.') || typeof change.to !== 'number') continue
+      updates[change.field as StatusField] = change.to
+      if (change.field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
     }
-    const changedFields = Object.keys(updates) as StatusField[]
+    const changedFields = changedStatusFields(turn.stateChanges.map((change) => change.field))
     // 턴 응답의 state 가 백엔드 확정 값이다. 없을 때(이전 형식)만 stateChanges 로 맞춘다
     if (turn.state) setStatus(pickStatus(turn.state))
-    else if (changedFields.length > 0) setStatus((prev) => ({ ...prev, ...updates }))
+    else if (Object.keys(updates).length > 0) setStatus((prev) => ({ ...prev, ...updates }) as StatusValues)
     if (changedFields.length > 0) setChanged(new Set(changedFields))
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
     if (turn.notice) toast.show({ message: turn.notice.message })
@@ -110,6 +102,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
         await reloadLatest()
         return
       }
+      if (apiError.type === 'PLAY_PAUSED') setPaused(true)
       if (apiError.type === 'ALREADY_ENDED') {
         navigate(`/play/${play.playId}/result`, { replace: true })
         return
@@ -121,6 +114,30 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       toast.show({ type: 'error', message: apiError.message })
     } finally {
       setWaiting(false)
+    }
+  }
+
+  /** 일시정지 · 이어 하기 (PATCH /api/v1/plays/{playId}, 05 화면 2) */
+  async function togglePause(next: boolean) {
+    if (pausing) return
+    setPausing(true)
+    try {
+      const result = await gameApi.setPaused(play.playId, next)
+      setPaused(result.paused)
+      setStatus(pickStatus(result.state))
+    } catch (error) {
+      const apiError = error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN')
+      if (apiError.type === 'ALREADY_ENDED') {
+        navigate(`/play/${play.playId}/result`, { replace: true })
+        return
+      }
+      if (apiError.type === 'UNKNOWN_PLAYER') {
+        void resetPlayer()
+        return
+      }
+      toast.show({ type: 'error', message: apiError.message })
+    } finally {
+      setPausing(false)
     }
   }
 
@@ -158,9 +175,16 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     setItems((prev) => prev.map((item) => (item.id === id && item.kind === 'experience' ? { ...item, status: 'declined' } : item)))
   }
 
+  const pauseAction =
+    ended || paused ? null : (
+      <Button variant="ghost" size="sm" onClick={() => void togglePause(true)} disabled={pausing || waiting}>
+        일시정지
+      </Button>
+    )
+
   return (
     <>
-      <StatusBar values={status} changed={changed} />
+      <StatusBar values={status} changed={changed} actions={pauseAction} />
       <div className="play">
         <section className="chat" aria-label="이야기">
           <ChatLog items={items} waiting={waiting} onStartExperience={startExperience} onDeclineExperience={declineExperience} />
@@ -173,11 +197,20 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
                 </Link>
               </div>
             </div>
+          ) : paused ? (
+            <div className="chat-footer">
+              <div className="chat-ended" role="status">
+                <p>일시정지 중이에요. 이어 하려면 아래 버튼을 눌러 주세요.</p>
+                <Button onClick={() => void togglePause(false)} disabled={pausing}>
+                  이어 하기
+                </Button>
+              </div>
+            </div>
           ) : (
             <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} disabled={waiting} waiting={waiting} />
           )}
         </section>
-        <StatusPanel values={status} changed={changed} />
+        <StatusPanel values={status} changed={changed} actions={pauseAction} />
       </div>
       {activeExperience && <ExperienceOverlay playId={play.playId} sessionId={play.sessionId} offer={activeExperience.offer} onClose={closeExperience} />}
     </>

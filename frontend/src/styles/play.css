@@ -44,13 +44,20 @@
 .skeleton-row { display: grid; grid-template-columns: 56px 1fr 28px; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2); font-size: var(--text-xs); color: var(--color-text-muted); }
 .skeleton { height: 10px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
 .skeleton-label { height: 10px; width: 40px; border-radius: var(--radius-pill); background: var(--color-disabled-bg); }
-/* 상태 막대 (자금 · 에너지, 0~100) */
+/* 자금 · 빚 · 주거 (원화) */
+.status-money { margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+.status-money-row { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-sm); border-radius: var(--radius-sm); }
+.status-money-row dt { color: var(--color-text-muted); }
+.status-money-row dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-text); text-align: right; }
+/* 상태 막대 (건강 · 에너지 · 스트레스 · 성적/자기계발, 0~100) */
 .status-meters { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
 .status-meter { display: grid; grid-template-columns: 56px 1fr 32px; gap: var(--space-2); align-items: center; font-size: var(--text-sm); border-radius: var(--radius-md); }
 .status-meter-label { color: var(--color-text-muted); }
 .status-meter-track { height: 10px; border-radius: var(--radius-pill); background: var(--color-surface-2); border: 1px solid var(--color-border); overflow: hidden; }
 .status-meter-fill { display: block; height: 100%; border-radius: var(--radius-pill); background: var(--color-accent); transition: width .4s ease-out; }
 .status-meter-fill.is-energy { background: var(--color-success); }
+.status-meter-fill.is-stress { background: var(--color-warning); }
+.status-meter-fill.is-development { background: var(--color-ink); }
 .status-meter-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--color-text); }
 @media (prefers-reduced-motion: reduce) { .status-meter-fill { transition: none; } }
 .is-changed { animation: pulse 1.6s ease-out 1; }
@@ -83,3 +90,4 @@
 .chat-ended p { margin-bottom: var(--space-3); }
 @media (prefers-reduced-motion: reduce) { .is-changed { animation: none; } }
 .job-kicker { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
+.status-actions { margin-top: var(--space-4); display: flex; justify-content: flex-end; }
