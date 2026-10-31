@@ -14,7 +14,7 @@
 | [docs/unity/USAGE.md](../docs/unity/USAGE.md) 의 "프론트" 열 | Unity 연결 코드 · 명세 |
 
 ## 꼭 지킬 것
-- `docs/unity/frontend/` 의 Unity 연결 코드는 **참고만 한다.** `frontend/` 로 복사하지 않고, 그 동작 · 메시지 형식 · 확인 규칙을 따라 작성한다
+- Unity 연결 코드(`client.js`)는 **`frontend/` 로 복사하지 않는다.** 빌드에 함께 들어 있는 `<buildUrl>/frontend/client.js` 를 실행할 때 불러와 쓴다 (`src/lib/experience/runtime.ts`). 빌드와 연결 코드의 버전이 항상 같아진다. 규칙 참고: `docs/unity/frontend/`
 - 백엔드 어댑터는 `credentials: 'omit'` + `X-Player-Id` 헤더
 - 브라우저 `alert` 를 쓰지 않는다 (토스트 · 모달)
 - 백엔드 주소는 환경변수로만 둔다

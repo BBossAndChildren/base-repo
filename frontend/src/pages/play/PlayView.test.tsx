@@ -117,7 +117,7 @@ describe('PlayView', () => {
     expect(card).toHaveTextContent('선배가 축제 준비를 함께 하자고 제안했어요.')
     await userEvent.click(within(card).getByRole('button', { name: '체험 시작' }))
     expect(onStartExperience).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'career-net-951-experience' }))
-    expect(card).toHaveTextContent('체험을 시작했어요')
+    expect(card).toHaveTextContent('체험하는 중이에요')
   })
 
   it('[다음에 할게요] 를 누르거나 카드를 두고 계속 말하면 카드가 접힌다', async () => {
@@ -171,5 +171,38 @@ describe('timeline helpers', () => {
       { kind: 'experience', id: '2', offer, status: 'started' },
     ]
     expect(declineOpenOffers(items).map((item) => (item.kind === 'experience' ? item.status : ''))).toEqual(['declined', 'started'])
+  })
+})
+
+describe('PlayView + 3D 체험 화면 닫힘', () => {
+  beforeEach(() => {
+    mockControl.setDelay(0)
+    mockControl.reset()
+    clearPlayerId()
+  })
+
+  it('체험 화면을 [다음에 할게요] 로 닫으면 카드가 접히고 안내 메시지는 붙지 않는다', async () => {
+    await ensurePlayerId(mockGameApi)
+    const started = await mockGameApi.startPlay({ name: '민준', age: 15, situation: '중학생', hasDreamJob: false })
+    const play = await mockGameApi.getPlay(started.playId)
+    const user = userEvent.setup()
+    // 실제 체험 화면을 쓰되, 빌드는 불러오지 못하게 둔다 (jsdom 에는 Unity 가 없다)
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 404 })))
+    render(
+      <PlayerContext.Provider value={{ playerId: 'p', resetPlayer: vi.fn() }}>
+        <ToastProvider>
+          <MemoryRouter>
+            <PlayView play={play} />
+          </MemoryRouter>
+        </ToastProvider>
+      </PlayerContext.Provider>,
+    )
+    await user.type(screen.getByLabelText('하고 싶은 말이나 행동'), '체험 할래')
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await user.click(await screen.findByRole('button', { name: '체험 시작' }))
+    expect(await screen.findByText('3D 체험을 불러오지 못했어요. 이번 체험은 건너뛰고 텍스트로 이어갈게요.')).toBeInTheDocument()
+    expect(await within(log()).findByText(/체험은 다음에 하기로 했어요/)).toBeInTheDocument()
+    expect(within(log()).queryByText(/이야기로 돌아왔어요/)).not.toBeInTheDocument()
+    vi.unstubAllGlobals()
   })
 })

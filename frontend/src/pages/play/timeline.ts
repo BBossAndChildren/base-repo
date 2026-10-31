@@ -4,7 +4,7 @@ import type { ChatMessage, ExperienceOffer } from '../../types/api'
 export type TimelineItem =
   | { kind: 'message'; id: string; message: ChatMessage }
   | { kind: 'system'; id: string; text: string }
-  | { kind: 'experience'; id: string; offer: ExperienceOffer; status: 'offered' | 'declined' | 'started' }
+  | { kind: 'experience'; id: string; offer: ExperienceOffer; status: 'offered' | 'declined' | 'started' | 'done' }
 
 let counter = 0
 export const nextId = (prefix: string) => `${prefix}-${(counter += 1)}`

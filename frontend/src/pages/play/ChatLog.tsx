@@ -98,8 +98,8 @@ function ExperienceItem({
           <Badge>물건 3개</Badge>
           <Badge>효과음 있음</Badge>
         </div>
-        {item.status === 'started' ? (
-          <p className="small muted">체험을 시작했어요</p>
+        {item.status === 'started' || item.status === 'done' ? (
+          <p className="small muted">{item.status === 'done' ? '체험을 마쳤어요' : '체험하는 중이에요'}</p>
         ) : (
           <div className="row">
             <Button onClick={() => onStart(item.id, offer)}>체험 시작</Button>
