@@ -1,0 +1,25 @@
+/* 결말 화면 — docs/design/styles.css 12절 */
+.ending-hero { text-align: center; padding: var(--space-6) var(--space-5); background: linear-gradient(180deg, #2B3A67 0%, #3E4F86 100%); color: #fff; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+.ending-hero h1 { color: #fff; }
+.ending-hero p { font-family: var(--font-heading); font-size: var(--text-lg); max-width: 640px; margin: 0 auto var(--space-3); }
+.ending-hero .stars { position: absolute; inset: 0; pointer-events: none; }
+.ending-meta { font-size: var(--text-sm); opacity: .9; }
+.job-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+@media (max-width: 1023px) { .job-grid { grid-template-columns: 1fr; } }
+.job-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.job-card.is-new { border: 2px solid var(--color-ink); }
+.job-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); }
+.job-card h3 { margin: 0; }
+.job-kicker { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
+.job-section h4 { font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-ink); margin: 0 0 var(--space-1); }
+.job-section p, .job-section li { font-size: var(--text-sm); }
+.job-section ol { margin: 0; padding-left: 1.2em; }
+.job-section li + li { margin-top: var(--space-1); }
+.disclaimer { display: flex; gap: var(--space-2); align-items: flex-start; font-size: var(--text-sm); color: var(--color-text-muted); background: var(--color-surface-2); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+.result-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; margin-top: var(--space-6); }
+
+
+/* 구현 추가: 결말을 만드는 동안 */
+.skeleton-card { min-height: 220px; display: flex; flex-direction: column; gap: var(--space-3); }
+.skeleton-card .skeleton { width: 100%; }
+.skeleton-card .skeleton:nth-child(2) { width: 70%; }
