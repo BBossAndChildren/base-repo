@@ -138,9 +138,32 @@ export interface TurnResponse {
   state?: PlayState
   stateVersion?: number
   /** 자금 부족 · 입원 · 중요 결정에서 기다리는 선택 */
-  pendingChoices?: unknown[]
+  pendingChoices?: PendingChoice[]
   /** 이번 턴의 공개 사건 */
   events?: unknown[]
+}
+
+/** 백엔드가 기다리는 선택 (03 게임 상태와 턴 확장). 보기를 골라 다음 입력으로 보낸다 */
+export interface PendingChoice {
+  kind: 'insufficientFunds' | 'confirmAdvance' | 'offer' | 'familyPressure' | 'hospitalRecovery' | (string & {})
+  options: string[]
+  /** insufficientFunds: 부족한 금액(원) */
+  amount?: number
+  /** confirmAdvance: 진행할 날 수 · 활동 */
+  days?: number
+  activity?: string
+  /** offer: 제안 조건 */
+  offer?: {
+    kind?: 'job' | 'housing' | 'loan' | (string & {})
+    job?: string
+    monthlySalary?: number
+    type?: string
+    deposit?: number
+    monthlyRent?: number
+    livingCost?: number
+    amount?: number
+    creditor?: string
+  }
 }
 
 // 일시정지 · 재개 (03 게임 상태와 턴 확장, PATCH /api/v1/plays/{playId})
@@ -193,6 +216,6 @@ export interface PlayResume {
   stateVersion?: number
   activePlaySeconds?: number
   scene?: unknown
-  pendingChoices?: unknown[]
+  pendingChoices?: PendingChoice[]
   lastTurnId?: string | null
 }
