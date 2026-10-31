@@ -113,7 +113,7 @@
 | 채팅 대기 | 30초가 넘으면 `TIMEOUT` 안내 |
 
 ### 4-1. 3D 체험 연결 (Unity)
-> Unity 담당 연결 코드 `docs/unity/frontend/` 를 **참고해서** 프론트 코드를 구성한다. `frontend/` 안으로 복사 · 배치하지 않는다 (원본 보관소). 파일 안내: [docs/unity/USAGE.md](../unity/USAGE.md)
+> Unity 연결 코드(`client.js`)는 `frontend/` 로 복사하지 않고, **빌드에 함께 들어 있는 `<buildUrl>/frontend/client.js` 를 실행할 때 불러와 쓴다** (`frontend/src/lib/experience/runtime.ts`). 빌드와 연결 코드의 버전이 항상 같아진다. 규칙 원문은 `docs/unity/frontend/` (원본 보관소). 파일 안내: [docs/unity/USAGE.md](../unity/USAGE.md)
 
 | 항목 | 규칙 |
 |------|------|

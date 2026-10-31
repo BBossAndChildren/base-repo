@@ -201,6 +201,9 @@ server {
         }
         # Vercel 프론트 페이지만 이 빌드를 iframe 으로 넣을 수 있게 한다
         add_header Content-Security-Policy "frame-ancestors https://<프로젝트>.vercel.app" always;
+        # 프론트가 빌드의 연결 코드(frontend/client.js)와 지원 목록(supported-manifest.json)을 직접 불러온다 (05 4-1)
+        add_header Access-Control-Allow-Origin "https://<프로젝트>.vercel.app" always;
+        add_header Vary "Origin" always;
     }
 }
 ```
@@ -246,7 +249,7 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 허용 헤더 | 기본 헤더 + `x-player-id` (`CORS_ALLOW_HEADERS` 에 추가). 이 헤더 때문에 브라우저가 사전 요청(OPTIONS)을 보낸다 |
 | 허용 메서드 | `GET` · `POST` · `OPTIONS` |
 | 쿠키 | 쓰지 않으므로 `CORS_ALLOW_CREDENTIALS = False` |
-| 빌드 파일 | iframe 으로 열기 때문에 CORS 가 아니라 Nginx `frame-ancestors` 로 허용한다 |
+| 빌드 파일 | 화면은 iframe 이라 Nginx `frame-ancestors` 로 허용한다. 프론트가 빌드의 `frontend/client.js` · `supported-manifest.json` 을 직접 불러오므로 `/builds/` 에는 Nginx 가 `Access-Control-Allow-Origin` 도 붙인다 (API CORS 와 경로가 달라 중복되지 않음) |
 | Django 기타 | `ALLOWED_HOSTS` 에 `.trycloudflare.com`, `SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')` |
 
 ### 5-2. 3D 빌드 파일 저장 · 관리 · 전달
@@ -321,6 +324,7 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 | SSH 를 끊었더니 터널이 멈춤 | tmux 밖에서 실행함 | cloudflared 를 tmux 안에서 실행 (백엔드는 Docker 가 계속 실행) |
 | 채팅이 30초 부근에서 `TIMEOUT` 대신 502 로 끊김 | Gunicorn 기본 worker 타임아웃(30초)이 채팅 대기 시간(30초)과 같음 | Gunicorn `--timeout 60`, HTTPX 타임아웃은 그보다 짧게 |
 | 여러 명이 동시에 채팅하면 응답이 밀림 | WSGI worker 하나가 AI 응답을 기다리는 동안 다른 요청을 못 받음 | worker 수를 늘리거나 `--threads` 사용 |
+| 3D 체험이 "불러오지 못했어요" 로 바로 닫힘 | 빌드의 `client.js` · `supported-manifest.json` 을 CORS 때문에 못 불러옴 | `/builds/` 에 `Access-Control-Allow-Origin` (5-1 ⑤) |
 | 3D 빌드가 브라우저에서 안 열림 | `.wasm` Content-Type 누락, 비압축 빌드에 `Content-Encoding` 을 붙임, `frame-ancestors` 에 Vercel 주소 누락 | 5-1 ⑤ Nginx 설정 확인 |
 | 프론트에서 API 호출 시 CORS 오류 | 허용 출처에 Vercel 주소 없음, `x-player-id` 헤더 미허용, Nginx 와 Django 가 헤더를 중복으로 붙임 | [CORS](#cors--django-가-담당) 확인 |
 | Django 가 400 Bad Request | `ALLOWED_HOSTS` 에 터널 주소 없음 | `.trycloudflare.com` 추가 |
