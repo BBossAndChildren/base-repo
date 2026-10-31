@@ -12,8 +12,9 @@
 | GET | `/api/health` | PostgreSQL 연결 확인, 정상 200 / 장애 503 | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
 | GET | `/api/schema/` | 구현된 API의 OpenAPI 명세 | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
 | GET | `/api/docs/` | Swagger UI | 없음 | `apps/core/tests.py` 자동 테스트 통과 |
+| POST | `/api/v1/players` | 게스트 UUID 발급 · PostgreSQL 저장 | 없음 | `apps/game/tests/test_players.py` 3개 통과 |
 
-게임 API 9개와 AI 호출 계약 2개는 아직 미착수다. AI 서버의 경로를 백엔드가 직접 제공하는 API로 표시하지 않는다.
+게임 API의 게스트 발급을 제외한 기능과 AI 호출 계약은 아직 미착수다. AI 서버의 경로를 백엔드가 직접 제공하는 API로 표시하지 않는다.
 
 ## 1. 필수 작업 순서
 
@@ -31,21 +32,23 @@
 
 상태: `미착수` / `진행 중` / `자동 테스트 통과` / `외부 연동 대기`. 설계 문서나 Swagger 경로만 있어서는 완료가 아니다.
 
-### 프론트 → 백엔드 (9개)
+### 프론트 → 백엔드 (10개)
 
 | ID | Method · Path | 기능 | 필수 테스트 | 상태 |
 |---|---|---|---|---|
-| BE1 | POST `/api/v1/players` | 게스트 발급 | 인증 없이 UUID 발급 · DB 저장 · 호출마다 다른 ID | 미착수 |
+| BE1 | POST `/api/v1/players` | 게스트 발급 | 인증 없이 UUID 발급 · DB 저장 · 호출마다 다른 ID | 자동 테스트 통과 |
 | BE2 | POST `/api/v1/plays` | 게임 시작 | 필수/조건부 입력 · 선택 항목 · 허용하지 않는 필드 · 알 수 없는 플레이어 401 · 플레이어별 저장 | 미착수 |
 | BE3 | POST `/api/v1/plays/{playId}/turns` | 채팅 한 턴 | 메시지 검증 · 소유권 · 종료 후 409 · 최근 20턴 · AI 오류/30초 초과 시 미저장 · 허용된 상태 변경만 저장 · 3D 추천 검증 | 미착수 |
-| BE4 | POST `/api/v1/plays/{playId}/experiences/{experienceId}/events` | 3D 이벤트 | Unity 형식 · 식별자/소유권 · 저장 후 ACK · 동일 이벤트 중복 · 내용 충돌 409 · 지연 이벤트 · 누적값 · 초기화 실행 분리 · 종료 결과 1회 반영 | 미착수 |
+| BE4 | POST `/api/v1/plays/{playId}/experience-events` | 3D 이벤트 | Unity 형식 · 식별자/소유권 · 저장 후 ACK · 동일 이벤트 중복 · 내용 충돌 409 · 지연 이벤트 · 누적값 · 초기화 실행 분리 · 종료 결과 1회 반영 | 미착수 |
 | BE5 | GET `/api/v1/plays/{playId}/result` | 결말·추천 조회 | 소유권 · 응답 형식 · 저장된 기록 사용 · 미정 추천 정책의 임의 확정 금지 | 미착수 |
 | BE6 | GET `/api/v1/players/me/plays` | 플레이 목록 | 본인 기록만 조회 · 빈 목록 · 시작 시각/종료 여부/요약 | 미착수 |
 | BE7 | GET `/api/v1/plays/{playId}` | 플레이 재개 | 본인 상태/최근 대화 · 다른 사람/없는 ID 404 · 재접속만으로 체험 정산하지 않음 | 미착수 |
-| BE8 | POST `/api/v1/plays/{playId}/experiences/reconcile` | 종료 미수신 정산 | Unity 수락 사례 16개 · 원자적 lease/소유권 처리 · 요청 중복/충돌 · 늦은 종료 revision · 이전 기록 보존 | 미착수 |
-| BE9 | POST `/api/v1/plays/{playId}/experiences/{experienceId}/heartbeat` | 생존 신호 | 소유권 · 120초 lease 갱신 · 종료/차단된 체험 보호 · 시간 초과만으로 종료하지 않음 | 미착수 |
+| BE8 | POST `/api/v1/plays/{playId}/experience-reconcile` | 종료 미수신 정산 | Unity 수락 사례 16개 · 원자적 lease/소유권 처리 · 요청 중복/충돌 · 늦은 종료 revision · 이전 기록 보존 | 미착수 |
+| BE9 | POST `/api/v1/plays/{playId}/experience-heartbeat` | 생존 신호 | 소유권 · 120초 lease 갱신 · 종료/차단된 체험 보호 · 시간 초과만으로 종료하지 않음 | 미착수 |
 
-### 백엔드 → 별도 AI 서버 (2개 호출 계약)
+| BE10 | POST `/api/v1/plays/{playId}/experience-pending` | 종료 응답 미수신 기록 | 소유권 · 입력 검증 · 종료되지 않은 체험의 대기 기록 | 미착수 |
+
+### 백엔드 → 별도 AI 서버 (3개 호출 계약)
 
 아래 경로는 GPU AI 서버의 API다. 백엔드는 HTTPX 호출·인증·응답 검증을 구현한다. AI 서버 자체 구현·실모델 검증은 별도 담당 범위이며 테스트 서버 통과와 구분한다.
 
@@ -53,6 +56,8 @@
 |---|---|---|---|---|
 | AI1 | POST `/ai/v1/chat` | 프롬프트 조립·대화 호출 | 가이드라인/시나리오 필수 · 매 요청 포함 · 내부 키 · 최근 20턴 · 응답 JSON · 재요청 1회 · 전체 30초 제한 · 누락/실패를 정상 응답으로 위장하지 않음 | 미착수 |
 | AI2 | POST `/ai/v1/experience-recommendation` | 3D 추천 호출 | 카탈로그 전달 · 실행 가능한 빌드/방/시나리오/버전만 허용 · 목록 외 값/실패/추천 없음이면 텍스트 진행 | 미착수 |
+
+| AI3 | POST `/ai/v1/ending` | 결말 및 추천 생성 호출 | 후보 · 근거 전달 · 응답 검증 · 실패 처리 | 미착수 |
 
 ### 기존 실행 기반 (회귀 검증)
 
@@ -93,7 +98,7 @@ docker compose build backend
 
 | 순서 | 기능 | 테스트 파일 · 명령 | 실행 결과 | 다음 기능 진행 가능 |
 |---|---|---|---|---|
-| — | 아직 구현 시작 전 | — | 미실행 | BE1부터 시작 |
+| 1 | BE1 | `python manage.py test apps.game.tests.test_players --verbosity 2` (Docker) | 3개 통과, 실제 PostgreSQL 및 OpenAPI | BE2 진행 가능 |
 
 ## 5. 미확정·외부 의존 사항
 
