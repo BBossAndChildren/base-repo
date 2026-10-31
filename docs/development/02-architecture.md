@@ -34,7 +34,8 @@
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
 | UI | React | 19.3 | Unity 연결 코드(`Experience.jsx`)가 React 기준 |
-| 라우팅 | React Router | 8.5 | 시작 · 게임 · 결말 · 지난 기록 화면 주소 |
+| 라우팅 | React Router | 8.5 | 인트로 · 시작 · 게임 · 결말 · 지난 기록 화면 주소 |
+| 3D 인트로 | Three.js (`three`) + GLTFLoader | 0.180 | Unity 담당이 준 인트로(`career-intro-react-v001`)가 r180 기준. 인트로 화면에서만 따로 나눠 불러온다 ([05 화면 0](05-ui-ux.md#화면-0-인트로-intro-선택)) |
 | 빌드 | Vite | 8.3 | Unity 연결 예제 · 환경변수(`VITE_*`)가 Vite 기준 |
 | 언어 | TypeScript | 7.0 (strict) | Unity 연결 코드에 타입(`*.d.ts`)이 함께 제공됨 |
 | 스타일 | 일반 CSS (CSS 변수) | — | 디자인 시안 `docs/design/styles.css` 를 그대로 옮김, 별도 라이브러리 없음 |
@@ -53,6 +54,8 @@
 | Vercel | 웹 프론트 배포 | SSL 자동 |
 | Cloudflare Tunnel (`cloudflared`) | 사설 IP 백엔드 서버를 외부 https 주소로 공개 | 무료 임시 주소, 재실행 때 바뀜 ([06 0절](06-deployment.md#0-배포-환경-한눈에)) |
 
+> 인트로 3D 모델(71개, 약 238MB)은 저장소 · Vercel 에 넣지 않고 백엔드 서버 Nginx `/intro-assets/` 에서 정적 파일로 제공한다 ([06 5-2-1](06-deployment.md#5-2-1-인트로-에셋), [12 결정 25](12-decisions.md)).
+
 ## 2. 아키텍처
 <!-- 구성 요소와 통신 방향 다이어그램 -->
 
@@ -60,7 +63,7 @@
 flowchart LR
   Browser --> FE[웹 프론트] --> BE[백엔드] --> AI[AI 서버]
   BE --> DB
-  BE --- Content[(game/ 마크다운 · 3D 빌드 · 빌드 카탈로그 JSON)]
+  BE --- Content[(game/ 마크다운 · 3D 빌드 · 빌드 카탈로그 JSON · 인트로 에셋)]
 ```
 
 > 프롬프트 조립과 3D 체험 추천 흐름 상세: [10-prompt-assembly.md](10-prompt-assembly.md)
@@ -79,12 +82,14 @@ base-repo/
 ├─ frontend/                    ← 웹 프론트 (Vercel Root Directory)
 │  ├─ AGENTS.md · CLAUDE.md     ← 프론트 작업 때 꼭 읽을 문서
 │  ├─ vercel.json               ← Vercel 빌드 · SPA 주소 처리 · docs 만 바뀌면 배포 건너뜀
+│  ├─ public/intro-assets/      ← 로컬 개발용 인트로 에셋 (git 제외, 배포는 백엔드 서버 /intro-assets/)
 │  └─ src/
 │     ├─ api/                   ← 백엔드 호출 (gameApi · 3D 이벤트 API), mock 과 실제 전환
 │     ├─ mocks/                 ← 백엔드 전 개발용 가짜 응답
 │     ├─ app/ · hooks/          ← 화면 주소 · 게스트 ID · 이어하기
 │     ├─ components/            ← 버튼 · 입력칸 · 토스트 · 모달 등 공통
-│     ├─ pages/                 ← start · play · result · history 화면
+│     ├─ pages/                 ← intro · start · play · result · history 화면
+│     │  └─ intro/              ← 인트로 (CareerIntro · Three.js 엔진, 원본 career-intro-react-v001)
 │     ├─ lib/experience/        ← Unity 체험 실행 (연결 코드는 빌드에서 불러옴)
 │     ├─ styles/                ← 화면별 CSS
 │     └─ types/                 ← API · Unity 타입

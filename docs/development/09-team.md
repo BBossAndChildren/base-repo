@@ -18,9 +18,9 @@
 |------|------|-------------|-----------|-------------|
 | 문서 총괄 | 이성준 | — | `docs/` (`docs` 브랜치) | 설계 문서 · 결정 기록 |
 | 백엔드 | 윤수현 | BE1 ~ BE14 | `backend/` | Django API · DB · 서버 배포 |
-| 웹 프론트 | 이성준 | FE1 ~ FE10 | `frontend/` | 화면 · Unity 연동 · Vercel 배포 |
+| 웹 프론트 | 이성준 | FE1 ~ FE11 | `frontend/` | 화면 · Unity 연동 · Vercel 배포 |
 | AI 서버 | 변승언 | AI1 ~ AI5 | 별도 저장소 | Qwen + RAG API · GPU 서버 배포 |
-| Unity 3D 체험 | 김정현 | — | Unity 담당 저장소 → `docs/unity/` 로 전달 | WebGL 빌드 · 연동 명세 · 카탈로그 |
+| Unity 3D 체험 | 김정현 | — | Unity 담당 저장소 → `docs/unity/` 로 전달 | WebGL 빌드 · 연동 명세 · 카탈로그 · 인트로 소스와 3D 모델 (FE11 원본) |
 | 시나리오 작가 | 이지혜 | — | `docs/game/` | 가이드라인 · 시나리오 · 규칙(게임 상태 필드) · NPC |
 
 > 라벨 · 커밋 scope: 백엔드 · AI 작업은 `be`, 프론트는 `fe`.
