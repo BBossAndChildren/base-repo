@@ -86,7 +86,7 @@
 | # | 문서 | 코드 | 처리 |
 |---|------|------|------|
 | E1 | 03·04·05·10의 최신 상세 기획 반영 설계 | 백엔드: 게임 상태 · NPC 기억 · 멱등 턴 · 일시정지 구현 · 자동 테스트 통과 (backend.md 4절). 프론트: `requestId` · 원화 상태 패널 · 일시정지 구현 (#99 · #101 · #102) | 남은 차이: 프론트의 `pendingChoices` · 자금 부족 선택 · 경과 요약 · 활성 시간 전달은 미구현 (05 9절). 실제 AI 로 확인 전 |
-| E2 | 06 5-1 ⑤ · 5-2-1 은 호스트 Nginx 설정 예시, 허용 출처 `https://base-repo-zeta.vercel.app` | 백엔드(#83)는 Docker 게이트웨이 `backend/deploy/nginx.conf` + `compose.gateway.yaml`(기본 `127.0.0.1:8080`)로 구현, 허용 출처는 아직 `https://base-repo-ck83.vercel.app` | 실제 설정의 기준은 `backend/deploy/nginx.conf`. 허용 출처를 새 Vercel 주소로 바꾸는 작업은 백엔드 담당 (#86), 어느 주소를 쓸지는 F11 |
+| E2 | 06 5-1 ⑤ 는 호스트 Nginx 설정 예시 | 백엔드(#83)는 Docker 게이트웨이 `backend/deploy/nginx.conf` + `compose.gateway.yaml`(기본 `127.0.0.1:8080`), 허용 출처 두 Vercel 주소(#104), 에셋은 `backend/deploy/assets/`(#107) | 실제 설정의 기준은 `backend/deploy/`. 06 5-1 ⑤ 는 이전 배포안 참고용 |
 
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |

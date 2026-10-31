@@ -112,7 +112,7 @@ npm run lint && npm run typecheck && npm test && npm run build   # PR 전 확인
 | `DB_SSLMODE` | 백엔드 | | 기본 prefer. 운영 DB의 TLS 구성에 맞춰 설정 |
 | `AI_API_BASE_URL` | 백엔드 | AI 연동 시 | AI API 주소 — **같은 GPU 서버의 내부 주소** (`http://<내부 호스트>:<포트>`, 이식 때 확정). 로컬 검증은 `compose.mock.yaml` 의 모의 AI |
 | `AI_SERVER_KEY` | 백엔드 · AI API | ✅ | 백엔드 → AI API 내부 호출 키 (헤더 `X-Internal-Key`). 같은 서버의 두 프로세스에 같은 값, 브라우저에 넣지 않음 |
-| `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | Vercel 프론트 주소 (쉼표 구분) |
+| `CORS_ALLOWED_ORIGINS` | 백엔드 | ✅ | Vercel 프론트 주소 (쉼표 구분): `https://base-repo-zeta.vercel.app,https://base-repo-ck83.vercel.app` (11 F11). 로컬 개발은 `http://localhost:5173` 등을 더한다. `scripts/init_local_env.py` 가 이 값으로 `.env` 를 만든다 |
 | `ALLOWED_HOSTS` | 백엔드 | ✅ | `.trycloudflare.com,localhost,127.0.0.1` (터널 주소가 바뀌어도 되도록 앞에 점) |
 | `CSRF_TRUSTED_ORIGINS` | 백엔드 | | 신뢰하는 프론트 출처 (쉼표 구분) |
 | `WEB_CONCURRENCY` · `GUNICORN_THREADS` | 백엔드 | | 초기값 worker 2 · thread 4, 부하 측정 후 조정 |
@@ -307,9 +307,9 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 
 | 항목 | 규칙 |
 |------|------|
-| 저장 위치 | 서버(GPU 서버) 폴더 `/srv/builds/<buildId>/`. Unity 가 준 `site/` 폴더 내용을 그대로 둔다 (`index.html` · `Build/` 등) |
+| 저장 위치 | 저장소의 `backend/deploy/assets/builds/<buildId>/` (**git · Docker 이미지 제외**). Unity 가 준 `site/` 폴더 내용을 그대로 둔다 (`index.html` · `Build/` 등). 게이트웨이(`compose.gateway.yaml`)가 이 폴더를 `/srv/builds/` 로 마운트한다. 서버에서 다른 위치를 쓰면 `UNITY_BUILD_DIR` 로 지정 |
 | Git | **빌드 파일은 Git 저장소에 넣지 않는다.** 수십 MB 바이너리라 GitHub 제한(50MB 경고 · 100MB 차단)에 걸리고 저장소가 계속 커진다. 저장소에는 빌드 카탈로그 JSON 만 둔다 |
-| 올리는 방법 | `scp -r site/ <GPU 서버 접속 주소>:/tmp/<buildId>/` 로 보낸 뒤 (접속 방법은 이식 때 확정) 서버에서 `sudo mkdir -p /srv/builds && sudo mv /tmp/<buildId> /srv/builds/`. 새 `buildId` 는 새 폴더에 두고 기존 폴더는 덮어쓰지 않는다 |
+| 올리는 방법 | git 으로는 오지 않으므로 GPU 서버의 저장소 `backend/deploy/assets/builds/` 로 따로 복사한다 (예: `scp -r site/ <GPU 서버 접속 주소>:<저장소>/backend/deploy/assets/builds/<buildId>/`, 접속 방법은 이식 때 확정). 새 `buildId` 는 새 폴더에 두고 기존 폴더는 덮어쓰지 않는다 |
 | 카탈로그 반영 | 빌드를 올린 뒤 Unity 가 준 카탈로그 · 허용 목록(`docs/unity/builds/production-*`)을 백엔드에 반영한다 ([10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공)) |
 | 프론트 전달 | 채팅 응답의 `experience.buildUrl` 로 준다. 터널 주소가 바뀌므로 백엔드는 **요청이 들어온 주소(Host) 기준으로** `https://<현재 터널 주소>/builds/<buildId>/` 를 만든다. 카탈로그에는 `/builds/<buildId>/` 경로만 둔다 |
 | 지우기 | 카탈로그에서 뺀 빌드는 진행 중인 체험이 없을 때 폴더를 지운다 |
@@ -320,14 +320,14 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 |------|------|
 | 내용 | `intro.json` + `models/PAN-001.glb` ~ `PAN-071.glb` (71개, 약 238MB). Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 그대로 쓴다 |
 | Unity WebGL 빌드와 다름 | **3D 체험 빌드(`/srv/builds/`, `Build/*.data`)로 대신할 수 없다.** 같은 71개 공간이지만 빌드 안에서는 Unity 전용 형식으로 묶여 있어 인트로(Three.js)가 읽지 못한다. 인트로는 공간마다 GLB 파일이 따로 있어야 한다. 크기의 대부분(233MB)은 GLB 마다 들어간 같은 팔레트 이미지(3.3MB)이다 |
-| 저장 위치 | 서버(GPU 서버) 폴더 `/srv/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래). Nginx `/intro-assets/` 로 제공 (5-1 ⑤) |
+| 저장 위치 | 저장소의 `backend/deploy/assets/intro-assets/` (`intro.json` 과 `models/` 가 바로 아래, **git · Docker 이미지 제외**). 게이트웨이가 `/srv/intro-assets/` 로 마운트해 `/intro-assets/` 로 제공한다. 서버에서 다른 위치를 쓰면 `INTRO_ASSET_DIR` 로 지정 |
 | Git | **넣지 않는다** (3D 빌드와 같은 이유). 프론트 저장소에도 사본을 두지 않는다 — 로컬 개발도 백엔드 `/intro-assets/` 를 쓴다 |
-| 올리는 방법 | `scp -r intro-assets/ <GPU 서버 접속 주소>:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
+| 올리는 방법 | git 으로는 오지 않으므로 GPU 서버의 저장소 `backend/deploy/assets/intro-assets/` 로 따로 복사한다 (예: `scp -r intro-assets/ <GPU 서버 접속 주소>:<저장소>/backend/deploy/assets/`) |
 | 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. `VITE_API_BASE_URL` 을 쓰는 경우 터널 주소가 바뀌어도 따로 바꿀 것이 없다. **mock 배포처럼 `VITE_API_BASE_URL` 이 비어 있으면 `VITE_INTRO_ASSET_BASE` 에 `https://<터널 주소>/intro-assets/` 를 넣고 재배포한다** (안 넣으면 Vercel 의 `/intro-assets/` 를 찾다가 실패) |
 | 없을 때 | 에셋을 못 받으면 프론트는 인트로를 건너뛰고 시작 화면으로 간다. 게임 진행에는 영향 없음 |
 | 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (기능 BE15, #67 · #83), 에셋 전달은 프론트 담당 |
 | 실제 설정 파일 | 백엔드가 Docker 게이트웨이로 구현했다: `backend/deploy/nginx.conf` · `backend/compose.gateway.yaml` (터널을 게이트웨이 포트에 연결, 사용법 `backend/deploy/README.md`). 위 5-1 ⑤ 의 호스트 Nginx 예시와 다르면 **`backend/deploy/` 가 기준**이다 ([11 E2](11-open-issues.md#e-코드와-문서-차이)) |
-| 배치 확인 | 서버에서 `python3 backend/scripts/check_intro_assets.py /srv/intro-assets` → "인트로 에셋 71개 확인" |
+| 배치 확인 | `python3 backend/scripts/check_intro_assets.py backend/deploy/assets/intro-assets` → "인트로 에셋 71개 확인" (2026-11-01 로컬 배치 · 확인 완료, 서버 복사는 배포 때) |
 
 ### 5-3. AI 서버 (GPU 서버)
 > **GPU 단일 서버에서는** AI API 가 Django 와 같은 서버에서 돈다. 아래 "사설망으로 닿는가" 확인과 AI 전용 터널은 **이전 배포안(두 서버)** 의 절차라 쓰지 않는다. `AI_API_BASE_URL` 은 같은 서버의 내부 주소다. 단일 GPU 는 한 번에 한 추론만 처리해 겹친 요청은 503 이 될 수 있다 ([02](02-architecture.md#1-기술-스택))
