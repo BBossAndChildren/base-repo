@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>게임 — 어른왕자 (시안)</title>
+  <meta name="description" content="어른왕자 게임(채팅) 화면 디자인 시안">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#composer-input">입력칸으로 건너뛰기</a>
+
+  <header class="site-header">
+    <a class="brand" href="01-start.html">
+      <svg class="brand-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z" fill="#E9B949" stroke="#2B3A67" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      어른왕자
+    </a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="05-history.html">지난 기록</a>
+    </nav>
+  </header>
+
+  <!-- 모바일(1024px 미만): 채팅 위 접이식 상태 막대 -->
+  <details class="status-bar">
+    <summary>
+      <span><span class="status-age-inline is-changed">16세</span> <span class="small">· 2027년 여름</span></span>
+      <span class="small">상태 보기 <span class="chev" aria-hidden="true">▾</span></span>
+    </summary>
+    <div class="status-bar-body">
+      <p class="status-profile">민준 · 시작 상황: 중학생 · 희망 직업: 과학자</p>
+      <div class="placeholder-box" aria-label="게임 상태 자리 표시">
+        <div class="placeholder-title">게임 상태 (작가 확정 후 표시)</div>
+        <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+        <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+        <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+      </div>
+    </div>
+  </details>
+
+  <div class="play">
+    <main id="main" class="chat" aria-label="이야기">
+      <ol class="chat-log" aria-live="polite" aria-relevant="additions">
+        <li class="msg msg-narrator">
+          <span class="msg-speaker">나레이션</span>
+          15살 봄. 중학교 3학년 새 학기가 시작됐다. 쉬는 시간, 짝꿍 민수가 의자를 돌려 앉는다.
+        </li>
+        <li class="msg msg-npc">
+          <span class="avatar" aria-hidden="true">민</span>
+          <div>
+            <span class="msg-speaker">친구 민수</span>
+            <div class="bubble">야, 너 진로 희망 조사서 뭐라고 썼어? 나 아직 하나도 못 썼는데.</div>
+          </div>
+        </li>
+        <li class="msg msg-user">
+          <span class="msg-speaker">나</span>
+          <div class="bubble">응 나 과학자임</div>
+        </li>
+        <li class="msg msg-npc">
+          <span class="avatar" aria-hidden="true">민</span>
+          <div>
+            <span class="msg-speaker">친구 민수</span>
+            <div class="bubble">뭔 소리야, 너 학생이잖아. 과학자가 되고 싶다는 거야?</div>
+          </div>
+        </li>
+        <li class="msg msg-user">
+          <span class="msg-speaker">나</span>
+          <div class="bubble">응, 그런 것 같아. 실험하는 게 제일 재밌어.</div>
+        </li>
+        <li class="msg msg-system" role="note">시간이 흘렀어요 · <strong>16세</strong></li>
+        <li class="msg msg-narrator">
+          <span class="msg-speaker">나레이션</span>
+          여름 방학을 앞둔 어느 날, 과학 선생님이 대학 연구실 견학 신청서를 나눠 주신다.
+        </li>
+        <li class="msg msg-npc">
+          <span class="avatar" aria-hidden="true">윤</span>
+          <div>
+            <span class="msg-speaker">과학 선생님 윤서진</span>
+            <div class="bubble">민준아, 실험 좋아한다고 했지? 이번에 연구실에서 하루 일해 볼 수 있는 기회가 있는데, 한번 가 볼래?</div>
+          </div>
+        </li>
+        <li class="exp-card" aria-labelledby="exp-title">
+          <div class="exp-card-art" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#E9B949" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></svg>
+          </div>
+          <div>
+            <span class="job-kicker">3D 직업 체험</span>
+            <h3 id="exp-title">연구실에서 하루 일해 보기</h3>
+            <p>연구원이 쓰는 물건 3개를 직접 다뤄 보는 짧은 체험이에요. 체험이 끝나면 이야기로 돌아와요.</p>
+            <div class="exp-meta">
+              <span class="badge badge-muted">물건 3개</span>
+              <span class="badge badge-muted">효과음 있음</span>
+            </div>
+            <a class="btn btn-primary" href="03-experience.html">체험 시작</a>
+          </div>
+        </li>
+      </ol>
+
+      <div class="chat-footer">
+        <div class="hints" role="group" aria-label="이렇게 말해 볼 수 있어요">
+          <span class="hints-label">힌트</span>
+          <button type="button" class="chip chip-hint">연구실에서는 무슨 일을 하는지 물어본다</button>
+          <button type="button" class="chip chip-hint">친구 민수도 같이 가자고 한다</button>
+        </div>
+        <form class="composer" onsubmit="return false">
+          <label class="sr-only" for="composer-input">하고 싶은 말이나 행동</label>
+          <input class="input" id="composer-input" placeholder="하고 싶은 말이나 행동을 자유롭게 적어 보세요" autocomplete="off" enterkeyhint="send">
+          <button class="btn btn-primary" type="submit">보내기</button>
+        </form>
+        <p class="composer-status">Enter 로 보내기</p>
+      </div>
+    </main>
+
+    <!-- 데스크톱(1024px 이상): 오른쪽 상태 패널 -->
+    <aside class="status-panel" aria-label="내 상태">
+      <div class="status-head">
+        <div class="label">지금 나이</div>
+        <div class="status-age is-changed">16세</div>
+        <div class="status-year">2027년 여름</div>
+      </div>
+      <div class="status-body">
+        <p class="status-profile">민준 · 시작 상황: 중학생<br>희망 직업: 과학자</p>
+        <div class="placeholder-box" aria-label="게임 상태 자리 표시">
+          <div class="placeholder-title">게임 상태 (작가 확정 후 표시)</div>
+          <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+          <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+          <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+          <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+          <div class="skeleton-row"><span class="skeleton-label"></span><span class="skeleton"></span><span>—</span></div>
+          <p class="small muted" style="margin:var(--space-2) 0 0">항목 · 수치는 <code>docs/game/03-rules.md</code> 확정 후 정해요. 막대를 쓰면 숫자를 함께 표시해요.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="page" style="padding-top:0">
+    <p class="design-note">나이가 바뀌면 상태 패널의 나이가 <strong>잠깐 금색으로 빛나는</strong> 강조(<code>.is-changed</code>)를 준다. 상단 모바일 막대에도 같은 강조. 3D 체험 안내 카드는 응답에 <code>experience</code> 가 있을 때만 나온다. 카드 제목(어떤 체험인지)은 현재 API 응답에 없는 값이라 백엔드와 협의가 필요하다.</p>
+
+    <h2 class="section-title">상태 예시</h2>
+    <div class="state-grid">
+      <div class="state-frame">
+        <span class="state-frame-label">AI 응답 대기 — 입력 잠금</span>
+        <div class="chat">
+          <ol class="chat-log">
+            <li class="msg msg-user"><span class="msg-speaker">나</span><div class="bubble">연구실에서는 무슨 일을 해요?</div></li>
+            <li class="msg msg-npc msg-loading" aria-live="polite">
+              <span class="avatar" aria-hidden="true">윤</span>
+              <div><span class="msg-speaker">과학 선생님 윤서진</span>
+                <div class="bubble"><span class="typing" aria-hidden="true"><span></span><span></span><span></span></span> 생각하는 중…</div></div>
+            </li>
+          </ol>
+          <div class="chat-footer">
+            <form class="composer" onsubmit="return false">
+              <label class="sr-only" for="c2">하고 싶은 말이나 행동</label>
+              <input class="input" id="c2" placeholder="답을 기다리고 있어요" disabled>
+              <button class="btn btn-primary" type="submit" disabled>보내기</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="state-frame">
+        <span class="state-frame-label">시간 초과(504) — 입력 문장 유지 + 토스트</span>
+        <div class="toast-region is-inline" role="status">
+          <div class="toast toast-error">
+            <span class="toast-icon" aria-hidden="true">!</span>
+            <div class="toast-body">응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.</div>
+            <button class="toast-close" type="button" aria-label="알림 닫기">✕</button>
+          </div>
+        </div>
+        <div class="chat" style="padding-top:72px">
+          <ol class="chat-log">
+            <li class="msg msg-npc"><span class="avatar" aria-hidden="true">윤</span><div><span class="msg-speaker">과학 선생님 윤서진</span><div class="bubble">한번 가 볼래?</div></div></li>
+          </ol>
+          <div class="chat-footer">
+            <form class="composer" onsubmit="return false">
+              <label class="sr-only" for="c3">하고 싶은 말이나 행동</label>
+              <input class="input" id="c3" value="연구실에서는 무슨 일을 해요?">
+              <button class="btn btn-primary" type="submit">다시 보내기</button>
+            </form>
+            <p class="composer-status">보내지 못한 문장은 그대로 남겨 두었어요.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="state-frame">
+        <span class="state-frame-label">3D 건너뜀 — notice 토스트 (정보)</span>
+        <div class="toast-region is-inline" role="status">
+          <div class="toast">
+            <span class="toast-icon" aria-hidden="true">i</span>
+            <div class="toast-body">지금 상황에 맞는 3D 체험이 없어 텍스트로 이야기를 이어갈게요.</div>
+            <button class="toast-close" type="button" aria-label="알림 닫기">✕</button>
+          </div>
+        </div>
+        <div class="chat" style="padding-top:72px">
+          <ol class="chat-log">
+            <li class="msg msg-narrator"><span class="msg-speaker">나레이션</span>연구실 문을 열자 낯선 기계 소리가 들린다.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    게임 속 사건과 인물은 가상이며, 직업 정보는 직업백과를 근거로 합니다. 결과는 실제 진로 · 취업을 보장하지 않습니다.
+  </footer>
+</body>
+</html>

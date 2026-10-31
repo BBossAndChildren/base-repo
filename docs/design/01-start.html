@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시작 — 어른왕자 (시안)</title>
+  <meta name="description" content="어른왕자 시작 화면 디자인 시안">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <header class="site-header">
+    <a class="brand" href="01-start.html">
+      <svg class="brand-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.6 6.2 20l1.6-6.6L2.6 8.9l6.8-.6z" fill="#E9B949" stroke="#2B3A67" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      어른왕자
+    </a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="05-history.html">지난 기록</a>
+    </nav>
+  </header>
+
+  <main id="main" class="page-narrow">
+    <section class="hero">
+      <svg class="hero-art" viewBox="0 0 120 90" aria-hidden="true">
+        <circle cx="60" cy="70" r="34" fill="#F4ECDD" stroke="#E3D8C5"/>
+        <path d="M60 18c-6 0-10 5-10 11v13h20V29c0-6-4-11-10-11z" fill="#2B3A67"/>
+        <circle cx="60" cy="16" r="8" fill="#E9B949"/>
+        <path d="M70 34c10 2 18 0 26-6" stroke="#B8502A" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="18" cy="18" r="2" fill="#E9B949"/><circle cx="100" cy="12" r="2.5" fill="#E9B949"/><circle cx="108" cy="40" r="1.6" fill="#E9B949"/>
+      </svg>
+      <h1>어떤 어른이 되어 볼까요?</h1>
+      <p>지금의 나에서 출발해, 여러 인생을 살아 보며 좋아하는 일을 찾아봐요.</p>
+    </section>
+
+    <!-- 이어하기: 진행 중 플레이가 있을 때만 보인다 -->
+    <section class="card resume-card" aria-labelledby="resume-title">
+      <div>
+        <h2 id="resume-title">진행 중인 인생이 있어요</h2>
+        <p class="small muted" style="margin:0">민준 · 16세 · 마지막 대화 10월 30일</p>
+      </div>
+      <a class="btn btn-secondary" href="02-play.html">이어하기</a>
+    </section>
+    <p class="design-note">이어하기 카드는 저장된 게스트 ID 로 <strong>진행 중 플레이가 있을 때만</strong> 보인다. 새로 시작하면 진행 중 플레이를 어떻게 처리할지(덮어쓰기 · 보관)는 아직 정해지지 않았다.</p>
+
+    <form class="card stack" style="margin-top:var(--space-5)" aria-labelledby="form-title" onsubmit="return false">
+      <h2 id="form-title" style="font-size:var(--text-xl)">새 인생 시작하기</h2>
+
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label" for="name">이름 <span class="req" aria-hidden="true">*</span></label>
+          <input class="input" id="name" name="name" value="민준" autocomplete="nickname" required>
+          <span class="field-help">게임 안에서 불릴 이름이에요. 닉네임도 괜찮아요.</span>
+        </div>
+        <div class="field">
+          <label class="field-label" for="age">나이 <span class="req" aria-hidden="true">*</span></label>
+          <input class="input" id="age" name="age" type="number" inputmode="numeric" min="7" max="99" value="15" required>
+          <span class="field-help">이 나이부터 인생이 시작돼요.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="situation">지금 상황 <span class="req" aria-hidden="true">*</span></label>
+        <select class="select" id="situation" name="situation" required>
+          <option>초등학생</option>
+          <option selected>중학생</option>
+          <option>고등학생</option>
+          <option>대학생</option>
+          <option>직장인</option>
+          <option>구직 중</option>
+          <option>기타</option>
+        </select>
+      </div>
+
+      <fieldset class="field dream" style="border:0;padding:0;margin-top:var(--space-4)">
+        <legend class="field-label" style="margin-bottom:var(--space-2)">되고 싶은 직업이 있나요? <span class="req" aria-hidden="true">*</span></legend>
+        <div class="segmented" role="radiogroup">
+          <input type="radio" id="dream-yes" name="hasDreamJob" value="true" checked>
+          <label for="dream-yes">있어요</label>
+          <input type="radio" id="dream-no" name="hasDreamJob" value="false">
+          <label for="dream-no">아직 없어요</label>
+        </div>
+        <div class="field dream-job" style="margin-top:var(--space-3)">
+          <label class="field-label" for="dreamJob">어떤 직업인가요?</label>
+          <input class="input" id="dreamJob" name="dreamJob" placeholder="예: 과학자, 웹툰 작가, 요리사" aria-invalid="true" aria-describedby="dreamJob-err">
+          <span class="field-error" id="dreamJob-err">되고 싶은 직업을 적어 주세요.</span>
+        </div>
+      </fieldset>
+
+      <div class="divider-label">조금 더 알려 주세요 (선택)</div>
+      <p class="small muted" style="margin-top:calc(-1 * var(--space-2))">건너뛰어도 괜찮아요. 나머지는 게임 속 사람들이 대화하면서 물어볼 거예요.</p>
+
+      <!-- 선택 항목: 7개 중 랜덤 2개. 시안은 관심사 · 가치관 -->
+      <div class="optional-block" role="group" aria-labelledby="opt-interest">
+        <div class="optional-head">
+          <span class="field-label" id="opt-interest">관심사 <span class="muted small">(여러 개 고를 수 있어요)</span></span>
+          <button type="button" class="btn btn-ghost">건너뛰기</button>
+        </div>
+        <div class="chips">
+          <input class="chip-input" type="checkbox" id="i1" checked><label class="chip" for="i1">과학</label>
+          <input class="chip-input" type="checkbox" id="i2" checked><label class="chip" for="i2">게임</label>
+          <input class="chip-input" type="checkbox" id="i3"><label class="chip" for="i3">그림</label>
+          <input class="chip-input" type="checkbox" id="i4"><label class="chip" for="i4">음악</label>
+          <input class="chip-input" type="checkbox" id="i5"><label class="chip" for="i5">운동</label>
+          <input class="chip-input" type="checkbox" id="i6"><label class="chip" for="i6">요리</label>
+          <input class="chip-input" type="checkbox" id="i7"><label class="chip" for="i7">사람 돕기</label>
+          <button type="button" class="chip chip-add">+ 직접 입력</button>
+        </div>
+      </div>
+
+      <div class="optional-block optional-skipped" role="group" aria-labelledby="opt-values" style="margin-top:var(--space-4)">
+        <div class="optional-head">
+          <span class="field-label" id="opt-values">가치관 <span class="muted small">— 건너뛰었어요</span></span>
+          <button type="button" class="btn btn-ghost">다시 고르기</button>
+        </div>
+        <div class="chips" aria-disabled="true">
+          <span class="chip chip-static">안정</span>
+          <span class="chip chip-static">성장</span>
+          <span class="chip chip-static">돈</span>
+          <span class="chip chip-static">사회 기여</span>
+          <span class="chip chip-static">자유</span>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--space-6)">
+        <button class="btn btn-primary btn-lg btn-block" type="submit" disabled aria-describedby="start-help">인생 시작하기</button>
+        <p id="start-help" class="small muted" style="text-align:center;margin-top:var(--space-2)">필수 항목(<span aria-hidden="true">*</span>) 4개를 채우면 시작할 수 있어요.</p>
+      </div>
+    </form>
+
+    <p class="design-note">위 폼은 <strong>희망 직업 "있어요" + 직업명 비어 있음</strong> 상태라 시작 버튼이 비활성이다. "아직 없어요"를 누르면 직업 입력칸이 사라진다(CSS <code>:has()</code> 로 흉내). 가치관은 <strong>건너뛴 상태</strong> 예시.</p>
+
+    <h2 class="section-title">시작 버튼 상태</h2>
+    <div class="stack">
+      <button class="btn btn-primary btn-lg btn-block" type="button">인생 시작하기</button>
+      <button class="btn btn-primary btn-lg btn-block" type="button" aria-busy="true" disabled><span class="spinner" style="width:20px;height:20px;border-width:2px" aria-hidden="true"></span> 첫 장면을 준비하고 있어요…</button>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    게임 속 사건과 인물은 가상이며, 직업 정보는 직업백과를 근거로 합니다. 결과는 실제 진로 · 취업을 보장하지 않습니다.
+  </footer>
+</body>
+</html>
