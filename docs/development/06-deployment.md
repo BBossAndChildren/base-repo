@@ -290,12 +290,23 @@ grep -E 'trycloudflare.com|Registered tunnel connection' ~/cloudflared.log   # �
 **⑦ 프론트에 주소 알리기** — [5-4](#터널-주소가-바뀌었을-때) 의 2~3번
 
 #### 코드 업데이트할 때
+> 현재 GPU 서버는 게이트웨이 구성(`compose.yaml` + `compose.gateway.yaml`)이다. 코드는 이미지 안에 들어가므로 `git pull` 만으로는 반영되지 않고 **이미지를 다시 빌드해 컨테이너를 다시 띄운다**. 2026-11-01 이 순서로 #133 반영 확인
+
 ```bash
-cd ~/base-repo && git pull && cd backend
-docker compose up --build -d --wait
-docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
+cd /home1/ncloud/base-repo && git pull && cd backend
+docker compose -f compose.yaml -f compose.gateway.yaml up -d --build --wait
+
+# 확인
+docker compose -f compose.yaml -f compose.gateway.yaml ps     # backend healthy, db healthy, gateway Up
+curl -s http://127.0.0.1:8080/api/health                     # {"code":200,"data":{"status":"ok","database":"ok"}}
+# 문제가 있으면
+docker compose -f compose.yaml -f compose.gateway.yaml logs --tail 100 backend
 ```
-- 작가 문서(`docs/game/`)만 바뀌어도 이미지를 다시 빌드한다
+- **`-f compose.yaml -f compose.gateway.yaml` 을 둘 다 붙인다.** `docker compose up` 만 치면 게이트웨이 설정이 빠진다
+- 바뀐 서비스(backend)만 다시 만들어진다. DB 데이터(볼륨) · 게이트웨이 · 터널은 그대로라 터널 주소도 바뀌지 않는다
+- DB 마이그레이션 · 정적 파일 수집은 컨테이너 시작 스크립트(`scripts/start_container.sh`)가 자동으로 한다. 게이트웨이는 정적 파일을 공유 볼륨(`static_files`)에서 바로 읽으므로 `staticfiles` 복사는 필요 없다 (호스트 Nginx 를 쓰던 이전 배포안에서만 필요)
+- `.env` 는 새 환경변수가 추가된 변경일 때만 고친다. 고친 뒤에는 같은 명령으로 다시 띄운다
+- 작가 문서(`docs/game/`)만 바뀌어도 이미지를 다시 빌드한다 (이미지에 포함)
 - 터널은 끄지 않는다. 끄면 주소가 바뀐다
 
 #### CORS — Django 가 담당
@@ -380,6 +391,7 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
+- **본 배포 브랜치는 `develop`** (저장소 기본 브랜치). develop 에 머지되면 배포 주소에 바로 반영된다. `main` 머지(릴리스)를 기다리지 않는다 (2026-11-01 배포 번들로 확인)
 - 배포 주소: **https://base-repo-zeta.vercel.app/** — **2026-11-01 부터 실제 백엔드 모드** (`VITE_USE_MOCK=false`, `VITE_API_BASE_URL` = GPU 서버 터널 주소, `VITE_INTRO_ASSET_BASE` 는 넣지 않음). 현재 터널 주소는 서버의 `grep trycloudflare.com ~/cloudflared.log`. 2026-11-01 이 주소로 바꿨고, Vercel 프로젝트는 이것 하나만 남긴다 (이전 `base-repo-ck83` 은 쓰지 않음, 11 F11).
 - Vercel 주소가 바뀌면 Nginx `frame-ancestors` · `Access-Control-Allow-Origin`(`/builds/` · `/intro-assets/`) 과 Django `CORS_ALLOWED_ORIGINS` 를 함께 바꾼다
 - `docs/` 만 바뀐 커밋으로 재배포되지 않게 하는 설정(`ignoreCommand`)과 새로고침 404 를 막는 rewrites 는 `frontend/vercel.json` 에 들어 있다
