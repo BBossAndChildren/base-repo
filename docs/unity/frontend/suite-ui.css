@@ -1,0 +1,15 @@
+/* Copied beside the bridge after a Unity build; presentation only. */
+html[data-mode="test"] body.focused{grid-template-rows:48px minmax(0,1fr)}
+html[data-mode="test"] .focused header{padding:0 16px}
+html[data-mode="test"] .focused header small,
+html[data-mode="test"] .focused aside,
+html[data-mode="test"] .focused #selection-detail,
+html[data-mode="test"] .focused .scenario-picker{display:none}
+html[data-mode="test"] .focused main{grid-column:2;padding:8px;gap:8px}
+html[data-mode="test"] .focused .toolbar{min-height:40px;margin:0}
+html[data-mode="test"] .focused .stage{min-height:calc(100dvh - 112px);border-radius:8px}
+html[data-mode="test"] .focused #result-drawer{position:fixed;right:20px;bottom:16px;z-index:20;width:min(570px,calc(100vw - 40px));box-shadow:0 4px 24px #183e3822;background:#f8fcf8f2}
+html[data-mode="test"] .focused #result-drawer:not([open]){width:auto;opacity:.88}
+html[data-mode="test"] .focused #result-drawer .drawer{max-height:34vh}
+@media(max-width:760px){html[data-mode="test"] .focused .toolbar strong{width:auto;font-size:13px}html[data-mode="test"] .focused .toolbar{gap:6px}html[data-mode="test"] .focused #connection-status{display:none}html[data-mode="test"] .focused .stage{min-height:calc(100dvh - 116px)}}
+@media(max-width:540px){html[data-mode="test"] .focused main{grid-column:1}}

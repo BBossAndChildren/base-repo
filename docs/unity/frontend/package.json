@@ -1,0 +1,8 @@
+{
+  "name": "career-suite-bridge-v003",
+  "private": true,
+  "type": "module",
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}

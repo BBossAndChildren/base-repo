@@ -1,0 +1,105 @@
+{
+  "schema_version": 3,
+  "protocol": "career-experience",
+  "profileVersion": "v002",
+  "envelopeSchemaVersion": 1,
+  "status": "specification_only_new_realtime_requirements_not_runtime_verified",
+  "transport": {
+    "samePageEvent": "career-experience:event",
+    "iframeChannel": "career-experience",
+    "listenerBeforeStart": true,
+    "backendTransport": "Frontend responsibility; HTTP/WebSocket endpoint and ACK not specified by Unity protocol"
+  },
+  "eventTypes": [
+    "experience.started",
+    "experience.ended",
+    "experience.error",
+    "scene.entered",
+    "scene.exited",
+    "scenario.started",
+    "scenario.paused",
+    "scenario.resumed",
+    "scenario.reset",
+    "scenario.completed",
+    "scenario.failed",
+    "scenario.aborted",
+    "object.selected",
+    "interaction.opened",
+    "interaction.closed",
+    "navigation.back",
+    "interaction.started",
+    "interaction.progress",
+    "interaction.validation_failed",
+    "interaction.retry_requested",
+    "workflow.backtracked",
+    "request.changed",
+    "guidance.requested",
+    "guidance.presented",
+    "interaction.completed",
+    "interaction.failed",
+    "interaction.aborted"
+  ],
+  "requiredEnvelopeFields": [
+    "schemaVersion",
+    "protocol",
+    "eventId",
+    "sequence",
+    "occurredAt",
+    "sessionId",
+    "experienceId",
+    "roomId",
+    "requestId",
+    "buildId",
+    "sceneId",
+    "scenarioId",
+    "scenarioVersion",
+    "scenarioRunId",
+    "objectId",
+    "instanceId",
+    "assetId",
+    "assetVersion",
+    "stepId",
+    "workItemId",
+    "attemptId",
+    "requestRevision",
+    "documentRevision",
+    "type",
+    "action",
+    "process",
+    "result",
+    "context",
+    "data"
+  ],
+  "controlErrorException": {
+    "type": "experience.error",
+    "requiredFields": [
+      "schemaVersion",
+      "protocol",
+      "requestId",
+      "sessionId",
+      "experienceId",
+      "roomId",
+      "type",
+      "error"
+    ]
+  },
+  "snapshotPolicy": {
+    "counts": "cumulative_not_delta",
+    "deduplicationKey": [
+      "sessionId",
+      "eventId"
+    ],
+    "orderingScope": "sessionId",
+    "lateEvent": "persist_without_replacing_newer_snapshot",
+    "progressMaxHz": 5,
+    "terminalEvent": "never_drop_or_coalesce",
+    "assessment": "pending_until_terminal_for_same_process_scope"
+  },
+  "registryPath": "career-integration-registry-v001.json",
+  "sourceRefs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "5e2168d012728c6a792a1dabdbd8db724f2700f39608a9b6afb9c9c554765a01"
+    }
+  ]
+}

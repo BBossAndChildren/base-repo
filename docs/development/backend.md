@@ -100,5 +100,5 @@ docker compose build backend
 - 현재 명세는 1차 설계안이다. 게임 상태의 수치 규칙과 결말 추천 기준은 미정이다. 구현 가정과 미정인 항목을 구분해 기록한다.
 - 현재 `docs/game/`에는 안내 README만 있다. 실제 가이드라인·시나리오 없이 AI 요청을 보내지 않는다. 테스트 콘텐츠는 원본과 분리하고 테스트용임을 표시한다.
 - AI 주소·내부 키는 환경변수로 제공한다. 테스트 서버로 통신·오류를 검증해도 실제 GPU AI 검증은 `외부 연동 대기`로 남긴다.
-- Unity 정산은 [원본 tx 명세](../unity/tx/README.md)와 [수락 사례 16개](../unity/tx/acceptance-cases.json)를 따른다. Unity 원본과 작가 콘텐츠는 임의 수정하지 않는다.
+- Unity 정산은 [원본 tx 명세](../unity/contracts/CONTRACT-SNAPSHOT.md)와 [수락 사례 16개](../unity/contracts/reconciliation-v003/acceptance-cases.json)를 따른다. Unity 원본과 작가 콘텐츠는 임의 수정하지 않는다.
 - 테스트 DB와 운영 DB를 구분하며 비밀값·사용자 실데이터는 문서·테스트·PR에 기록하지 않는다.

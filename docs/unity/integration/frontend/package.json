@@ -1,1 +1,0 @@
-{"name":"career-preview-v001","private":true,"type":"module","scripts":{"start":"node server.mjs"},"peerDependencies":{"react":">=18"}}

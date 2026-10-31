@@ -9,7 +9,9 @@ docs/
 ├─ 00-idea.md         ← 아이디어 원문. 모든 문서의 출발점
 ├─ development/       ← 개발 설계 문서 (어떻게 만드는가)
 ├─ game/              ← 게임 콘텐츠 문서 (무엇을 플레이하는가) — 시나리오 작가 담당
-└─ unity/             ← Unity 3D 체험 연동 자료 (tx/ 송수신 명세 · integration/ 프론트 연결 코드 · webgl/ 테스트 빌드). 누가 무엇을 쓰는지는 unity/README.md
+└─ unity/             ← Unity 3D 체험 연동 자료 (Unity 담당 전달물). 누가 무엇을 쓰는지는 unity/USAGE.md
+
+저장소 최상위: frontend/ (웹 프론트) · backend/ (Django) · docs/ (이 폴더). AI 서버는 별도 저장소.
 ```
 
 | 폴더 | 들어가는 것 | 들어가지 않는 것 | 시작점 |

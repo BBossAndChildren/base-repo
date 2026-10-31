@@ -14,26 +14,40 @@
 | 프론트 ↔ 백엔드 | 게스트 방식(`X-Player-Id`) · 채팅은 한 번에 응답 · 채팅 30초 · 3D 이벤트 재전송 3회 | [03 1부](03-api.md#1부-프론트--백엔드) |
 | 3D 빌드 전달 | 백엔드는 빌드 파일 주소를 주고 프론트가 불러온다 | [03 1-3](03-api.md#1-3-채팅-한-턴) · [10 4](10-prompt-assembly.md#4-3d-체험-연동) |
 | 백엔드 ↔ AI 서버 | AI 응답은 정해진 JSON · 최근 20턴 · 형식 오류 1회 재요청 · 내부 키 `X-Internal-Key` | [03 2부](03-api.md#2부-백엔드--ai-서버) · [10 3](10-prompt-assembly.md#3-ai-응답-처리) |
-| 빌드 카탈로그 · 플레이어 기록 형식 | 카탈로그 JSON 항목과 플레이어 기록 항목 | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-json-형식) · [10 5](10-prompt-assembly.md#5-플레이어-기록-항목) |
+| 빌드 카탈로그 · 플레이어 기록 형식 | 카탈로그 JSON 항목과 플레이어 기록 항목 | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공) · [10 5](10-prompt-assembly.md#5-플레이어-기록-항목) |
 | 백엔드 기술 스택 · DB | Python · Django + DRF · HTTPX · **PostgreSQL** · Gunicorn, 네이버 클라우드 배포 (백엔드 담당 결정) | [02 1](02-architecture.md#1-기술-스택) · [06](06-deployment.md) |
 | 게임 시작 입력 항목 | 필수 4개 + 선택 7개 (시작 때 랜덤 2개, 나머지는 게임 중 대화로 하나씩). 건강 · 질병은 받지도 유도하지도 않음, 가족관계 · 반려동물은 받지 않음 | [00 게임 시작 입력](../00-idea.md#게임-시작-입력-회의-결정) · [03 1-2](03-api.md#1-2-게임-시작) · [10 3](10-prompt-assembly.md#3-ai-응답-처리) |
-| 3D 빌드 파일 위치 | 백엔드 서버 폴더(`/srv/builds/`) + Nginx 가 내려줌. Git 저장소에는 넣지 않음 | [06 5-1](06-deployment.md#5-1-백엔드-game-마크다운--3d-빌드--빌드-카탈로그-json-포함) |
-| 웹 프론트 배포 | Vercel (SSL 자동). 백엔드는 네이버 클라우드에서 Nginx + Let's Encrypt 로 SSL | [06 5-1 · 5-3](06-deployment.md#5-3-웹-프론트--vercel) |
+| 3D 빌드 파일 위치 | 백엔드 서버 폴더(`/srv/builds/`) + Nginx 가 내려줌. Git 저장소에는 넣지 않음 | [06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달) |
+| 웹 프론트 배포 | Vercel (SSL 자동) | [06 5-4](06-deployment.md#5-4-웹-프론트--vercel) |
+| 백엔드 외부 공개 | 제공 서버는 사설 IP · VPN 전용이라 도메인 없이 **Cloudflare Tunnel** 로 공개 (SSL 은 Cloudflare). 서버 바깥 연결 확인 완료. AI 서버는 비공개 | [06 0절](06-deployment.md#0-배포-환경-한눈에) · [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
 | CORS 담당 | 백엔드(Django · django-cors-headers)가 붙이고 프론트는 설정하지 않음. 빌드 iframe 은 `frame-ancestors` 로 허용 | [06 CORS](06-deployment.md#cors--django-가-담당) · [05 4](05-ui-ux.md#4-api-호출-공통-모듈) |
-| 실제 방 · 시나리오 목록 | `PAN-NNN` 방 ID, 실행 가능한 체험 10개 (buildId `career-pilot-v007`) | [docs/unity/README.md](../unity/README.md) |
-| 실시간 이벤트 형식 | Unity 명세 `tx/realtime-contract.json` (실시간 전달 필수) | [10 4-2](10-prompt-assembly.md#4-2-체험-결과값-형식-unity--프론트) |
-| 빌드 압축 방식 | 현재 테스트 빌드는 비압축 | [06 Nginx](06-deployment.md#nginx-설정-예시) |
+| 실제 방 · 시나리오 목록 | `PAN-NNN` 방 ID, 71개 방 · 555개 조합 (buildId `career-suite-integration-v005`). 체험별 `jobs` · `description` 포함 | [docs/unity/USAGE.md](../unity/USAGE.md) |
+| 실시간 이벤트 형식 | Unity 명세 `docs/unity/contracts/realtime-v002/realtime-contract.json` (실시간 전달 필수) | [10 4-2](10-prompt-assembly.md#4-2-체험-결과값-형식-unity--프론트) |
+| 빌드 압축 방식 | 현재 테스트 빌드는 비압축 | [06 5-1](06-deployment.md#5-1-백엔드-서버-처음-세팅) |
 | 이벤트 저장 확인 · 재전송 | 백엔드는 저장 후 `{stored, sessionId, eventId}`, 프론트 전송 큐는 확인까지 2초마다 재전송 | [03 1-4](03-api.md#1-4-3d-체험-이벤트-전달) |
 | 종료 응답 없는 체험 정산 | Unity 명세 v003 을 따름: 새 체험 시작 때 정산, heartbeat 30초 · lease 120초 (기존 "재개 시 처리"를 대체) | [10 4-5](10-prompt-assembly.md#4-5-종료-응답이-오지-않은-체험-정산-v003) · [03 1-8 · 1-9](03-api.md#1-8-종료-응답-없는-체험-정산) |
+| 체험 설명 (AI 선택 근거) | Unity 담당이 555개 조합 모두에 `jobs` · `description` 제공 — `docs/unity/builds/production-ai-build-catalog.json` | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공) |
+| 추천 범위 · 후보 줄이기 | 555개 전부 허용, 백엔드가 희망 직업 · 관심사로 후보 약 20개로 줄여 AI 에 전달 | [10 4-1](10-prompt-assembly.md#4-1-빌드-카탈로그-unity-제공) · [03 2-2](03-api.md#2-2-3d-체험-추천) |
+| Unity 어댑터에 API 맞춤 | 이벤트는 원본 그대로 받고 응답은 감싸지 않음, `credentials: 'omit'`, 미수신 기록 API(1-10) 추가 | [03 1-4](03-api.md#1-4-3d-체험-이벤트-전달) · [05 4-1](05-ui-ux.md#4-1-3d-체험-연결-unity) |
+| 직업 데이터 | AI 서버(Qwen)에 RAG 로 552개 직업 데이터를 넣음 (A2 해결) | [10 6](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버) |
+| 터널 공개 규정 | 괜찮은 것으로 확인 (F6 해결) | [06 0](06-deployment.md#0-배포-환경-한눈에) |
+| 후보 20개 고르는 방식 (A3) | 1단계 점수(희망 직업 · 대화 속 직업 · 관심사) 상위 12개 + 다른 방 무작위 8개. 부족하면 2단계 임베딩 | [10 4-1-1](10-prompt-assembly.md#4-1-1-후보-20개-고르는-방식-be7) |
+| 저장소 구성 | `base-repo` 하나에 `frontend/` · `backend/` · `docs/` (모노레포), AI 서버는 별도 저장소. 라벨 · scope 는 AI 도 `be` | [02 3](02-architecture.md#3-디렉터리-구조) · [12 결정 17](12-decisions.md) |
+| 플레이 시간 | 약 15분은 **권장 · 예상 시간**이며 강제 제한이 아님 | [00 5장](../00-idea.md#5-진행-속도와-인생-전략) |
+| AI 분기 주제 필드 | AI 대화 응답에 `branch`(topic · jobs · reason). 백엔드가 감지해 3D 추천, 프론트가 `experience` 를 감지해 렌더 | [03 2-1](03-api.md#2-1-대화-생성) · [10 4](10-prompt-assembly.md#4-3d-체험-연동) |
+| `sessionId` 발급 | 백엔드가 게임 시작 때 발급 | [03 1-2](03-api.md#1-2-게임-시작) |
+| `docs/game/` 파일 약속 | 백엔드가 파일 이름 · 역할을 정하고 작가가 내용을 채움. 게임 상태 필드는 작가가 `03-rules.md` 에 정함 | [10 1](10-prompt-assembly.md#1-콘텐츠-파일-읽기-규칙) · [game/README](../game/README.md) |
+| 결말 · 추천 방식 | 근거 점수 상위 5개 → AI 가 추천 3개(새 직업 1개 이상) + 결말 (1차안) | [10 7](10-prompt-assembly.md#7-결말--추천-직업-be12--ai5) · [03 2-3](03-api.md#2-3-결말-생성) |
 
 ## A. 스펙 미확정 항목
 | # | 항목 | 선택지 | 추천안 · 이유 | 결정 |
 |---|------|--------|---------------|------|
-| A2 | **(보류 — 팀 논의 후 전달 예정)** 직업 데이터(552개)를 AI 에게 알려 주는 방식 | 매 요청에 관련 직업만 골라 넣기 / AI 서버가 따로 조회 / 넣지 않음 | 현재 [10 2절](10-prompt-assembly.md#2-프롬프트-조립-순서) 조립 순서에 직업 데이터가 없음. 대화 · 추천 근거로 쓰려면 관련 직업만 골라 넣는 방식 추천 (552개 전부는 너무 김). 직업백과 이용 조건 확인도 필요 ([00-idea.md 10장](../00-idea.md#10-직업-정보와-추천)) | |
+| A4 | RAG 구성 (벡터 DB · 임베딩 모델 · Qwen 크기) | | AI 담당이 테스트 후 결정 | |
 
 ## B. 팀 · 협업 규칙 불일치
 | # | 내용 | 결정 |
 |---|------|------|
+| B1 | **`backend.md`(백엔드 담당 구현 계획)가 예전 API 기준이다.** ① 기능 번호가 [features.md](features.md) 와 다르다 (예: 3D 이벤트 = backend.md BE4 / features BE8). ② 3D API 주소가 예전 것이다 (`experiences/{experienceId}/events` → 현재 `experience-events`, `experiences/reconcile` → `experience-reconcile`, heartbeat 동일). ③ 이후 추가된 미수신 기록(03 1-10), 결말 생성(03 2-3), AI 응답 `branch`, 게임 시작 `sessionId`, 3D API 응답 비포장이 빠져 있다. 백엔드 담당이 features.md · 03 기준으로 맞춘다 (다른 담당 영역이라 문서 총괄이 고치지 않음, 링크 경로만 수정) | |
 | | | |
 
 ## C. 없는 파일 · 깨진 참조
@@ -49,5 +63,6 @@
 ## F. 확인이 필요한 질문
 | # | 질문 | 답 |
 |---|------|----|
-| F4 | 백엔드 · 프론트 도메인은? (SSL · CORS · frame-ancestors 설정에 필요) | |
-| F5 | 빌드 카탈로그의 `concept` · `description`(AI 가 고를 근거)은 누가 쓰나? 체험 10개 내용 요약이 필요 | |
+| F8 | 새 실서비스 빌드 `career-suite-integration-v005.zip` 을 받아 `docs/unity/webgl/` 을 교체 (지금은 예전 `career-pilot-v007`) | |
+| F9 | 백엔드 서버에서 GPU 서버로 사설망 접속이 되는가? (`curl` 확인 — 되면 AI 터널 불필요) | |
+| F7 | 백엔드 저장소 주소 · AI 서버 사설 IP · 포트 · OS (06 의 TODO) | |

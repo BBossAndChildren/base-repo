@@ -13,7 +13,8 @@
 ## 매 작업마다 지킬 순서
 
 1. **이슈 먼저** — `.github/ISSUE_TEMPLATE/issue_template.md` 양식으로 이슈를 만든다. 제목은 `[FEAT]` · `[FIX]` · `[REFACTOR]` 로 시작
-   라벨은 유형 1개(`feat` `fix` `hotfix` `refactor` `docs` `test` `chore`) + 영역(`be` `fe`)을 단다. PR 에도 같은 라벨
+   라벨은 유형 1개(`feat` `fix` `hotfix` `refactor` `docs` `test` `chore`) + 영역(`be` = `backend/` · AI 서버, `fe` = `frontend/`)을 단다. PR 에도 같은 라벨
+   `frontend/` · `backend/` 에서 작업할 때는 그 폴더의 `AGENTS.md` 도 먼저 읽는다
 2. **브랜치** — `git pull origin develop` 후 develop 에서 `<접두어>/<kebab-case-요약>` 브랜치를 딴다 (긴급 배포 수정만 main 에서 `hotfix/`)
 3. **커밋** — `<type>(<scope>): <내용> #<이슈번호>` (type: feat fix hotfix refactor docs test style chore / scope: be, fe 또는 생략 / 한국어 50자 이내, 마침표 없음)
 4. **PR** — `.github/pull_request_template.md` 의 모든 섹션을 채운다. 제목은 커밋 형식과 같고, 본문에 `close #이슈번호`
