@@ -90,7 +90,7 @@ describe('mockGameApi', () => {
     await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '1' })
     await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '2' })
     const third = await api.sendTurn(play.playId, { requestId: crypto.randomUUID(), message: '3' })
-    expect(play.state).toMatchObject({ funds: 50, energy: 70 })
+    expect(play.state).toMatchObject({ funds: 0, debt: 0, health: 80, energy: 70, stress: 20 })
     expect(third.stateChanges).toEqual([
       { field: 'age', from: 15, to: 16 },
       { field: 'energy', from: 70, to: 65 },

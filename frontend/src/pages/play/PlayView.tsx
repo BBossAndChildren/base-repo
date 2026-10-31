@@ -8,20 +8,11 @@ import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
-import { StatusBar, StatusPanel, type StatusField, type StatusValues } from './StatusPanel'
+import { StatusBar, StatusPanel } from './StatusPanel'
+import { changedStatusFields, pickStatus, type StatusField, type StatusValues } from './statusModel'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
 
 const CHANGE_HIGHLIGHT_MS = 1600
-
-const STATUS_FIELDS: StatusField[] = ['age', 'funds', 'energy']
-
-function pickStatus(state: PlayResume['state']): StatusValues {
-  return {
-    age: state.age,
-    funds: typeof state.funds === 'number' ? state.funds : undefined,
-    energy: typeof state.energy === 'number' ? state.energy : undefined,
-  }
-}
 
 const NO_CHANGES: ReadonlySet<StatusField> = new Set()
 
@@ -67,17 +58,16 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
 
   function applyTurn(turn: TurnResponse) {
     const added: TimelineItem[] = messagesToTimeline(turn.messages)
-    const updates: Partial<StatusValues> = {}
+    const updates: Partial<Record<StatusField, number>> = {}
     for (const change of turn.stateChanges) {
-      const field = change.field as StatusField
-      if (!STATUS_FIELDS.includes(field) || typeof change.to !== 'number') continue
-      updates[field] = change.to
-      if (field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
+      if (change.field.includes('.') || typeof change.to !== 'number') continue
+      updates[change.field as StatusField] = change.to
+      if (change.field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
     }
-    const changedFields = Object.keys(updates) as StatusField[]
+    const changedFields = changedStatusFields(turn.stateChanges.map((change) => change.field))
     // 턴 응답의 state 가 백엔드 확정 값이다. 없을 때(이전 형식)만 stateChanges 로 맞춘다
     if (turn.state) setStatus(pickStatus(turn.state))
-    else if (changedFields.length > 0) setStatus((prev) => ({ ...prev, ...updates }))
+    else if (Object.keys(updates).length > 0) setStatus((prev) => ({ ...prev, ...updates }) as StatusValues)
     if (changedFields.length > 0) setChanged(new Set(changedFields))
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
     if (turn.notice) toast.show({ message: turn.notice.message })

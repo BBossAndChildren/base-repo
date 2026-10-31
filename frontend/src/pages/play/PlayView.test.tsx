@@ -48,27 +48,47 @@ describe('PlayView', () => {
     clearPlayerId()
   })
 
-  it('나레이션 · NPC 메시지를 구분해 보여 주고, 상태 패널에 나이 · 자금 · 에너지를 표시한다', async () => {
+  it('나레이션 · NPC 메시지를 구분하고, 상태 패널에 나이 · 원화 자금 · 빚(0원도) · 건강 · 에너지 · 스트레스를 표시한다', async () => {
     await setup()
     expect(within(log()).getByText('나레이션')).toBeInTheDocument()
     expect(within(log()).getByText('친구 민수')).toBeInTheDocument()
     const panel = screen.getByRole('complementary', { name: '내 상태' })
     expect(within(panel).getByText('15세')).toBeInTheDocument()
-    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '50')
+    expect(within(panel).getByText('자금').nextElementSibling).toHaveTextContent('0원')
+    expect(within(panel).getByText('빚').nextElementSibling).toHaveTextContent('0원')
+    expect(within(panel).getByRole('meter', { name: '건강' })).toHaveAttribute('aria-valuenow', '80')
     expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '70')
+    expect(within(panel).getByRole('meter', { name: '스트레스' })).toHaveAttribute('aria-valuenow', '20')
+    // 자금을 0~100 막대로 그리지 않는다 (05 화면 2)
+    expect(within(panel).queryByRole('meter', { name: '자금' })).not.toBeInTheDocument()
+    // 주거 미배정 · 성적 미확인이면 보이지 않는다
+    expect(within(panel).queryByText('주거')).not.toBeInTheDocument()
+    expect(within(panel).queryByRole('meter', { name: '성적' })).not.toBeInTheDocument()
   })
 
-  it('받은 항목만 막대로 보여 주고, 범위 밖 값은 0~100 으로 맞춘다', async () => {
-    await setup({ mapState: (state) => ({ age: state.age, funds: 140 }) })
+  it('원화는 천 단위로, 주거 · 성적은 해당할 때만, 막대 값은 0~100 으로 맞춘다', async () => {
+    await setup({
+      mapState: (state) => ({
+        ...state,
+        funds: 1234567,
+        debt: 3000000,
+        energy: 140,
+        housing: { type: 'monthlyRent', deposit: 5000000, depositPaid: true, monthlyRent: 450000, livingCost: 600000 },
+        development: { kind: 'grades', value: 72, previousGrades: null },
+      }),
+    })
     const panel = screen.getByRole('complementary', { name: '내 상태' })
-    expect(within(panel).getByRole('meter', { name: '자금' })).toHaveAttribute('aria-valuenow', '100')
-    expect(within(panel).queryByRole('meter', { name: '에너지' })).not.toBeInTheDocument()
+    expect(within(panel).getByText('자금').nextElementSibling).toHaveTextContent('1,234,567원')
+    expect(within(panel).getByText('빚').nextElementSibling).toHaveTextContent('3,000,000원')
+    expect(within(panel).getByText('주거').nextElementSibling).toHaveTextContent('월세 · 월 1,050,000원')
+    expect(within(panel).getByRole('meter', { name: '성적' })).toHaveAttribute('aria-valuenow', '72')
+    expect(within(panel).getByRole('meter', { name: '에너지' })).toHaveAttribute('aria-valuenow', '100')
   })
 
-  it('자금 · 에너지가 모두 없으면 자리 표시를 보여 준다', async () => {
+  it('상태 값이 하나도 없으면 자리 표시를 보여 준다', async () => {
     await setup({ mapState: (state) => ({ age: state.age }) })
     const panel = screen.getByRole('complementary', { name: '내 상태' })
-    expect(within(panel).getByText('자금 · 에너지 (서버 연결 후 표시)')).toBeInTheDocument()
+    expect(within(panel).getByText('자금 · 건강 · 에너지 (서버 연결 후 표시)')).toBeInTheDocument()
     expect(within(panel).queryByRole('meter')).not.toBeInTheDocument()
   })
 
