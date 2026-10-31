@@ -59,13 +59,17 @@ with tempfile.TemporaryDirectory(prefix="intro-http-test-") as directory:
         for attempt in range(20):
             try:
                 with urllib.request.urlopen(
-                    base_url + "/intro-assets/intro.json", timeout=2
+                    urllib.request.Request(
+                        base_url + "/intro-assets/intro.json",
+                        headers={"Origin": "https://base-repo-zeta.vercel.app"},
+                    ),
+                    timeout=2,
                 ) as response:
                     assert len(json.load(response)["rooms"]) == 71
                     assert response.headers["Content-Type"].startswith("application/json")
                     assert (
                         response.headers["Access-Control-Allow-Origin"]
-                        == "https://base-repo-ck83.vercel.app"
+                        == "https://base-repo-zeta.vercel.app"
                     )
                     assert response.headers["Vary"] == "Origin"
                     assert response.headers["Cache-Control"] == "public, max-age=604800"
@@ -74,6 +78,18 @@ with tempfile.TemporaryDirectory(prefix="intro-http-test-") as directory:
                 if attempt == 19:
                     raise
                 time.sleep(0.1)
+        # 허용 목록의 다른 Vercel 주소는 그 출처를, 목록에 없는 출처는 CORS 헤더 없이 응답한다
+        for origin, expected_origin in [
+            ("https://base-repo-ck83.vercel.app", "https://base-repo-ck83.vercel.app"),
+            ("https://evil.example", None),
+        ]:
+            with urllib.request.urlopen(
+                urllib.request.Request(
+                    base_url + "/intro-assets/intro.json", headers={"Origin": origin}
+                )
+            ) as response:
+                allowed = response.headers.get("Access-Control-Allow-Origin")
+                assert allowed == expected_origin, origin
         for number in (1, 71):
             with urllib.request.urlopen(
                 f"{base_url}/intro-assets/models/PAN-{number:03d}.glb"
