@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { gameApi } from '../api'
+import { ApiError, gameApi } from '../api'
+import { ErrorScreen } from '../components'
 import '../styles/play.css'
 import type { PlayResume } from '../types/api'
 import { PlayView } from './play/PlayView'
@@ -13,22 +14,33 @@ function createSamplePlay(): Promise<PlayResume> {
     for (const message of ['응 나 과학자임', '실험하는 게 재밌어', '축제 체험 해 볼래']) await gameApi.sendTurn(started.playId, { message })
     return gameApi.getPlay(started.playId)
   })()
+  // 실패하면 다음 방문 때 다시 만든다
+  samplePlay.catch(() => {
+    samplePlay = null
+  })
   return samplePlay
 }
 
 /** 개발 전용: mock 플레이를 만들어 게임 화면을 바로 확인한다 (/dev/play). 배포 빌드에는 경로가 없다 */
 export function DevPlayPreviewPage() {
   const [play, setPlay] = useState<PlayResume | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    void createSamplePlay().then((resumed) => {
-      if (!cancelled) setPlay(resumed)
-    })
+    createSamplePlay().then(
+      (resumed) => {
+        if (!cancelled) setPlay(resumed)
+      },
+      (reason: unknown) => {
+        if (!cancelled) setError(reason instanceof ApiError ? reason.message : 'mock 플레이를 만들지 못했어요.')
+      },
+    )
     return () => {
       cancelled = true
     }
   }, [])
 
+  if (error) return <ErrorScreen message={error} />
   return play ? <PlayView play={play} /> : <p className="page-narrow muted">mock 플레이를 만드는 중…</p>
 }

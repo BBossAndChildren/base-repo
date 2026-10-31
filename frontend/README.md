@@ -32,7 +32,7 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 
 - 화면은 `src/api` 의 `gameApi` 만 쓴다. `VITE_USE_MOCK` 에 따라 mock(`src/mocks/mockGameApi.ts`) 또는 실제 백엔드(`src/api/httpGameApi.ts`)가 쓰인다
 - 실패는 모두 `ApiError`(`type` · `message`)로 온다. `message` 는 화면에 그대로 보여 줄 수 있는 문구다 (05-ui-ux.md 5절)
-- mock 은 메모리에만 저장한다 (새로고침하면 플레이가 사라짐). 채팅에 아래 단어를 넣으면 상황을 흉내 낸다
+- mock 은 플레이를 메모리에만 저장한다 (새로고침하면 플레이가 사라짐). 발급한 게스트는 실제 백엔드처럼 남도록 localStorage(`adult-prince.mockPlayers`)에 기억한다. 채팅에 아래 단어를 넣으면 상황을 흉내 낸다
 
 | 입력에 포함 | 흉내 내는 상황 |
 |-------------|----------------|

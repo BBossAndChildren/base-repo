@@ -46,6 +46,21 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
     markIntroSeen()
   })
 
+  it('서버가 모르는 게스트로 시작하면 안내 후 게스트 ID 를 새로 발급한다 (05 5절 UNKNOWN_PLAYER)', async () => {
+    setPlayerId('stale-player')
+    renderApp()
+    const user = userEvent.setup()
+    await user.type(await screen.findByLabelText(/이름/), '민준')
+    await user.type(screen.getByLabelText(/나이/), '15')
+    await user.selectOptions(screen.getByLabelText(/지금 상황/), '중학생')
+    await user.click(screen.getByLabelText('아직 없어요'))
+    await user.click(screen.getByRole('button', { name: '인생 시작하기' }))
+    expect(await screen.findByText('플레이 정보를 찾을 수 없어요. 처음부터 다시 시작해 주세요.')).toBeInTheDocument()
+    await waitFor(() => expect(getPlayerId()).not.toBe('stale-player'))
+    expect(getPlayerId()).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: '어른왕자', level: 1 })).toBeInTheDocument()
+  })
+
   it('처음 방문이면 시작 화면 대신 인트로로 보낸다 (FE11)', async () => {
     localStorage.clear()
     renderApp()
