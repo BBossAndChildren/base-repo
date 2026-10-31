@@ -210,6 +210,7 @@ docker compose build backend
 | 62 | 프론트 실제 연결 (로컬) | 로컬 Docker 백엔드(PostgreSQL + `compose.mock.yaml` 모의 AI) + 프론트 `VITE_USE_MOCK=false`, headless Chrome | 게스트 발급 → 시작 → 채팅(`requestId` 포함 200) → 재개 → 일시정지 · 이어 하기 → 지난 기록, 콘솔 오류 없음. 실제 GPU AI 미검증 | 서버 배포 · 실제 AI 대기 |
 | 63 | BE14·BE15 실제 파일 배치·게이트웨이 #107 | `check_intro_assets.py backend/deploy/assets/intro-assets`, 로컬 `compose.gateway.yaml` + curl, 전체 test · `test_intro_gateway.py` · Ruff | 인트로 71개(249,041,188 bytes) 확인, GLB 71/71 `model/gltf-binary`, 빌드 index·wasm·client.js·manifest 200, `frame-ancestors` 두 주소, 게이트웨이 경유 API·CORS 사전 요청 통과, 목록 밖 출처 차단. Django 148개 통과. GPU 서버 복사·터널·Vercel 로딩 미검증 | GPU 서버 배포 대기 |
 | 64 | 실제 AI 연결 (GPU 서버) #113 | 서버: 중계기 `ai-relay`(172.17.0.1:18010 → AI 127.0.0.1:8010), `.env` `AI_API_BASE_URL=http://host.docker.internal:18010` · 기존 키, 컨테이너에서 `/openapi.json`, 게이트웨이로 게스트 → 시작 → 턴. 배포 사이트 headless Chrome 대화 2턴 | 컨테이너 → AI 200, 턴 `code:200` (실제 Qwen 대사 · 확정 state), 사이트 대화 200 · 약 6초 · 이전 대화 기억. 추천 · 결말 API 는 AI 쪽 미구현, Cloudflare 502 변환(11 E3) 남음 | AI 쪽 추천 · 결말 구현 대기 |
+| 65 | 허용 출처 zeta 하나로 #122 | `python3 backend/scripts/test_intro_gateway.py`, 전체 `python manage.py test`, Ruff | 게이트웨이 PASS (zeta 허용 · 이전 `base-repo-ck83` · 목록 밖 출처는 CORS 헤더 없음), Django 148개 통과. GPU 서버 반영(pull · `.env` · 재기동)은 서버 작업 | 서버 반영 대기 |
 
 ## 5. 미확정·외부 의존 사항
 
