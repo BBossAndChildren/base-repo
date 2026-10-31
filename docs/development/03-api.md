@@ -90,13 +90,37 @@
 요청
 ```json
 {
+  "name": "민준",
   "age": 15,
   "situation": "중학생",
   "hasDreamJob": true,
-  "dreamJob": "과학자"
+  "dreamJob": "과학자",
+  "gender": "남",
+  "interests": ["과학", "게임"],
+  "majorOrGrade": "중학교 3학년",
+  "strengths": ["만들기"],
+  "values": ["성장"],
+  "roleModel": "아버지",
+  "mbti": "INTP"
 }
 ```
-- `dreamJob` 은 `hasDreamJob` 이 `true` 일 때만 보낸다
+
+| 필드 | 필수 | 설명 |
+|------|:---:|------|
+| `name` | ✅ | 게임 안에서 불릴 이름 (닉네임 가능) |
+| `age` | ✅ | 현재 나이. 이 나이부터 게임이 시작된다 |
+| `situation` | ✅ | 현재 상황 (학생 · 직장인 · 구직 중 등) |
+| `hasDreamJob` | ✅ | 희망 직업 유무 |
+| `dreamJob` | `hasDreamJob` 이 `true` 일 때 | 희망 직업명 |
+| `gender` | | 성별. 선택 안 함 허용 |
+| `interests` | | 관심사 (여러 개) |
+| `majorOrGrade` | | 전공 또는 학년 |
+| `strengths` | | 잘하는 것 · 좋아하는 과목 (여러 개) |
+| `values` | | 가치관 (보기 중 선택. 예: 안정 · 성장 · 돈 · 사회 기여 · 자유) |
+| `roleModel` | | 롤모델 |
+| `mbti` | | MBTI |
+
+- 받지 않는 정보: 건강 · 질병 (개인정보보호법상 민감정보), 가족관계 · 반려동물 (주변 인물은 게임이 랜덤으로 구성 — [00-idea.md 7장](../00-idea.md#7-주변-인물과-랜덤성))
 
 응답 (성공)
 ```json
@@ -114,7 +138,7 @@
 실패
 | code | 조건 |
 |------|------|
-| 400 | 나이 · 상황 누락 |
+| 400 | 필수 값(이름 · 나이 · 상황 · 희망 직업 유무) 누락 |
 
 ### 1-3. 채팅 한 턴
 `POST /api/v1/plays/{playId}/turns` · 인증: `X-Player-Id`
