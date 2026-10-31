@@ -296,7 +296,9 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 | 올리는 방법 | VPN 을 켠 PC 에서 `scp -r intro-assets/ ncloud@10.1.1.14:/tmp/intro-assets/` 후 서버에서 `sudo mv /tmp/intro-assets /srv/intro-assets` |
 | 프론트 전달 | 프론트가 `VITE_INTRO_ASSET_BASE` (비우면 `VITE_API_BASE_URL` + `/intro-assets/`) 에서 `intro.json` → 모델 순서로 받는다. `VITE_API_BASE_URL` 을 쓰는 경우 터널 주소가 바뀌어도 따로 바꿀 것이 없다. **mock 배포처럼 `VITE_API_BASE_URL` 이 비어 있으면 `VITE_INTRO_ASSET_BASE` 에 `https://<터널 주소>/intro-assets/` 를 넣고 재배포한다** (안 넣으면 Vercel 의 `/intro-assets/` 를 찾다가 실패) |
 | 없을 때 | 에셋을 못 받으면 프론트는 인트로를 건너뛰고 시작 화면으로 간다. 게임 진행에는 영향 없음 |
-| 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (기능 BE15, #67), 에셋 전달은 프론트 담당 |
+| 담당 | 서버 배치 · Nginx 설정은 백엔드 담당 (기능 BE15, #67 · #83), 에셋 전달은 프론트 담당 |
+| 실제 설정 파일 | 백엔드가 Docker 게이트웨이로 구현했다: `backend/deploy/nginx.conf` · `backend/compose.gateway.yaml` (터널을 게이트웨이 포트에 연결, 사용법 `backend/deploy/README.md`). 위 5-1 ⑤ 의 호스트 Nginx 예시와 다르면 **`backend/deploy/` 가 기준**이다 ([11 E2](11-open-issues.md#e-코드와-문서-차이)) |
+| 배치 확인 | 서버에서 `python3 backend/scripts/check_intro_assets.py /srv/intro-assets` → "인트로 에셋 71개 확인" |
 
 ### 5-3. AI 서버 (GPU 서버)
 - 제공받은 네이버 클라우드 GPU 서버. 오픈소스 **Qwen + 직업 데이터 RAG** 를 띄운다 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)). 접속은 [5-0](#5-0-서버-접속-백엔드--ai-공통) 과 같다 <!-- TODO: 사설 IP · 포트 · OS -->
