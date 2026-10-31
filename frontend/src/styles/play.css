@@ -27,6 +27,11 @@
 .exp-meta { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
 
 .chat-footer { flex: none; border-top: 1px solid var(--color-border); padding: var(--space-3) var(--space-4) var(--space-4); }
+/* 대기 중인 선택 (자금 부족 · 기간 진행 확인 · 제안, 05 9절 · #134) */
+.choices { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); max-height: 40vh; overflow-y: auto; }
+.choice { border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-surface-2); padding: var(--space-3); }
+.choice-text { margin: 0 0 var(--space-2); font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+.choice-options { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .hints { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-3); }
 .hints-label { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 700; }
 .composer { display: flex; gap: var(--space-2); }

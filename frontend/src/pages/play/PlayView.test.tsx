@@ -205,6 +205,29 @@ describe('PlayView', () => {
     spy.mockRestore()
   })
 
+  it('자금 부족 선택이 오면 상황과 보기를 보여 주고, 보기를 누르면 입력칸에 채운다 (#134)', async () => {
+    const real = mockGameApi.sendTurn.bind(mockGameApi)
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockImplementationOnce(async (playId, body) => ({
+      ...(await real(playId, body)),
+      pendingChoices: [{ kind: 'insufficientFunds', amount: 200000, options: ['대출 알아보기', '지출 미루기'] }],
+    }))
+    const { user, input, say } = await setup()
+    await say('한 달 지내기')
+    const group = await screen.findByRole('group', { name: '선택이 필요해요' })
+    expect(within(group).getByText('돈이 200,000원 부족해요. 어떻게 할까요?')).toBeInTheDocument()
+    await user.click(within(group).getByRole('button', { name: '지출 미루기' }))
+    expect(input).toHaveValue('지출 미루기')
+    // 보내면 선택이 사라진다 (다음 턴 응답에 없으므로)
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await waitFor(() => expect(screen.queryByRole('group', { name: '선택이 필요해요' })).not.toBeInTheDocument())
+    spy.mockRestore()
+  })
+
+  it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
+    await setup({ mapPlay: (play) => ({ ...play, pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
+    expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()
+  })
+
   it('턴 응답의 state 를 확정 값으로 상태 패널에 쓴다', async () => {
     const real = mockGameApi.sendTurn.bind(mockGameApi)
     const spy = vi.spyOn(mockGameApi, 'sendTurn').mockImplementationOnce(async (playId, body) => {

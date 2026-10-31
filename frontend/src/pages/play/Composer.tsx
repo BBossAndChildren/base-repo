@@ -1,11 +1,15 @@
 import { useId, type FormEvent } from 'react'
 import { Button } from '../../components'
+import type { PendingChoice } from '../../types/api'
+import { describeChoice } from './pendingChoices'
 
 interface ComposerProps {
   value: string
   onChange: (value: string) => void
   onSubmit: () => void
   hints: string[]
+  /** 백엔드가 기다리는 선택 (05 9절). 보기를 누르면 입력칸에 채운다 */
+  choices?: PendingChoice[]
   disabled: boolean
   waiting: boolean
 }
@@ -13,7 +17,7 @@ interface ComposerProps {
 export const MESSAGE_MAX = 300
 
 /** 입력 · 힌트 (05 화면 2) */
-export function Composer({ value, onChange, onSubmit, hints, disabled, waiting }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, hints, choices = [], disabled, waiting }: ComposerProps) {
   const inputId = useId()
   const canSend = !disabled && value.trim().length > 0
 
@@ -24,6 +28,22 @@ export function Composer({ value, onChange, onSubmit, hints, disabled, waiting }
 
   return (
     <div className="chat-footer">
+      {choices.length > 0 && !disabled && (
+        <div className="choices" role="group" aria-label="선택이 필요해요">
+          {choices.map((choice, index) => (
+            <div key={`${choice.kind}-${index}`} className="choice">
+              <p className="choice-text">{describeChoice(choice)}</p>
+              <div className="choice-options">
+                {choice.options.map((option) => (
+                  <button key={option} type="button" className="chip chip-hint" onClick={() => onChange(option)}>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {hints.length > 0 && !disabled && (
         <div className="hints" role="group" aria-label="이렇게 말해 볼 수 있어요">
           <span className="hints-label">힌트</span>

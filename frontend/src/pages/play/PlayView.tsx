@@ -4,13 +4,14 @@ import { ApiError, gameApi } from '../../api'
 import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
-import type { ExperienceOffer, PlayResume, TurnResponse } from '../../types/api'
+import type { ExperienceOffer, PendingChoice, PlayResume, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
 import { StatusBar, StatusPanel } from './StatusPanel'
 import { changedStatusFields, pickStatus, type StatusField, type StatusValues } from './statusModel'
+import { usableChoices } from './pendingChoices'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
 
 const CHANGE_HIGHLIGHT_MS = 1600
@@ -44,6 +45,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state))
   const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
   const [hints, setHints] = useState<string[]>([])
+  const [choices, setChoices] = useState<PendingChoice[]>(() => usableChoices(play.pendingChoices))
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [ended, setEnded] = useState(play.ended)
@@ -76,6 +78,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     if (turn.notice) toast.show({ message: turn.notice.message })
     setItems((prev) => [...prev, ...added])
     setHints(turn.hints)
+    setChoices(usableChoices(turn.pendingChoices))
     if (turn.ended) setEnded(true)
   }
 
@@ -87,6 +90,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     setItems((prev) => [...declineOpenOffers(prev), { kind: 'message', id: pendingId, message: { role: 'user', speaker: '나', text: message } }])
     setDraft('')
     setHints([])
+    const previousChoices = choices
+    setChoices([])
     setWaiting(true)
     const requestId = failedRequest.current?.message === message ? failedRequest.current.requestId : crypto.randomUUID()
     try {
@@ -97,6 +102,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       // 보내지 못한 말은 화면에서 빼고 입력칸에 되돌린다 (05 6절: 입력한 내용은 지우지 않는다)
       setItems((prev) => prev.filter((item) => item.id !== pendingId))
       setDraft(message)
+      setChoices(previousChoices)
       failedRequest.current = KEEP_REQUEST_ID.has(apiError.type) ? { message, requestId } : null
       if (apiError.type === 'STATE_CONFLICT') {
         toast.show({ type: 'error', message: apiError.message })
@@ -151,6 +157,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       const latest = await gameApi.getPlay(play.playId)
       setItems(messagesToTimeline(latest.messages))
       setStatus(pickStatus(latest.state))
+      setChoices(usableChoices(latest.pendingChoices))
       setEnded(latest.ended)
     } catch {
       // 다시 조회하지 못하면 지금 화면을 유지한다. 다음 전송에서 다시 안내된다
@@ -211,7 +218,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
               </div>
             </div>
           ) : (
-            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} disabled={waiting} waiting={waiting} />
+            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} choices={choices} disabled={waiting} waiting={waiting} />
           )}
         </section>
         <StatusPanel values={status} changed={changed} actions={pauseAction} />
