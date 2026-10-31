@@ -204,6 +204,8 @@ docker compose build backend
 
 | 58 | 최종 전체 검사 | 전체 `python manage.py test --verbosity 1 --noinput`, check, makemigrations --check --dry-run, migrate --check, spectacular --validate --fail-on-warn, Ruff check/format, Docker Compose build | PostgreSQL/규칙/모의 HTTP 144개 및 필수 검사 통과; Ruff 93파일 형식 확인, 실제 GPU·운영 WebGL/인트로 에셋은 미검증 | PR 준비 가능 |
 
+| 59 | Swagger 필수·조건부 필수·정상 요청 예시 #88 | 전체 `python manage.py test --verbosity 1 --noinput` (apiresume Docker) | PostgreSQL·모의 AI 146개 통과; 새 스키마 검사 2개 포함, situation 고딩 거부/고등학생 허용·정상 요청 예시 확인 | 스키마·lint·build 확인 후 PR |
+
 ## 5. 미확정·외부 의존 사항
 
 - 미배정 자산·비용은 0, 미확정 급여·성적·흥미 단계는 null로 두며 현실 수치를 추정하지 않는다. AI의 사망 제안만으로 종료하지 않고 건강 0 지속/과로 확정 판정을 사용한다. 이전 추상 상태는 다음 유효 턴에서 전환하고 원본을 비공개 보존한다.

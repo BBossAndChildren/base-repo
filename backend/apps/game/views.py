@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -70,8 +70,29 @@ class PlaysView(PlayerRequiredView):
         tags=["플레이"],
         summary="게임 시작",
         description=(
-            "필수 프로필 4개와 선택 프로필을 검증합니다. 플레이와 Unity sessionId를 생성합니다."
+            "필수: name, age(7~99), situation(정해진 보기), hasDreamJob. "
+            "hasDreamJob=true면 dreamJob도 필수이며 false면 생략/빈 문자열이어야 합니다. "
+            "situation은 고등학생 등 지정값만 허용하며 고딩·학생·string은 불가합니다. "
+            "선택 항목은 생략할 수 있습니다. 헤더 X-Player-Id는 게스트 발급 결과를 사용하세요."
         ),
+        examples=[
+            OpenApiExample(
+                "최소 요청 · 희망 직업 없음",
+                value={"name": "나야나", "age": 20, "situation": "대학생", "hasDreamJob": False},
+                request_only=True,
+            ),
+            OpenApiExample(
+                "희망 직업 있음",
+                value={
+                    "name": "나야나",
+                    "age": 20,
+                    "situation": "고등학생",
+                    "hasDreamJob": True,
+                    "dreamJob": "작가",
+                },
+                request_only=True,
+            ),
+        ],
         request=StartPlaySerializer,
         responses=api_responses(PlayResponseSerializer, 400, 401),
     )
@@ -200,6 +221,16 @@ class TurnView(PlayerRequiredView):
             "최근 20턴과 게임 콘텐츠를 AI 서버에 보내고 검증된 상태 변경만 저장합니다. "
             "AI branch가 있으면 3D 후보를 추천합니다. 전체 30초 제한입니다."
         ),
+        examples=[
+            OpenApiExample(
+                "채팅 요청",
+                value={
+                    "requestId": "11111111-1111-4111-8111-111111111111",
+                    "message": "작가가 하는 일을 알아보고 싶어",
+                },
+                request_only=True,
+            )
+        ],
         request=TurnInputSerializer,
         responses=api_responses(TurnResponseSerializer, 400, 401, 404, 409, 502, 503, 504),
     )
