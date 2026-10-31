@@ -37,10 +37,10 @@
 flowchart LR
   Browser --> FE[웹 프론트] --> BE[백엔드] --> AI[AI 서버]
   BE --> DB
-  BE --- Content[(game/ 마크다운 · 3D 빌드 · 빌드·에셋 정보 JSON)]
+  BE --- Content[(game/ 마크다운 · 3D 빌드 · 빌드 카탈로그 JSON)]
 ```
 
-> 프롬프트 조립과 3D 빌드·에셋 추천 흐름 상세: [10-prompt-assembly.md](10-prompt-assembly.md)
+> 프롬프트 조립과 3D 체험 추천 흐름 상세: [10-prompt-assembly.md](10-prompt-assembly.md)
 
 ## 3. 디렉터리 구조
 ```
