@@ -72,6 +72,10 @@ SPECTACULAR_SETTINGS = {
     ),
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "apps.game.schema.describe_start_conditions",
+    ],
     "ENUM_NAME_OVERRIDES": {"HealthStateEnum": ["ok", "unavailable"]},
 }
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])

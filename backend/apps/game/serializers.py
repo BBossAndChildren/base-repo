@@ -11,27 +11,51 @@ class StrictSerializer(serializers.Serializer):
 
 
 class StartPlaySerializer(StrictSerializer):
-    name = serializers.CharField(max_length=200)
-    age = serializers.IntegerField(min_value=7, max_value=99, help_text="시작 나이, 7~99세 정수")
+    name = serializers.CharField(
+        max_length=200, help_text="필수. 게임에서 부를 이름, 빈 문자열 불가"
+    )
+    age = serializers.IntegerField(
+        min_value=7, max_value=99, help_text="필수. 시작 나이, 7~99세 정수"
+    )
     situation = serializers.ChoiceField(
         choices=["초등학생", "중학생", "고등학생", "대학생", "직장인", "구직 중", "기타"],
-        help_text="현재 상황, 지정된 7개 보기 중 선택",
+        help_text="필수. 현재 상황, 지정된 7개 보기 중 정확한 값 선택",
     )
-    hasDreamJob = serializers.BooleanField()
-    dreamJob = serializers.CharField(required=False, allow_blank=True, max_length=200)
-    gender = serializers.CharField(required=False, allow_blank=True, max_length=100)
+    hasDreamJob = serializers.BooleanField(
+        help_text="필수. 희망 직업 유무. true면 dreamJob 필수, false면 dreamJob 생략 또는 빈 문자열"
+    )
+    dreamJob = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=200,
+        help_text=(
+            "조건부 필수. hasDreamJob=true면 비어 있지 않은 직업명. "
+            "false면 생략하거나 빈 문자열로 전송"
+        ),
+    )
+    gender = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=100,
+        help_text="선택. 성별, 응답하지 않으면 생략 가능",
+    )
     interests = serializers.ListField(
         child=serializers.CharField(max_length=200),
         required=False,
         max_length=5,
-        help_text="관심사 최대 5개, 직접 입력 허용",
+        help_text="선택. 관심사 최대 5개, 직접 입력 허용. 미응답은 필드 생략",
     )
-    majorOrGrade = serializers.CharField(required=False, allow_blank=True, max_length=200)
+    majorOrGrade = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=200,
+        help_text="선택. 전공 또는 학년. 미응답은 필드 생략",
+    )
     strengths = serializers.ListField(
         child=serializers.CharField(max_length=200),
         required=False,
         max_length=5,
-        help_text="잘하는 것·좋아하는 과목 최대 5개",
+        help_text="선택. 잘하는 것·좋아하는 과목 최대 5개",
     )
     values = serializers.ListField(
         child=serializers.ChoiceField(
@@ -39,10 +63,17 @@ class StartPlaySerializer(StrictSerializer):
         ),
         required=False,
         max_length=3,
-        help_text="가치관 보기 중 최대 3개",
+        help_text="선택. 가치관 보기 중 최대 3개",
     )
-    roleModel = serializers.CharField(required=False, allow_blank=True, max_length=200)
-    mbti = serializers.CharField(required=False, allow_blank=True, max_length=20)
+    roleModel = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=200,
+        help_text="선택. 롤모델, 미응답은 필드 생략",
+    )
+    mbti = serializers.CharField(
+        required=False, allow_blank=True, max_length=20, help_text="선택. MBTI, 미응답은 필드 생략"
+    )
 
     def validate(self, attrs):
         if attrs["hasDreamJob"] != bool(attrs.get("dreamJob")):
@@ -96,7 +127,7 @@ class ResumeResponseSerializer(serializers.Serializer):
 
 
 class PauseInputSerializer(StrictSerializer):
-    paused = serializers.BooleanField(help_text="true: 새 턴 차단, false: 이어 하기")
+    paused = serializers.BooleanField(help_text="필수. true: 새 턴 차단, false: 이어 하기")
 
 
 class PauseDataSerializer(serializers.Serializer):
@@ -216,9 +247,15 @@ class AIRecommendationResponseSerializer(StrictSerializer):
 
 
 class TurnInputSerializer(StrictSerializer):
-    requestId = serializers.UUIDField(help_text="같은 행동을 재시도할 때 유지하는 UUID")
+    requestId = serializers.UUIDField(
+        help_text=(
+            "필수. 클라이언트가 생성한 UUID. 같은 행동 재시도에는 유지하고 "
+            "새로운 행동에는 새 UUID 사용"
+        )
+    )
     message = serializers.CharField(
-        max_length=10000, help_text="플레이어가 보낸 비어 있지 않은 대화 입력"
+        max_length=10000,
+        help_text="필수. 플레이어 대화 입력, 공백만 있는 문자열 불가. 최대 10000자",
     )
 
 
