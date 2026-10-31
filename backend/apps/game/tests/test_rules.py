@@ -25,6 +25,9 @@ class LifeRuleTests(SimpleTestCase):
             {"age": 15, "name": "테스트", "situation": "중학생", "hasDreamJob": False}
         )
         self.state["gameDate"] = "2026-01-01"
+        # 규칙 계산만 검증하도록 상황별 밸런스 기준값(#132)을 비운다
+        self.state["funds"] = 0
+        self.state["support"]["monthlyAmount"] = 0
 
     def evolve(self, actions, state=None, progress=None, rng=None):
         return evolve(
@@ -216,6 +219,51 @@ class LifeRuleTests(SimpleTestCase):
     def test_month_end_anchor_handles_leap_year(self):
         self.assertEqual(add_months(date(2028, 1, 31), 1), date(2028, 2, 29))
 
+    def test_family_support_is_paid_monthly_before_expenses(self):
+        self.state["support"]["monthlyAmount"] = 50000
+        self.state["housing"]["livingCost"] = 30000
+        state, progress, *_ = self.advance(31)
+        self.assertEqual(state["funds"], 20000)
+        kinds = [row["kind"] for row in progress["ledger"]]
+        self.assertEqual(kinds, ["familySupport", "monthlyExpenses"])
+        state, progress, *_ = self.advance(1, state=state, progress=progress)
+        self.assertEqual(state["funds"], 20000)  # 같은 달 중복 지급 없음
+
+    def test_support_change_is_announced_and_applies_from_next_month(self):
+        self.state["support"]["monthlyAmount"] = 50000
+        action = {"kind": "supportChange", "monthlyAmount": 0, "evidenceQuote": "테스트"}
+        state, progress, events, *_ = self.evolve([action])
+        self.assertEqual(events[0]["kind"], "supportNotice")
+        self.assertEqual(progress["supportChange"]["effectiveFrom"], "2026-02-01")
+        self.assertEqual(state["support"]["monthlyAmount"], 50000)
+        state, progress, events, *_ = self.advance(31, state=state, progress=progress)
+        self.assertEqual(state["support"]["monthlyAmount"], 0)
+        self.assertEqual(state["funds"], 0)
+        self.assertIn("supportChanged", [row["kind"] for row in events])
+        self.assertNotIn("supportChange", progress)
+
+    def test_aging_reduces_health_on_birthdays_from_65(self):
+        self.state["age"] = 64
+        year = {"confirmedAdvance": {"days": 366, "activity": "idle"}}
+        state, _, events, *_ = self.advance(366, progress=dict(year))
+        self.assertEqual(state["age"], 65)
+        self.assertEqual(state["health"], 77)
+        self.assertEqual(
+            [row for row in events if row["kind"] == "aging"][0]["facts"],
+            {"age": 65, "healthLoss": 3},
+        )
+        self.state["age"] = 30
+        state, *_ = self.advance(366, progress=dict(year))
+        self.assertEqual(state["health"], 80)
+
+    def test_old_age_eventually_ends_life(self):
+        self.state["age"] = 95
+        self.state["health"] = 20
+        progress = {"confirmedAdvance": {"days": 900, "activity": "idle"}}
+        state, _, events, _, ended = self.advance(900, progress=progress)
+        self.assertTrue(ended)
+        self.assertEqual(events[-2]["facts"], {"cause": "zeroHealthSixMonths"})
+
 
 class RuleTurnTests(TestCase):
     setUp = turns_fixture.TurnTests.setUp
@@ -253,3 +301,54 @@ class RuleTurnTests(TestCase):
         self.play.refresh_from_db()
         self.assertTrue(self.play.ended)
         self.assertEqual(self.post().status_code, 409)
+
+
+class BaselineTests(SimpleTestCase):
+    """상황별 시작 자금 · 주거 · 생활비 · 가족 지원 · 월급 (#132)"""
+
+    def test_every_situation_has_consistent_money(self):
+        for situation in ["초등학생", "중학생", "고등학생", "대학생", "직장인", "구직 중", "기타"]:
+            for age in (15, 30):
+                state = initial_state({"age": age, "situation": situation})
+                self.assertGreater(state["funds"], 0, situation)
+                self.assertGreaterEqual(state["housing"]["livingCost"], 0)
+                self.assertIn(state["housing"]["type"], {"family", "monthlyRent"})
+                self.assertEqual(state["support"]["source"], "family")
+
+    def test_worker_starts_with_sourced_minimum_wage_and_paid_deposit(self):
+        state = initial_state({"age": 30, "situation": "직장인"})
+        self.assertEqual(state["occupation"]["monthlySalary"], 2156880)
+        self.assertIn("minimumwage.go.kr", state["occupation"]["salarySource"]["url"])
+        self.assertTrue(state["housing"]["depositPaid"])
+        state["gameDate"] = "2026-01-01"
+        state, progress, *_ = evolve(
+            state,
+            {},
+            [{"kind": "advance", "days": 31, "activity": "idle", "evidenceQuote": "출근"}],
+            "출근",
+            "worker",
+        )
+        # 월급 - (월세 + 생활비), 보증금은 다시 빼지 않는다
+        self.assertEqual(state["funds"], 5000000 + 2156880 - 500000 - 900000)
+        self.assertNotIn("housingDeposit", [row["kind"] for row in progress["ledger"]])
+
+    def test_other_situation_depends_on_age(self):
+        adult = initial_state({"age": 40, "situation": "기타"})
+        minor = initial_state({"age": 12, "situation": "기타"})
+        self.assertGreater(adult["housing"]["livingCost"], 0)
+        self.assertEqual(minor["housing"]["livingCost"], 0)
+
+    def test_job_seeker_runs_short_and_gets_choices_not_negative_funds(self):
+        state = initial_state({"age": 25, "situation": "구직 중"})
+        state["gameDate"] = "2026-01-01"
+        progress = {"confirmedAdvance": {"days": 400, "activity": "jobSearch"}}
+        state, progress, _, pending, _ = evolve(
+            state,
+            progress,
+            [{"kind": "advance", "days": 400, "activity": "jobSearch", "evidenceQuote": "구직"}],
+            "구직",
+            "seeker",
+        )
+        self.assertEqual(pending[0]["kind"], "insufficientFunds")
+        self.assertGreaterEqual(state["funds"], 0)
+        self.assertTrue(state["arrears"])

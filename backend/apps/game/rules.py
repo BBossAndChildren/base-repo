@@ -13,6 +13,13 @@ from django.conf import settings
 
 from .state import initial_state
 
+# 노화 (#132): 생일마다 건강 감소. (이 나이 이상, 감소량) — 높은 구간부터 찾는다
+AGING_HEALTH_LOSS = ((95, 20), (85, 10), (75, 6), (65, 3))
+
+
+def aging_loss(age):
+    return next((loss for minimum, loss in AGING_HEALTH_LOSS if age >= minimum), 0)
+
 
 class RuleViolation(ValueError):
     pass
@@ -136,6 +143,18 @@ def evolve(state, progress, actions, message, key, rng=None):
         month = day.isoformat()
         if month in progress["settledMonths"]:
             return
+        support = state.setdefault("support", {"monthlyAmount": 0, "source": "family"})
+        change = progress.get("supportChange")
+        if change and day >= date.fromisoformat(change["effectiveFrom"]):
+            # 미리 알린 가족 지원 변경은 알린 다음 달 정산부터 적용한다 (06 5절)
+            event(
+                "supportChanged",
+                {"from": support["monthlyAmount"], "to": change["monthlyAmount"]},
+            )
+            support["monthlyAmount"] = change["monthlyAmount"]
+            progress.pop("supportChange")
+        if support["monthlyAmount"]:
+            ledger("familySupport", integer(support["monthlyAmount"]), "support:" + month)
         occupation = state["occupation"]
         salary = occupation.get("monthlySalary")
         if occupation["status"] == "employed" and salary is not None:
@@ -277,9 +296,14 @@ def evolve(state, progress, actions, message, key, rng=None):
                 state["elapsedDays"] += 1
                 origin = date.fromisoformat(progress["originDate"])
                 years = today.year - origin.year
+                previous_age = state["age"]
                 state["age"] = (
                     progress["originAge"] + years - (today < add_months(origin, years * 12))
                 )
+                if state["age"] > previous_age and aging_loss(state["age"]):
+                    loss = aging_loss(state["age"])
+                    state["health"] -= loss
+                    event("aging", {"age": state["age"], "healthLoss": loss})
                 energy, stress = {
                     "work": (-3, 1),
                     "overtime": (-8, 4),
@@ -428,6 +452,22 @@ def evolve(state, progress, actions, message, key, rng=None):
                 raise RuleViolation("학습 경험 근거가 필요합니다")
             state["development"]["value"] = value
             event("learning", {"value": value, "kind": state["development"]["kind"]})
+        elif kind == "supportChange":
+            # 가족 지원이 줄거나 끊기면 대화로 먼저 알리고 다음 달부터 적용한다 (06 5절)
+            amount = integer(action.get("monthlyAmount"), 0, 10**9)
+            effective = add_months(today, 1)
+            progress["supportChange"] = {
+                "monthlyAmount": amount,
+                "effectiveFrom": effective.isoformat(),
+            }
+            event(
+                "supportNotice",
+                {
+                    "from": state.get("support", {}).get("monthlyAmount", 0),
+                    "to": amount,
+                    "effectiveFrom": effective.isoformat(),
+                },
+            )
         elif kind == "stressFactors":
             factors = action.get("factors")
             if not isinstance(factors, list) or len(factors) > 20:

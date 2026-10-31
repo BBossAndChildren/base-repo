@@ -93,8 +93,9 @@ class PlayDataSerializer(serializers.Serializer):
     state = serializers.JSONField(
         help_text=(
             "확정 상태: age·elapsedDays·원화 funds/debt·health/energy/stress·"
-            "housing·development·occupation. 미확정 급여·성적은 null, "
-            "미배정 자산은 0입니다. 흥미는 1~5 또는 미확인 null입니다."
+            "housing·support(가족 지원)·development·occupation. 시작 자금·생활비·"
+            "가족 지원은 상황별 기준값, 성적은 미확인 null입니다. "
+            "흥미는 1~5 또는 미확인 null입니다."
         )
     )
     messages = MessageSerializer(many=True)

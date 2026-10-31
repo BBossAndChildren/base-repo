@@ -48,13 +48,14 @@ class StateChangeTests(TestCase):
             {"field": "profile.health", "to": "실제 개인정보"},
             {"field": "interests.과학", "to": 3, "eventId": "다른 플레이 사건"},
         ]:
+            starting_funds = self.play.state["funds"]
             self.data["stateChanges"] = [proposal]
             with patch("apps.game.turns.ai.chat", return_value=self.data) as ai:
                 self.assertEqual(self.post().status_code, 502)
             self.assertEqual(ai.call_count, 2)
         self.assertFalse(Turn.objects.exists())
         self.play.refresh_from_db()
-        self.assertEqual(self.play.state["funds"], 0)
+        self.assertEqual(self.play.state["funds"], starting_funds)  # 직접 자금 조작 무시
         self.assertEqual(self.play.state["interests"], {})
 
     def test_state_changes_include_server_calculated_fields(self):
