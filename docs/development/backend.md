@@ -208,12 +208,13 @@ docker compose build backend
 | 60 | BE14·BE15 게이트웨이 허용 출처 두 Vercel 주소 #86 | `python3 backend/scripts/test_intro_gateway.py` (Docker Nginx), 전체 `python manage.py test` (compose dev + mock) | 게이트웨이 PASS: `base-repo-zeta` · `base-repo-ck83` 출처 반환, 목록 밖 출처는 CORS 헤더 없음, 구문·JSON/GLB·캐시·404/403 유지 (가짜 파일). Django 146개 통과. 실제 서버 배치 · 실제 모델 · Vercel 로딩은 미검증 | 서버 배치 대기 |
 | 61 | Swagger 일시정지 · Unity 4개 요청 예시 #91 | `python manage.py test apps.game.tests.test_request_examples_schema`, 전체 test · check · makemigrations --check --dry-run · spectacular --validate --fail-on-warn · Ruff check/format | 신규 2개 포함 148개 통과; 5개 요청 예시가 입력 Serializer 검증 통과, 스키마 검증 · Ruff 90파일 통과 | 완료 |
 | 62 | 프론트 실제 연결 (로컬) | 로컬 Docker 백엔드(PostgreSQL + `compose.mock.yaml` 모의 AI) + 프론트 `VITE_USE_MOCK=false`, headless Chrome | 게스트 발급 → 시작 → 채팅(`requestId` 포함 200) → 재개 → 일시정지 · 이어 하기 → 지난 기록, 콘솔 오류 없음. 실제 GPU AI 미검증 | 서버 배포 · 실제 AI 대기 |
+| 63 | BE14·BE15 실제 파일 배치·게이트웨이 #107 | `check_intro_assets.py backend/deploy/assets/intro-assets`, 로컬 `compose.gateway.yaml` + curl, 전체 test · `test_intro_gateway.py` · Ruff | 인트로 71개(249,041,188 bytes) 확인, GLB 71/71 `model/gltf-binary`, 빌드 index·wasm·client.js·manifest 200, `frame-ancestors` 두 주소, 게이트웨이 경유 API·CORS 사전 요청 통과, 목록 밖 출처 차단. Django 148개 통과. GPU 서버 복사·터널·Vercel 로딩 미검증 | GPU 서버 배포 대기 |
 
 ## 5. 미확정·외부 의존 사항
 
 - 미배정 자산·비용은 0, 미확정 급여·성적·흥미 단계는 null로 두며 현실 수치를 추정하지 않는다. AI의 사망 제안만으로 종료하지 않고 건강 0 지속/과로 확정 판정을 사용한다. 이전 추상 상태는 다음 유효 턴에서 전환하고 원본을 비공개 보존한다.
 - 활성 시간은 서버에서 확인 가능한 요청 처리 구간을 누적한다. 프론트의 읽기/입력 구간을 포함한 전체 활성 시간은 별도 활성 구간 전달 연동이 필요하다.
-- BE15 실제 에셋 71개가 현재 작업 공간에 없어 운영 업로드·터널 CORS·실제 WebGL 재생은 미검증이다.
+- BE15 실제 에셋 71개는 `backend/deploy/assets/intro-assets/`(git 제외)에 배치해 로컬 게이트웨이로 확인했다 (기록 63). GPU 서버 복사·터널·Vercel 에서의 실제 재생은 미검증이다.
 - `docs/game/`의 지침·세계관·시나리오·규칙·NPC 문서를 캐시해 사용한다. 작가 원문의 TODO는 승인된 콘텐츠로 간주하지 않는다. 필수 지침이 누락/비어 있으면 시작하지 않으며 통합 테스트는 별도 표시된 테스트 콘텐츠를 사용한다.
 - AI 주소·내부 키는 환경변수로 제공한다. 테스트 서버로 통신·오류를 검증해도 실제 GPU AI 검증은 `외부 연동 대기`로 남긴다.
 - Unity 정산은 [원본 tx 명세](../unity/contracts/CONTRACT-SNAPSHOT.md)와 [수락 사례 16개](../unity/contracts/reconciliation-v003/acceptance-cases.json)를 따른다. Unity 원본과 작가 콘텐츠는 임의 수정하지 않는다.
