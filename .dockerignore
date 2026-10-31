@@ -4,6 +4,16 @@
 !docs/
 !docs/game/
 !docs/game/**
+!docs/unity/
+!docs/unity/contracts/
+!docs/unity/contracts/realtime-v002/
+!docs/unity/contracts/realtime-v002/realtime-contract.json
+!docs/unity/contracts/reconciliation-v003/
+!docs/unity/contracts/reconciliation-v003/resolution-response.schema.json
+!docs/unity/contracts/reconciliation-v003/acceptance-cases.json
+!docs/unity/builds/
+!docs/unity/builds/production-ai-build-catalog.json
+!docs/unity/builds/production-supported-manifest.json
 **/.env
 **/.env.*
 !backend/.env.example

@@ -12,6 +12,7 @@ dependencies = [
     "drf-spectacular>=0.28,<0.30",
     "gunicorn>=23,<24",
     "httpx>=0.28,<0.29",
+    "jsonschema>=4.26,<5",
     "psycopg[binary]>=3.2,<4",
 ]
 

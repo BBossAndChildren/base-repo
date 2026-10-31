@@ -1,0 +1,14 @@
+{
+  "experiences": [
+    {
+      "buildId": "career-suite-integration-v005",
+      "roomId": "PAN-002",
+      "scenarioId": "career-net-951-experience",
+      "scenarioVersion": "v002",
+      "jobs": [
+        "행사기획자"
+      ],
+      "description": "API 테스트용 행사 준비 체험. 실제 WebGL 실행 검증이 아니다."
+    }
+  ]
+}

@@ -14,6 +14,7 @@ dependencies = [
     { name = "drf-spectacular" },
     { name = "gunicorn" },
     { name = "httpx" },
+    { name = "jsonschema" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
@@ -31,6 +32,7 @@ requires-dist = [
     { name = "drf-spectacular", specifier = ">=0.28,<0.30" },
     { name = "gunicorn", specifier = ">=23,<24" },
     { name = "httpx", specifier = ">=0.28,<0.29" },
+    { name = "jsonschema", specifier = ">=4.26,<5" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
 ]
 
