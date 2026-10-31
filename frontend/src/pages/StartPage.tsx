@@ -1,11 +1,16 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Button, Modal, Spinner } from '../components'
 import { useResumablePlay } from '../hooks/useResumablePlay'
-import { clearLastPlayId } from '../lib/lastPlay'
+import { clearLastPlayId, setLastPlayId } from '../lib/lastPlay'
+import { savePlaySession } from '../lib/playSession'
+import '../styles/start.css'
+import { StartForm } from './start/StartForm'
+import type { OptionalField } from './start/options'
 
-/** 화면 1: 시작 (05-ui-ux.md). 시작 입력 폼은 5단계에서 채운다 */
-export function StartPage() {
+/** 화면 1: 시작 (05-ui-ux.md) */
+export function StartPage({ optionalFields }: { optionalFields?: OptionalField[] } = {}) {
+  const navigate = useNavigate()
   const { play, checking } = useResumablePlay()
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [startingNew, setStartingNew] = useState(false)
@@ -40,10 +45,14 @@ export function StartPage() {
       )}
 
       {!checking && !showResume && (
-        <section className="card" aria-label="새 인생 시작">
-          {/* 5단계: 시작 입력 폼 (필수 4개 + 선택 랜덤 2개) */}
-          <p className="muted">시작 입력 화면을 준비하고 있어요.</p>
-        </section>
+        <StartForm
+          optionalFields={optionalFields}
+          onStarted={(play) => {
+            setLastPlayId(play.playId)
+            savePlaySession(play.playId, play.sessionId)
+            navigate(`/play/${play.playId}`)
+          }}
+        />
       )}
 
       <Modal
