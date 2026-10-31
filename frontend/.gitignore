@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# 인트로 3D 모델 (약 238MB) — 로컬 개발용 사본. 배포는 백엔드 서버 /intro-assets/ (docs/development/06-deployment.md 5-2-1)
+# 인트로 3D 모델은 백엔드 서버 /intro-assets/ 에서만 받는다 (06-deployment.md 5-2-1). 실수로 커밋하지 않게 막아 둔다
 public/intro-assets/

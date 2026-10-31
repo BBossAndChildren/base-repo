@@ -26,7 +26,7 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 |----|------|
 | `VITE_API_BASE_URL` | 백엔드 주소 (현재 Cloudflare Tunnel 주소, 끝에 `/` 없이). `VITE_USE_MOCK=false` 일 때 필수 |
 | `VITE_USE_MOCK` | `true`(기본): mock 응답 사용 · `false`: 실제 백엔드 호출 |
-| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 폴더 (끝에 `/`). 비우면 `VITE_API_BASE_URL` + `/intro-assets/`, 그것도 비면 `/intro-assets/` (`public/intro-assets/`) |
+| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 폴더 (끝에 `/`, 백엔드 BE15). 비우면 `VITE_API_BASE_URL` + `/intro-assets/`, 둘 다 비면 인트로를 띄우지 않는다 |
 
 ## API 와 mock
 
@@ -55,11 +55,10 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 - 화면 CSS 는 `--ci-*` 대신 `src/styles/global.css` 의 역할 변수(`--color-*` · `--font-*`)를 쓴다. 새 색이 필요하면 역할 변수를 추가하고 `docs/design/README.md` 표와 대비를 함께 고친다
 - 글꼴 Pretendard 는 `index.html` 에서 jsDelivr 고정 버전으로 불러온다
 
-## 인트로 (로컬 개발, FE11)
+## 인트로 (FE11)
 
 - 처음 방문하면 `/` 에서 `/intro` 로 간다. 끝까지 보거나 [건너뛰기] 를 누르면 다음부터 생략한다 (localStorage `adult-prince.introSeen`). 다시 보려면 헤더 "인트로 다시 보기" 또는 이 값을 지운다
-- 에셋(`intro.json` + `models/` 71개, 약 238MB)은 Git 에 없다. Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 `frontend/public/intro-assets/` 에 둔다 (git 제외). 없으면 "인트로를 불러오지 못해…" 토스트 후 시작 화면으로 간다
-- 에셋을 `public/` 에 둔 채 `npm run build` 하면 `dist/` 에도 복사된다 (로컬에서만, Vercel 에는 에셋이 없다)
+- 에셋(`intro.json` + `models/` 71개)은 백엔드 서버 `/intro-assets/`(BE15)에서만 받는다. 프론트 저장소에는 두지 않는다. 로컬에서 보려면 `.env.local` 에 `VITE_INTRO_ASSET_BASE=https://<터널 주소>/intro-assets/` 를 넣는다. 에셋 주소가 없으면 인트로 화면 · 헤더 "인트로 다시 보기" 를 쓰지 않고, 주소가 틀리면 "인트로를 불러오지 못해…" 토스트 후 시작 화면으로 간다
 - 코드: `src/pages/intro/` — `CareerIntro.tsx` · `introEngine.ts` 는 원본(v002 토큰 판)을 옮긴 것이라 연출을 바꾸지 않는다. `CareerIntro.css` 는 생성 파일, `introGuard.css` 는 앱 전역 스타일 차단. Three.js(`three@0.180.0`)는 인트로 화면에서만 따로 불러온다
 
 ## 개발 전용 경로 (배포 빌드에는 없음)
@@ -83,7 +82,6 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 | `src/styles/` | 전역 역할 변수 · 화면별 CSS |
 | `src/types/` | API · 도메인 타입 |
 | `scripts/` | 디자인 토큰 생성 (`npm run tokens`) |
-| `public/intro-assets/` | 로컬 개발용 인트로 에셋 (Git 제외) |
 
 ## 배포 (Vercel)
 
@@ -108,11 +106,11 @@ npm run build       # npm run tokens(디자인 토큰 생성) 포함
 
 **mock 배포의 한계**
 - 플레이 기록은 브라우저 메모리에만 있어 **새로고침하면 진행 중 플레이가 사라진다** (게스트는 기억하므로 새로 시작은 바로 된다) ("인생을 찾을 수 없어요" 안내 후 새로 시작)
-- 인트로 에셋(모델 238MB)은 배포 사이트에 없어, 첫 방문 때 `/intro` 로 갔다가 "인트로를 불러오지 못해 시작 화면으로 이동해요." 안내 후 시작 화면으로 간다 (BE15 배치 + `VITE_INTRO_ASSET_BASE` 설정 전까지)
+- 에셋 주소(`VITE_INTRO_ASSET_BASE` 또는 `VITE_API_BASE_URL`)를 넣지 않은 mock 배포에서는 인트로가 나오지 않고 바로 시작 화면이다
 - 3D 체험 빌드는 배포 사이트에 없어, [체험 시작] 을 누르면 "3D 체험을 불러오지 못했어요" 안내 후 텍스트로 이어간다 (실제 3D 는 백엔드 서버의 `/builds/` 로 제공 — docs/development/06-deployment.md 5-2)
 
 **배포 후 확인**
-- [ ] 처음 방문(사이트 데이터 삭제 후) → `/intro`. 에셋이 있으면 71/71 → [인트로 재생] → 24초 뒤 시작 화면, 없으면 안내 토스트 후 시작 화면
+- [ ] 처음 방문(사이트 데이터 삭제 후): 에셋 주소가 있으면 `/intro` → 71/71 → [인트로 재생] → 24초 뒤 시작 화면. 없으면 바로 시작 화면 (헤더에 "인트로 다시 보기" 없음)
 - [ ] 글꼴이 Pretendard, 화면이 어두운 청록 · 민트 디자인
 - [ ] 시작 화면 → 필수 4개 입력 → [인생 시작하기] → 게임 화면
 - [ ] 채팅 · 힌트 · 나이 변화(세 턴마다) · "오류" 입력 시 토스트와 입력 유지
