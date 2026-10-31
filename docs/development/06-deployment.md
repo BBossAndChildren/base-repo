@@ -28,6 +28,8 @@
 | 게임 백엔드 (게이트웨이 · Django · PostgreSQL · 3D 빌드 · 인트로 에셋 · game/ 문서) | **GPU 서버** | **Cloudflare Tunnel** → 게이트웨이(`backend/deploy/`) | Cloudflare 자동 |
 | AI API (Qwen, 추후 RAG) | **같은 GPU 서버** | **공개하지 않음** — Django 가 서버 내부 주소로 호출 (`AI_API_BASE_URL`). 별도 AI 터널 · 사설망 확인 불필요 | — |
 
+- **2026-11-01 배포 기록 (GPU 서버 `inno-gpu-009`, 저장소 `/home1/ncloud/base-repo`)**: Docker(`docker.io` · `docker-compose-v2` · `docker-buildx`)를 설치하고 `backend/` 에서 `docker compose -f compose.yaml -f compose.gateway.yaml up -d --build --wait` 로 게이트웨이(127.0.0.1:8080) · Django · PostgreSQL 실행. 에셋은 `backend/deploy/assets/` 에 배치. 터널은 **`cloudflared tunnel --protocol http2 --url http://127.0.0.1:8080`** (이 서버는 UDP · QUIC 이 막혀 `--protocol http2` 필수) 를 `nohup … > ~/cloudflared.log 2>&1 &` 로 실행, 주소는 `grep trycloudflare.com ~/cloudflared.log`. AI API 는 아직 연결 전
+- 주의: 에셋 폴더를 옮기기 **전에** compose 를 띄우면 Docker 가 `deploy/assets/intro-assets` · `builds` 를 root 소유 빈 폴더로 만든다. 그러면 게이트웨이가 404 를 낸다. 그때는 gateway 를 멈추고 `sudo rmdir` 로 빈 폴더를 지운 뒤 실제 파일을 옮기고 `up -d --force-recreate gateway`
 - 서버 접속 방법 · 내부 포트 · 터널 도메인은 이식 때 확정한다 ([11 F7](11-open-issues.md#f-확인이-필요한-질문)). 아래 "이전 배포안" 의 명령 중 서버 공통 절차(Docker · 게이트웨이 · `/srv/builds` · `/srv/intro-assets` · 터널)는 같은 방식으로 GPU 서버에서 쓴다
 
 **이전 배포안 (두 서버, 참고용)**
@@ -275,7 +277,7 @@ cloudflared --version
 
 # 실행 (tmux 안에서 계속 켜 둔다)
 tmux new -s tunnel
-cloudflared tunnel --url http://127.0.0.1:80
+cloudflared tunnel --url http://127.0.0.1:80        # UDP(QUIC)가 막힌 서버면 --protocol http2 를 붙인다
 # 출력의 https://<랜덤>.trycloudflare.com 이 백엔드 주소. Ctrl+B 누른 뒤 D
 ```
 - 실행 전 확인: 서버에서 `curl -I https://www.cloudflare.com` 이 `HTTP/2 200` 이면 바깥 연결이 가능하다 (2026-10-31 확인 완료)
