@@ -71,7 +71,7 @@
 | FE11 | 인트로 | ✅ | #69 · #72 · #78 · #94 — 배포 사이트(https://base-repo-zeta.vercel.app)에서 GPU 서버 에셋으로 첫 방문 인트로 → 재생 → 시작 화면 확인 (2026-11-01) |
 
 ## 3. 출시 · 발표 당일 체크리스트
-- [ ] GPU 서버: 게이트웨이 · Django(Gunicorn) · PostgreSQL · AI API · 터널이 실행 중
+- [ ] GPU 서버: 게이트웨이 · Django(Gunicorn) · PostgreSQL (`docker compose ps` 모두 healthy) · AI API(`pgrep -af uvicorn`) · 중계기(`docker ps` 의 `ai-relay`) · 터널(`pgrep -a cloudflared`)이 실행 중
 - [ ] 터널 주소가 Vercel 환경변수와 같다 (바뀌었으면 재배포)
 - [ ] AI 서버 응답 확인 (L6 대표 입력 1개)
 - [ ] 시연할 3D 체험을 미리 한 번 끝까지 해 봄

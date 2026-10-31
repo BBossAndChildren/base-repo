@@ -1,7 +1,7 @@
 # 05. UI / UX 설계
 
 > 스택: **React + Vite + TypeScript** (`frontend/`, Vercel 배포) · 스타일: 일반 CSS + CSS 변수 (`frontend/src/styles/`)
-> 배포 주소: https://base-repo-zeta.vercel.app/ (현재 mock 모드, 2026-11-01 변경 — [06 5-4](06-deployment.md#5-4-웹-프론트--vercel))
+> 배포 주소: https://base-repo-zeta.vercel.app/ — 2026-11-01 부터 **GPU 서버 백엔드(터널) 연결 · 실제 AI 대화** ([06 5-4](06-deployment.md#5-4-웹-프론트--vercel))
 > 디자인: [docs/design/](../design/README.md) — 인트로에서 뽑은 디자인 토큰을 앱 전체에 쓴다 (확정, [12 결정 26](12-decisions.md))
 > 백엔드 게임 API 가 구현되기 전까지 **mock(가짜 응답)** 으로 개발한다. mock 응답은 [03-api.md](03-api.md) 예시를 따르고, 백엔드가 준비되면 주소만 바꾼다
 > 기능 번호: [features.md 3절](features.md#3-웹-프론트-fe) · 흐름: [01-user-flow.md](01-user-flow.md)
