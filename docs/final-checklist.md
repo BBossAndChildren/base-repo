@@ -49,5 +49,8 @@
 | Three.js r180 (`three@0.180.0`, GLTFLoader 포함) | 오픈소스 | 웹 프론트 인트로(FE11) 3D 렌더링 · GLB 로딩 (2026-10-31 추가) | MIT — [threejs.org](https://threejs.org) · npm `three` | 반영 필요 |
 | Pretendard v1.3.9 | 오픈소스 (글꼴) | 웹 프론트 전 화면 글꼴, jsDelivr CDN 으로 불러옴 (2026-11-01 추가) | SIL OFL 1.1 — [github.com/orioncactus/pretendard](https://github.com/orioncactus/pretendard) | 반영 필요 |
 | Meshy (3D 생성 AI) | 모델 / 기타 | 인트로 · 3D 체험 공간 모델 원본 생성 (Unity 담당, `intro.json` 의 `sourceFbxPath: meshy/...`). 인트로 전달물은 추가 생성 호출 0 | 약관 · 상업적 이용 조건 확인 필요 — Unity 담당 원본 기록 | 반영 필요 |
+| Qwen3-4B-Instruct-2507 | 모델 | GPU 서버의 대화 생성(AI1) 모델, AI 담당 운영 (2026-11-01 실제 연결) | 라이선스 확인 필요 — 모델 카드(Hugging Face `Qwen/Qwen3-4B-Instruct-2507`) | 반영 필요 |
+| Cloudflare Tunnel (quick tunnel, `cloudflared`) | 기타 (서비스) | GPU 서버 게이트웨이를 외부 https 주소로 공개 | 계정 없는 quick tunnel 은 가동 보장 없음 · Cloudflare 이용 약관 적용 (실행 로그 안내) | 반영 필요 |
+| `alpine/socat` (Docker 이미지) | 오픈소스 | 백엔드 컨테이너 → 호스트 AI 중계기 (`ai-relay`) | socat GPL-2.0 — 확인 필요 | 반영 필요 |
 
 기존 프로젝트 재사용 금지와 외부 자원 허용의 경계가 불명확하면 운영진에게 확인한다. 제공 요약의 사전 보유 코드 기재 항목만으로 재사용 허용이라고 판단하지 않는다.

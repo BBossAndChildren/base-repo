@@ -61,7 +61,7 @@
 | Python | 3.12.13 | `backend/.python-version` |
 | uv | 0.10.9 (이미지 빌드 도구) | 컨테이너에서 `uv sync --locked --no-dev --no-install-project` + `backend/uv.lock` |
 | PostgreSQL | 15 계열 | 직접 설치 또는 `backend/compose.yaml` |
-| Docker · Docker Compose | Compose v2 | 백엔드 · DB 컨테이너 실행. 소스 직접 실행도 가능 |
+| Docker · Docker Compose | Compose v2 | 백엔드 · DB · 게이트웨이 컨테이너 실행. 없으면 (sudo 필요): `sudo apt-get install -y docker.io docker-compose-v2 docker-buildx && sudo systemctl enable --now docker && sudo usermod -aG docker $USER` → 다시 로그인 → `docker run --rm hello-world` (2026-11-01 GPU 서버에 설치) |
 | Node.js · npm | 20.11 이상 (Vercel 기본 버전 사용) | `frontend/package.json` `engines`. `vite.config.ts` 가 `import.meta.dirname` 을 써서 20.11 미만은 빌드 실패 |
 | Nginx | 서버 패키지 기본 | 호스트에 설치 (API · 빌드 · 인트로 에셋 · 정적 파일 전달) |
 | cloudflared | 최신 | GitHub 릴리스 실행 파일 |
@@ -77,6 +77,8 @@ python3 scripts/init_local_env.py
 docker compose -f compose.yaml -f compose.dev.yaml up --build -d --wait
 docker compose logs --tail=50 backend
 ```
+
+**서버(GPU 서버)에서는** 위 스크립트를 반드시 `backend/` 폴더에서 실행한 뒤(저장소 루트에는 `scripts/init_local_env.py` 가 없다) 운영용으로 두 값을 고친다: `sed -i 's/^DJANGO_DEBUG=.*/DJANGO_DEBUG=False/' .env` · `sed -i 's/^ALLOWED_HOSTS=.*/ALLOWED_HOSTS=.trycloudflare.com,localhost,127.0.0.1,[::1]/' .env`. `CORS_ALLOWED_ORIGINS` 에는 Vercel 두 주소가 기본으로 들어간다. AI 값은 [5-3](#5-3-ai-서버-gpu-서버). 운영 실행은 `compose.dev.yaml` 대신 `docker compose -f compose.yaml -f compose.gateway.yaml up -d --build --wait`
 
 `init_local_env.py`는 개발 전용 비밀값을 생성하고 `.env`에만 저장한다. 기존 `.env`는 덮어쓰지 않는다. `.env.example`을 직접 복사했다면 비어 있는 필수 값을 채워야 한다. AI 서버 주소와 내부 키는 실제 AI 연동 구현 전까지 비워 둬도 된다. 패키지 목록은 기존 `uv.lock`을 사용한다. Python 패키지가 바뀌면 이미지를 다시 빌드한다.
 
@@ -275,13 +277,15 @@ curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest
 chmod +x cloudflared && sudo mv cloudflared /usr/local/bin/
 cloudflared --version
 
-# 실행 (tmux 안에서 계속 켜 둔다)
-tmux new -s tunnel
-cloudflared tunnel --url http://127.0.0.1:80        # UDP(QUIC)가 막힌 서버면 --protocol http2 를 붙인다
-# 출력의 https://<랜덤>.trycloudflare.com 이 백엔드 주소. Ctrl+B 누른 뒤 D
+# 실행 — GPU 단일 서버 (현재 적용): 게이트웨이 8080 에 연결, 백그라운드 + 로그 파일
+nohup cloudflared tunnel --protocol http2 --url http://127.0.0.1:8080 > ~/cloudflared.log 2>&1 &
+grep -E 'trycloudflare.com|Registered tunnel connection' ~/cloudflared.log   # 주소 + 연결 확인 (10초쯤 뒤)
 ```
+- `--protocol http2`: GPU 서버는 UDP(QUIC 7844)가 막혀 있어 꼭 붙인다. 안 붙이면 주소는 나오지만 연결이 안 돼 바깥에서 Cloudflare `Error 1033`(HTTP 530)
+- `nohup … &` 로 SSH 를 끊어도 계속 돈다. 상태 `pgrep -a cloudflared`, 끄기 `pkill cloudflared` (다시 켜면 주소가 바뀐다)
+- 이전 배포안(두 서버)은 `tmux new -s tunnel` 안에서 `cloudflared tunnel --url http://127.0.0.1:80` 으로 실행했다
 - 실행 전 확인: 서버에서 `curl -I https://www.cloudflare.com` 이 `HTTP/2 200` 이면 바깥 연결이 가능하다 (2026-10-31 확인 완료)
-- 주소 확인: `tmux attach -t tunnel`
+- 주소 확인: `grep trycloudflare.com ~/cloudflared.log`
 
 **⑦ 프론트에 주소 알리기** — [5-4](#터널-주소가-바뀌었을-때) 의 2~3번
 
@@ -376,16 +380,17 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
-- 배포 주소: **https://base-repo-zeta.vercel.app/** (현재 `VITE_USE_MOCK=true`, mock 모드). 2026-11-01 이 주소로 바꿨다. 이전 주소 `https://base-repo-ck83.vercel.app` 은 다른 Vercel 프로젝트다 — 계속 쓸지는 [11 F11](11-open-issues.md#f-확인이-필요한-질문). 둘 다 쓰면 Django `CORS_ALLOWED_ORIGINS` 에 둘 다 넣고, Nginx 는 `Access-Control-Allow-Origin` 이 하나만 허용되므로 `map $http_origin` 으로 요청 출처를 골라 돌려준다
+- 배포 주소: **https://base-repo-zeta.vercel.app/** — **2026-11-01 부터 실제 백엔드 모드** (`VITE_USE_MOCK=false`, `VITE_API_BASE_URL` = GPU 서버 터널 주소, `VITE_INTRO_ASSET_BASE` 는 넣지 않음). 현재 터널 주소는 서버의 `grep trycloudflare.com ~/cloudflared.log`. 2026-11-01 이 주소로 바꿨다. 이전 주소 `https://base-repo-ck83.vercel.app` 은 다른 Vercel 프로젝트다 — 계속 쓸지는 [11 F11](11-open-issues.md#f-확인이-필요한-질문). 둘 다 쓰면 Django `CORS_ALLOWED_ORIGINS` 에 둘 다 넣고, Nginx 는 `Access-Control-Allow-Origin` 이 하나만 허용되므로 `map $http_origin` 으로 요청 출처를 골라 돌려준다
 - Vercel 주소가 바뀌면 Nginx `frame-ancestors` · `Access-Control-Allow-Origin`(`/builds/` · `/intro-assets/`) 과 Django `CORS_ALLOWED_ORIGINS` 를 함께 바꾼다
 - `docs/` 만 바뀐 커밋으로 재배포되지 않게 하는 설정(`ignoreCommand`)과 새로고침 404 를 막는 rewrites 는 `frontend/vercel.json` 에 들어 있다
 - 백엔드 연결 때: 환경변수 `VITE_USE_MOCK=false`, `VITE_API_BASE_URL` 에 현재 터널 주소(끝에 `/` 없이)를 넣고 재배포한다
+- **`VITE_*` 변수는 Type 을 `Config` 로 만든다.** `VITE_` 값은 빌드 결과(브라우저 코드)에 그대로 들어가는 공개 값이라, Vercel 은 Secret 타입으로 두면 저장을 막는다 ("Remove the public framework prefix…"). 이미 Secret 으로 저장된 변수는 Config 로 바꿀 수 없으니 **지우고 Config 로 다시 만든다**. 비밀값(`AI_SERVER_KEY` 등)은 프론트 환경변수에 넣지 않는다
 - Vercel 주소가 정해지면 백엔드 `CORS_ALLOWED_ORIGINS` 와 Nginx `frame-ancestors` 에 등록한다
 
 #### 터널 주소가 바뀌었을 때
 > `cloudflared` 재실행 · 서버 재시작 · 터널 끊김 때 주소가 바뀐다.
 
-1. 서버에서 `tmux attach -t tunnel` 로 새 주소를 확인한다 (꺼져 있으면 5-1 ⑥ 다시 실행)
+1. 서버에서 `grep trycloudflare.com ~/cloudflared.log` 로 새 주소를 확인한다 (꺼져 있으면 5-1 ⑥ 다시 실행, 이전 배포안은 `tmux attach -t tunnel`)
 2. Vercel 환경변수 `VITE_API_BASE_URL` 을 새 주소로 바꾼다
 3. Vercel 에서 **다시 배포(Redeploy)** 한다 (환경변수는 빌드 때 들어가므로 재배포해야 반영된다)
 4. 백엔드 · Nginx 설정은 바꾸지 않는다 (`ALLOWED_HOSTS` 가 `.trycloudflare.com` 전체를 허용하고, 빌드 주소는 요청 주소 기준으로 만든다)
@@ -399,21 +404,30 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 - [ ] Vercel 페이지에서 빌드 iframe 이 열리고, 다른 주소에서는 열리지 않는다 (`frame-ancestors`)
 - [ ] `.wasm` 응답의 Content-Type 이 `application/wasm` 이다
 - [ ] Vercel 주소 첫 방문에서 인트로 모델이 71 / 71 까지 받아지고 재생된다 (`/intro-assets/` CORS · Content-Type `model/gltf-binary`)
-- [ ] Gunicorn(8000) · Nginx(80) 가 외부가 아니라 `127.0.0.1` 에만 열려 있다 (`ss -tlnp`)
+- [ ] 게이트웨이(8080) · Django(8000) · AI(8010) 는 `127.0.0.1`, 중계기(18010) 는 `172.17.0.1` 에만 열려 있다 — 외부 인터페이스에 열린 포트가 없다 (`ss -tlnp`)
+- [ ] 백엔드 컨테이너 → AI `/openapi.json` 이 `200` (5-3)
+- [ ] Vercel 사이트에서 시작 → 대화 → **AI 대사 표시**, 다음 턴에 이전 대화를 기억한다
 - [ ] AI 서버는 백엔드에서만 호출된다. 터널을 쓴 경우 키 없는 요청이 401 로 거부된다
 
 ## 7. 트러블슈팅
 | 증상 | 원인 | 해결 |
 |------|------|------|
 | 프론트에서 갑자기 모든 API 가 실패 | 터널 주소가 바뀜 (cloudflared 재실행 · 서버 재시작) | [터널 주소가 바뀌었을 때](#터널-주소가-바뀌었을-때) |
-| SSH 를 끊었더니 터널이 멈춤 | tmux 밖에서 실행함 | cloudflared 를 tmux 안에서 실행 (백엔드는 Docker 가 계속 실행) |
+| SSH 를 끊었더니 터널이 멈춤 | 터미널에서 그냥 실행함 | `nohup … &` 로 실행 (5-1 ⑥). 백엔드는 Docker 가 계속 실행 |
+| 터널 주소로 접속하면 Cloudflare `Error 1033` (HTTP 530) | 주소만 발급되고 서버 cloudflared 가 연결 못 함. 로그에 `Failed to dial a quic connection` 반복 = UDP(QUIC) 막힘 | `--protocol http2` 로 다시 실행 (주소가 바뀜 → Vercel 갱신) |
+| 터널 주소 `/` 로 들어가면 404 | 정상. 게이트웨이는 `/api/` · `/builds/` · `/intro-assets/` 만 처리 | `/api/health` 로 확인 |
+| `/intro-assets/…` · `/builds/…` 가 404 | 에셋을 옮기기 전에 compose 를 띄워 Docker 가 `deploy/assets/*` 를 root 소유 빈 폴더로 만듦 | gateway stop → `sudo rmdir` 빈 폴더 → 실제 파일 이동 → `up -d --force-recreate gateway` (0절 배포 기록) |
+| 대화가 `AI_UNAVAILABLE`, 컨테이너에서 AI 연결 거부 | `AI_API_BASE_URL` 이 `127.0.0.1` (컨테이너 자신) 이거나 AI 가 `127.0.0.1` 에만 열려 있음 | 중계기(`ai-relay`) 또는 AI 를 `172.17.0.1` 로 실행, 주소는 `host.docker.internal` (5-3) |
+| 대화가 `AI_UNAVAILABLE`, 연결은 됨 | 백엔드와 AI 의 `AI_SERVER_KEY` 가 다름 (AI 로그 401) · AI 모델 오류 · 동시 요청 503 | 키를 맞추고 백엔드 재기동, AI 로그 확인 |
+| AI 실패인데 화면은 "연결이 끊겼어요" | Cloudflare 가 서버의 502 · 504 를 자체 오류 페이지로 바꿔 CORS 헤더가 사라짐 | [11 E3](11-open-issues.md#e-코드와-문서-차이) 결정 대기 |
+| Vercel 에서 `VITE_*` 변수 저장이 안 됨 | Secret 타입으로 만들어짐 | 지우고 Config 로 다시 만들기 (5-4) |
 | 채팅이 30초 부근에서 `TIMEOUT` 대신 502 로 끊김 | Gunicorn 기본 worker 타임아웃(30초)이 채팅 대기 시간(30초)과 같음 | Gunicorn `--timeout 60`, HTTPX 타임아웃은 그보다 짧게 |
 | 여러 명이 동시에 채팅하면 응답이 밀림 | WSGI worker 하나가 AI 응답을 기다리는 동안 다른 요청을 못 받음 | worker 수를 늘리거나 `--threads` 사용 |
 | 3D 체험이 "불러오지 못했어요" 로 바로 닫힘 | 빌드의 `client.js` · `supported-manifest.json` 을 CORS 때문에 못 불러옴 | `/builds/` 에 `Access-Control-Allow-Origin` (5-1 ⑤) |
 | 3D 빌드가 브라우저에서 안 열림 | `.wasm` Content-Type 누락, 비압축 빌드에 `Content-Encoding` 을 붙임, `frame-ancestors` 에 Vercel 주소 누락 | 5-1 ⑤ Nginx 설정 확인 |
 | 프론트에서 API 호출 시 CORS 오류 | 허용 출처에 Vercel 주소 없음, `x-player-id` 헤더 미허용, Nginx 와 Django 가 헤더를 중복으로 붙임 | [CORS](#cors--django-가-담당) 확인 |
-| 인트로가 바로 "불러오지 못해" 토스트 후 시작 화면으로 감 | `/intro-assets/` 미배치 · CORS 누락 · 주소 오타 |
-| 인트로가 아예 나오지 않음 (헤더에 "인트로 다시 보기" 도 없음) | `VITE_INTRO_ASSET_BASE` · `VITE_API_BASE_URL` 둘 다 비어 있음 (mock 배포) | 5-2-1 · 5-1 ⑤ 확인, 필요하면 `VITE_INTRO_ASSET_BASE` 지정 |
+| 인트로가 바로 "불러오지 못해" 토스트 후 시작 화면으로 감 | `/intro-assets/` 미배치 · CORS 누락 · 주소 오타 | 5-2-1 배치 확인 · 게이트웨이 허용 출처 · `VITE_API_BASE_URL` 확인 |
+| 인트로가 아예 나오지 않음 (헤더에 "인트로 다시 보기" 도 없음) | `VITE_INTRO_ASSET_BASE` · `VITE_API_BASE_URL` 둘 다 비어 있음 | Vercel 에 `VITE_API_BASE_URL` 설정 후 Redeploy |
 | Django 가 400 Bad Request | `ALLOWED_HOSTS` 에 터널 주소 없음 | `.trycloudflare.com` 추가 |
 
 ## 8. 민감정보 관리 체크
