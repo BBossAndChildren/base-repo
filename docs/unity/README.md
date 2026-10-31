@@ -1,21 +1,58 @@
-# Unity–React 프론트 연동 전달 패키지 v001
+# Unity 3D 체험 연동 자료 안내
 
-이 ZIP은 **연동 명세·TypeScript 타입·가상 JSON 예시**입니다. WebGL 실행본, React 라이브러리, 작동하는 Unity 통신 브리지는 포함하지 않습니다. 기존 office-assistant-v005는 플레이 가능한 별도 빌드지만, 이 공통 시작/종료 명령과 결과 응답을 아직 구현하지 않았습니다. 이 패키지로 프론트의 목업과 수신 화면을 준비할 수 있습니다.
+> Unity 담당이 전달한 자료다. **`tx/` · `integration/` 의 파일은 직접 고치지 않는다.** 바뀌면 Unity 담당이 새 버전으로 다시 전달한다.
+> 우리 쪽 설계(백엔드 저장 · API · 프롬프트)는 [development/10-prompt-assembly.md 4절](../development/10-prompt-assembly.md#4-3d-체험-연동) · [development/03-api.md](../development/03-api.md) 에 있다.
+> 상태 (2026-10-31): 실시간 전달 규격 확정, 중간 테스트용 체험 10개 동작 확인. 실서비스 백엔드 연결 · 종료 미수신 정산(v003)은 미구현.
 
-## 먼저 읽을 파일
+## 폴더 구조
 
-1. `CALLS.md` — React → Unity 시작/종료 호출
-2. `RESPONSES.md` — Unity → React 준비 완료/체험 종료/제어 오류 응답
-3. `INTEGRATION.md` — 연결 순서·담당 범위·중복 처리·검증 항목
-4. `types/career-experience.types.ts` — TypeScript 타입 선언(런타임 검증기/SDK 아님)
-5. `examples/` — 복사 가능한 원시 통신 JSON 8개
-6. `PROTOCOL-SNAPSHOT.md` — 기준 AGENTS.md의 규격 절을 생성 시점 그대로 추출한 고정 스냅샷
-7. `MANIFEST.json` — 파일 해시·상태·기준 문서 출처
+```
+docs/unity/
+├─ README.md        ← 이 문서 (우리가 관리)
+├─ tx/              ← 송수신 명세 v003 (Unity 담당)
+├─ integration/     ← 프론트 연결 코드 · 실제 실행 결과 예시 (Unity 담당)
+│  ├─ INTEGRATION.md
+│  ├─ frontend/
+│  └─ examples/actual/
+└─ webgl/           ← 테스트용 WebGL 빌드. Git 에 올리지 않음 (.gitignore). 최종은 백엔드가 전달
+```
 
-## 기본 흐름
+## 누가 무엇을 쓰나
 
-프론트가 방(roomId)·시나리오를 지정해 시작 → Unity가 방 로딩 후 experience.started → 내부 업무 과정 수집 → 프론트가 체험 종료 호출 → Unity가 experience.ended로 과정·결과·컨텍스트 반환 → 프론트가 응답을 보존하고 Unity 화면 제거.
+| 파일 | 내용 | 프론트 | 백엔드 |
+|------|------|:---:|:---:|
+| `integration/INTEGRATION.md` | 연결 방법 · 저장 ACK · 재전송 책임 · 결과 읽는 법 · 종료 미수신 처리 | ✅ | ✅ |
+| `integration/frontend/Experience.jsx` · `client.js` · `client.d.ts` | React 에 붙이는 Unity 연결 컴포넌트 · 클라이언트 · 타입 (iframe 로더, 이벤트 수신, 전송 큐) | ✅ | |
+| `integration/frontend/example.html` · `react-example.*` · `host.js` · `server.mjs` · `package.json` | 로컬 테스트용 예제와 테스트 수신기 (실서비스에 쓰지 않음) | 참고 | |
+| `tx/start-request.example.json` · `end-request.example.json` | 프론트 → Unity 체험 시작 · 종료 호출 형식 | ✅ | |
+| `tx/realtime-contract.json` · `realtime-events.example.json` | Unity 가 실시간으로 보내는 이벤트 종류 · 필수 필드 · 중복 제거 · 순서 규칙 | ✅ | ✅ |
+| `tx/career-integration-registry-v001.json` | 방 71개 · 시나리오 552개 · 실행 연결 21개의 고정 ID 목록 (참고용, 실행 허용 목록 아님) | | ✅ |
+| `tx/interruption-contract.json` · `reconcile-request.example.json` · `resolution-response.schema.json` · `resolution-responses.example.json` | 종료 응답이 오지 않은 체험을 백엔드가 정산하는 규칙 · 요청 · 응답 형식 (v003) | ✅ (요청 보내기 · 응답 표시) | ✅ (정산 구현) |
+| `tx/acceptance-cases.json` | 정산 구현 때 확인할 16개 사례 | | ✅ |
+| `tx/PROTOCOL-SNAPSHOT.md` | 위 규칙 전체 원문 (막힐 때 참고) | 참고 | 참고 |
+| `tx/MANIFEST.json` | 명세 파일 목록 · 해시 (버전 확인용) | | |
+| `integration/examples/actual/*.json` | 실제로 체험을 돌려 받은 이벤트 원본 (완료 · 중단 · 초기화, 직업 10개) | 테스트 | DB 설계 · 테스트 |
+| `webgl/README.md` · `manifest.json` · `site/` | 테스트용 빌드와 지원 체험 10개 목록 | 로컬 테스트 | 빌드 배포 참고 |
 
-모든 예시는 가상이며 실측 결과·현재 브리지의 지원 증거가 아닙니다. 예시에서 생략된 원본 이벤트 조회 기능도 현재 구현됐다고 간주하지 않습니다. 규칙의 단일 기준은 원 저장소의 AGENTS.md입니다. 이 패키지는 버전 고정 전달 스냅샷이며 기준 변경 시 새 ZIP 버전으로 재발행합니다.
+## 지금 실행되는 체험 (buildId `career-pilot-v007`, 버전 모두 `v002`)
 
-04~07 응답은 서로 대체되는 종료 사례입니다. 같은 실제 experience에 차례로 보내지 않습니다. 목업 사례를 새로 시작할 때 ID를 실제 새 실행에 맞춰 바꾸고, 종료 요청의 ID와 응답 ID를 일치시키세요.
+| 직업 | roomId | scenarioId |
+|------|--------|-----------|
+| 행사기획자 | PAN-002 | career-net-951-experience |
+| 가구조립 및 검사원 | PAN-019 | career-net-1152-experience |
+| 사서 | PAN-035 | career-net-268-experience |
+| 광고디자이너 | PAN-027 | career-net-285-experience |
+| 물류관리사 | PAN-053 | career-net-215-experience |
+| 원예기술자 | PAN-041 | career-net-963-experience |
+| 제과사 및 제빵사 | PAN-025 | career-net-172-experience |
+| 사진작가 | PAN-030 | career-net-310-experience |
+| 방송연출가 | PAN-031 | career-net-301-experience |
+| 방송장비(H/W)설치 및 수리원 | PAN-020 | career-net-1147-experience |
+
+- `roomId` 는 `PAN-NNN` 형식이며 대소문자까지 정확해야 한다. `office` 같은 별칭은 받지 않는다
+- Unity 는 `buildId` + `roomId` + `scenarioId` + `scenarioVersion` 네 값이 모두 맞아야 체험을 시작한다
+- 레지스트리의 나머지 시나리오는 아직 실행 구현 전이다
+
+## 정리 기록
+
+- 2026-10-31: `integration/` 에서 `tx/` 와 같은 사본(`contracts/v003/`), 검수 증빙(`evidence/`), 빌드된 React 예제 번들(`react-example/`), 원래 폴더 구조용 실행 파일(`START.cmd`)을 제거했다. `integration/INTEGRATION.md` 본문에는 이 폴더들이 아직 언급돼 있다 (Unity 담당 원본이라 고치지 않음)

@@ -1,0 +1,65 @@
+{
+  "schema_version": 3,
+  "fictional": true,
+  "events": [
+    {
+      "schemaVersion": 1,
+      "protocol": "career-experience",
+      "eventId": "example-event-001",
+      "sequence": 1,
+      "occurredAt": "2026-10-31T15:00:00+09:00",
+      "sessionId": "example-session-001",
+      "experienceId": "example-experience-001",
+      "roomId": "PAN-001",
+      "requestId": null,
+      "buildId": "example-build-v001",
+      "sceneId": "PAN-001",
+      "scenarioId": "career-net-253-office-documents",
+      "scenarioVersion": "v002",
+      "scenarioRunId": "example-run-001",
+      "objectId": "copier",
+      "instanceId": "AST-009-0",
+      "assetId": "AST-009",
+      "assetVersion": "v001",
+      "stepId": "print",
+      "workItemId": "DOC-001",
+      "attemptId": null,
+      "requestRevision": 1,
+      "documentRevision": 2,
+      "type": "object.selected",
+      "action": "select_object",
+      "process": {
+        "scope": "scenario",
+        "measurementStatus": "complete",
+        "measurementNote": null,
+        "attemptCount": 0,
+        "navigationBackCount": 0,
+        "backtrackCount": 0,
+        "retryCount": 0,
+        "mistakeCount": 0,
+        "repeatedMistakeCount": 0,
+        "helpRequestCount": 0,
+        "guidanceUsed": false,
+        "elapsedActiveMs": 1000
+      },
+      "result": {
+        "outcome": "pending",
+        "success": null,
+        "completionCode": null,
+        "data": {}
+      },
+      "context": {
+        "assessmentStatus": "pending",
+        "assessmentCode": null,
+        "ruleVersion": "v001",
+        "reasonCodes": [],
+        "evidenceEventIds": [],
+        "interpretation": null,
+        "limitations": [
+          "가상 예시; 실행 검증 증거 아님"
+        ]
+      },
+      "data": {}
+    }
+  ]
+}

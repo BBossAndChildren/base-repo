@@ -35,7 +35,8 @@
 ### 3D 체험 (Unity WebGL)
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
-| | | | |
+| 엔진 | Unity WebGL | 6000.3.26f1 | Unity 담당 (테스트 빌드 `career-pilot-v007`) |
+| 연결 | iframe + postMessage (`integration/frontend/`) | 명세 v003 | Unity 담당 연결 코드 ([docs/unity/README.md](../unity/README.md)) |
 
 ### 외부 서비스
 | 서비스 | 용도 | 비고 |

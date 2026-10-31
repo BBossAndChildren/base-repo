@@ -32,7 +32,23 @@
 - 관련 기능 #:
 
 ## 4. API 호출 공통 모듈
-<!-- 요청 인스턴스, 토큰 첨부, 응답 정규화, 재시도/재발급 규칙 -->
+
+| 항목 | 규칙 |
+|------|------|
+| 주소 | 백엔드 주소는 환경변수(`VITE_API_BASE_URL` 등)로만 둔다. 코드에 직접 쓰지 않는다. 반드시 `https://` |
+| 플레이어 ID | 첫 접속 때 받은 `playerId` 를 브라우저(localStorage)에 보관하고 모든 요청 헤더 `X-Player-Id` 로 보낸다 ([03 인증](03-api.md#인증-방식)) |
+| CORS | **프론트는 따로 설정하지 않는다.** 허용은 백엔드(Django)가 한다 ([06 5-1 CORS](06-deployment.md#cors--django-가-담당)). 쿠키를 쓰지 않으므로 `credentials` 옵션도 쓰지 않는다. 프론트 배포 주소가 바뀌면 백엔드 담당에게 알린다 |
+| 응답 처리 | `{code, data}` / `{code, error}` 를 한곳에서 풀고, `error.message` 를 화면 문구로 쓴다 ([03 결과 코드](03-api.md#결과-코드-목록)) |
+| 채팅 대기 | 30초가 넘으면 `TIMEOUT` 안내 |
+
+### 4-1. 3D 체험 연결 (Unity)
+- Unity 담당의 연결 코드 `docs/unity/integration/frontend/` 의 `Experience.jsx` · `client.js` · `client.d.ts` 를 가져다 쓴다 ([docs/unity/README.md](../unity/README.md))
+- 백엔드가 준 `buildUrl` 을 iframe 으로 열고, URL 의 `parentOrigin` 에 프론트 주소(origin)를 정확히 넣는다
+- `sessionId` 는 플레이 동안 유지하고, 체험을 시작할 때마다 새 `experienceId` · `requestId` 를 만든다
+- 전송 큐(`createOutbox`)의 `send` 함수만 백엔드 API([03 1-4](03-api.md#1-4-3d-체험-이벤트-전달))로 바꾼다. 백엔드가 `stored: true` 를 줄 때만 저장 성공으로 본다
+- 체험 중 30초마다 생존 신호([03 1-9](03-api.md#1-9-체험-생존-신호)), 새 체험 시작 전 이전 체험 정산([03 1-8](03-api.md#1-8-종료-응답-없는-체험-정산))
+- 종료 응답을 받고 저장 확인까지 받은 뒤 iframe 을 제거한다
+- Vercel 쪽에 CSP 를 설정한다면 `frame-src` 에 백엔드 도메인을 허용한다
 
 ## 5. 결과 코드별 사용자 메시지
 | code | 화면에 보여 줄 문구 | 동작 |

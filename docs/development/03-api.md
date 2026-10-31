@@ -54,7 +54,8 @@
 | 대상 | 규칙 |
 |------|------|
 | 채팅 ([1-3](#1-3-채팅-한-턴)) | 30초가 넘으면 `TIMEOUT` 안내 |
-| 3D 체험 이벤트 ([1-4](#1-4-3d-체험-이벤트-전달)) | 실패 시 프론트가 최대 3회 다시 보냄. 같은 `eventId` 로 다시 보내므로 백엔드는 중복 제거 |
+| 3D 체험 이벤트 ([1-4](#1-4-3d-체험-이벤트-전달)) | 저장 확인을 받을 때까지 2초마다 같은 이벤트를 다시 보냄 (전송 큐). 백엔드는 `(sessionId, eventId)` 로 중복 제거 |
+| 3D 체험 종료 대기 | 5초. 넘어도 중단 확정 아님, 같은 `requestId` 로 재전송 |
 | 백엔드 → AI 서버 | 형식이 깨진 응답이면 1회 다시 요청 |
 
 ---
@@ -69,6 +70,8 @@
 | GET | `/api/v1/plays/{playId}` | 플레이 재개 (현재 상태 · 최근 대화) | |
 | POST | `/api/v1/plays/{playId}/turns` | 채팅 한 턴 | |
 | POST | `/api/v1/plays/{playId}/experiences/{experienceId}/events` | 3D 체험 이벤트 전달 | |
+| POST | `/api/v1/plays/{playId}/experiences/reconcile` | 종료 응답 없는 체험 정산 | |
+| POST | `/api/v1/plays/{playId}/experiences/{experienceId}/heartbeat` | 체험 생존 신호 | |
 | GET | `/api/v1/plays/{playId}/result` | 결말 · 추천 직업 | |
 | GET | `/api/v1/players/me/plays` | 지난 플레이 기록 목록 | |
 
@@ -120,7 +123,9 @@
 | `roleModel` | | 롤모델 |
 | `mbti` | | MBTI |
 
-- 받지 않는 정보: 건강 · 질병 (개인정보보호법상 민감정보), 가족관계 · 반려동물 (주변 인물은 게임이 랜덤으로 구성 — [00-idea.md 7장](../00-idea.md#7-주변-인물과-랜덤성))
+- **선택 항목은 프론트가 7개 중 랜덤 2개만 화면에 보여 준다.** 사용자가 건너뛴 항목과 보여 주지 않은 항목은 보내지 않는다 (필드 생략)
+- 비어 있는 선택 항목은 게임 중 NPC 가 대화로 하나씩 묻고, 답하면 [1-3](#1-3-채팅-한-턴) 의 `stateChanges` 로 `profile.<필드>` 가 채워진다
+- 받지 않는 정보: 건강 · 질병 (개인정보보호법상 민감정보. AI 가 묻거나 유도하지도 않는다), 가족관계 · 반려동물 (주변 인물은 게임이 랜덤으로 구성 — [00-idea.md 7장](../00-idea.md#7-주변-인물과-랜덤성))
 
 응답 (성공)
 ```json
@@ -164,15 +169,15 @@
   }
 }
 ```
-- `stateChanges` 는 백엔드가 확인을 마치고 실제 반영한 변경만 담는다
+- `stateChanges` 는 백엔드가 확인을 마치고 실제 반영한 변경만 담는다. 대화 중 사용자가 선택 항목에 답하면 `{ "field": "profile.mbti", "from": null, "to": "INTP" }` 처럼 담긴다
 - `experience` 는 3D 분기일 때만 채운다. 맞는 빌드가 없으면 `null` 과 함께 `notice` 를 준다
 ```json
 "experience": {
-  "buildId": "office-v001",
-  "buildUrl": "/builds/office-v001/",
-  "roomId": "office",
-  "scenarioId": "career-net-253-office-documents",
-  "scenarioVersion": "v001"
+  "buildId": "career-pilot-v007",
+  "buildUrl": "https://<백엔드 도메인>/builds/career-pilot-v007/",
+  "roomId": "PAN-002",
+  "scenarioId": "career-net-951-experience",
+  "scenarioVersion": "v002"
 }
 ```
 ```json
@@ -196,20 +201,21 @@
 요청
 ```json
 {
-  "buildId": "office-v001",
-  "roomId": "office",
-  "scenarioId": "career-net-253-office-documents",
-  "scenarioVersion": "v001",
+  "buildId": "career-pilot-v007",
+  "roomId": "PAN-002",
+  "scenarioId": "career-net-951-experience",
+  "scenarioVersion": "v002",
   "unityEvent": { }
 }
 ```
-- `unityEvent` 는 Unity 가 준 응답 객체를 **고치지 않고 그대로** 담는다 ([docs/unity/RESPONSES.md](../unity/RESPONSES.md))
+- `unityEvent` 는 Unity 가 준 응답 객체를 **고치지 않고 그대로** 담는다 (종류 · 필드: `docs/unity/tx/realtime-contract.json`)
 
 응답 (성공)
 ```json
-{ "code": 200, "data": { "accepted": true, "duplicate": false } }
+{ "code": 200, "data": { "stored": true, "sessionId": "…", "eventId": "…", "duplicate": false } }
 ```
-- 이미 받은 `eventId` 면 `duplicate: true` 로 성공 처리한다 (다시 보내기 대비)
+- **DB 저장을 마친 뒤에만** `stored: true` 를 준다. 프론트 전송 큐는 이 값을 받을 때까지 같은 이벤트를 2초마다 다시 보낸다 ([10 4-3](10-prompt-assembly.md#4-3-프론트--백엔드-전달))
+- 이미 받은 `(sessionId, eventId)` 와 내용이 같으면 `duplicate: true` 로 성공 처리한다
 - `unityEvent.type` 이 `experience.ended` 면 백엔드는 이때 플레이어 기록에 반영하고, 다음 채팅 턴부터 결과를 프롬프트에 넣는다
 
 실패
@@ -217,7 +223,7 @@
 |------|------|
 | 400 | `unityEvent` 가 Unity 명세 형식에 맞지 않음 → 프론트는 체험 종료 모달 ([10 4-4](10-prompt-assembly.md#4-4-오류-안내-문구)) |
 | 404 | 없는 `playId` |
-| 409 | 이미 종료 처리된 `experienceId` |
+| 409 | `EVENT_CONFLICT`: 같은 `(sessionId, eventId)` 인데 내용이 다름 |
 
 ### 1-5. 결말 · 추천 직업
 `GET /api/v1/plays/{playId}/result` · 인증: `X-Player-Id`
@@ -249,7 +255,42 @@
 ```json
 { "code": 200, "data": { "playId": "uuid", "state": { }, "messages": [ ], "ended": false } }
 ```
-- 종료 응답을 받지 못한 3D 체험이 있으면, 백엔드는 이 시점에 그때까지 받은 이벤트로 "중간에 그만둠" 처리한다
+- 재접속만으로는 진행 중이던 3D 체험을 정산하지 않는다 (정산은 [1-8](#1-8-종료-응답-없는-체험-정산))
+
+### 1-8. 종료 응답 없는 체험 정산
+`POST /api/v1/plays/{playId}/experiences/reconcile` · 인증: `X-Player-Id`
+
+> 새 3D 체험을 시작하기 전, 종료 응답을 받지 못한 이전 체험이 있으면 프론트가 보낸다. 규칙: [10 4-5](10-prompt-assembly.md#4-5-종료-응답이-오지-않은-체험-정산-v003)
+
+요청: `docs/unity/tx/reconcile-request.example.json` 의 `request` 객체 그대로
+```json
+{
+  "schemaVersion": 1,
+  "protocol": "career-experience-resolution",
+  "action": "reconcile_experience",
+  "reconcileRequestId": "…",
+  "sessionId": "…",
+  "experienceId": "이전 체험",
+  "roomId": "PAN-002",
+  "trigger": "NEW_PLAY_START",
+  "newExperienceId": "새 체험"
+}
+```
+
+응답 (성공): `data` 에 `docs/unity/tx/resolution-response.schema.json` 형식의 `experience.reconciled` 객체 (예시: `resolution-responses.example.json`)
+- 소유자는 요청 값이 아니라 `X-Player-Id` 로 서버가 판단한다
+- 같은 `reconcileRequestId` · 같은 내용이면 같은 응답, 내용이 다르면 409
+
+### 1-9. 체험 생존 신호
+`POST /api/v1/plays/{playId}/experiences/{experienceId}/heartbeat` · 인증: `X-Player-Id`
+
+> 체험 중 30초마다 보낸다. 백엔드는 마지막 신호 뒤 120초가 지나면 lease 만료로 본다 (정산 판단에만 쓰며, 시간 초과만으로 체험을 끝내지 않는다).
+
+요청: 없음
+응답 (성공)
+```json
+{ "code": 200, "data": { "leaseExpiresAt": "2026-10-31T10:32:00+09:00" } }
+```
 
 ---
 
@@ -321,10 +362,10 @@
   "code": 200,
   "data": {
     "found": true,
-    "buildId": "office-v001",
-    "roomId": "office",
-    "scenarioId": "career-net-253-office-documents",
-    "scenarioVersion": "v001",
+    "buildId": "career-pilot-v007",
+    "roomId": "PAN-002",
+    "scenarioId": "career-net-951-experience",
+    "scenarioVersion": "v002",
     "reason": "추천 이유"
   }
 }
@@ -349,6 +390,7 @@
 | 항목 | 값 | 근거 |
 |------|----|------|
 | 채팅 응답 대기 | 30초 | 이후 `TIMEOUT` 안내 |
-| 3D 이벤트 다시 보내기 | 최대 3회 | 같은 `eventId` 로 재전송 |
+| 3D 이벤트 다시 보내기 | 저장 확인까지 2초 간격 | Unity 연결 코드의 전송 큐 규칙 |
+| 체험 생존 신호 · lease | 30초 · 120초 | Unity 명세 v003 기본값 |
 | AI 형식 오류 재요청 | 1회 | |
 | 프롬프트에 넣는 대화 | 최근 20턴 | |
