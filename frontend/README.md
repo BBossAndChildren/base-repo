@@ -26,6 +26,7 @@ npm run build
 |----|------|
 | `VITE_API_BASE_URL` | 백엔드 주소 (현재 Cloudflare Tunnel 주소, 끝에 `/` 없이). `VITE_USE_MOCK=false` 일 때 필수 |
 | `VITE_USE_MOCK` | `true`(기본): mock 응답 사용 · `false`: 실제 백엔드 호출 |
+| `VITE_INTRO_ASSET_BASE` | 인트로 에셋 폴더 (끝에 `/`). 비우면 `VITE_API_BASE_URL` + `/intro-assets/`, 그것도 비면 `/intro-assets/` (`public/intro-assets/`) |
 
 ## API 와 mock
 
@@ -47,6 +48,13 @@ npm run build
 - 다른 위치의 빌드를 쓰려면 `UNITY_BUILD_DIR=<site 폴더 경로> npm run dev`
 - Unity 연결 코드는 빌드의 `frontend/client.js` 를 실행할 때 불러온다 (저장소에 복사하지 않음)
 
+## 인트로 (로컬 개발, FE11)
+
+- 처음 방문하면 `/` 에서 `/intro` 로 간다. 끝까지 보거나 [건너뛰기] 를 누르면 다음부터 생략한다 (localStorage `adult-prince.introSeen`). 다시 보려면 헤더 "인트로 다시 보기" 또는 이 값을 지운다
+- 에셋(`intro.json` + `models/` 71개, 약 238MB)은 Git 에 없다. Unity 담당 전달물 `career-intro-react-v001` 의 `public/intro-assets/` 를 `frontend/public/intro-assets/` 에 둔다 (git 제외). 없으면 "인트로를 불러오지 못해…" 토스트 후 시작 화면으로 간다
+- 에셋을 `public/` 에 둔 채 `npm run build` 하면 `dist/` 에도 복사된다 (로컬에서만, Vercel 에는 에셋이 없다)
+- 코드: `src/pages/intro/` — `CareerIntro.tsx` · `introEngine.ts` · `CareerIntro.css` 는 원본을 그대로 옮긴 것이라 연출을 바꾸지 않는다. Three.js(`three@0.180.0`)는 인트로 화면에서만 따로 불러온다
+
 ## 개발 전용 경로 (배포 빌드에는 없음)
 
 | 경로 | 내용 |
@@ -62,7 +70,7 @@ npm run build
 | `src/api/` | 백엔드 API 호출 (공통 모듈 · 엔드포인트별 함수) |
 | `src/mocks/` | 백엔드 구현 전 mock 응답 (`docs/development/03-api.md` 예시 기준) |
 | `src/components/` | 공통 컴포넌트 (버튼 · 토스트 · 모달 등) |
-| `src/pages/` | 화면 (시작 · 게임 · 결말 · 지난 기록) |
+| `src/pages/` | 화면 (인트로 · 시작 · 게임 · 결말 · 지난 기록) |
 | `src/lib/` | 환경변수 등 공통 유틸 |
 | `src/types/` | API · 도메인 타입 |
 
