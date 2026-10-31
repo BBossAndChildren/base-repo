@@ -1,20 +1,23 @@
 # 05. UI / UX 설계
 
-> 스택: **React + Vite + TypeScript** (`frontend/`, Vercel 배포) <!-- TODO: 스타일 방식 -->
+> 스택: **React + Vite + TypeScript** (`frontend/`, Vercel 배포) · 스타일: 일반 CSS + CSS 변수 (`frontend/src/styles/`)
+> 배포 주소: https://base-repo-ck83.vercel.app/ (현재 mock 모드)
 > 디자인 시안: [docs/design/](../design/) (검토용 시안)
 > 백엔드 게임 API 가 구현되기 전까지 **mock(가짜 응답)** 으로 개발한다. mock 응답은 [03-api.md](03-api.md) 예시를 따르고, 백엔드가 준비되면 주소만 바꾼다
 > 기능 번호: [features.md 3절](features.md#3-웹-프론트-fe) · 흐름: [01-user-flow.md](01-user-flow.md)
 
 ## 1. 디자인 시스템
 ### 폰트
-<!-- TODO: 디자인 시안 확정 후 -->
+- 제목: Gowun Batang · 본문: Noto Sans KR (Google Fonts)
 ### 디자인 토큰
+> 전체 목록: `frontend/src/styles/global.css` 의 `:root` (시안 `docs/design/styles.css` 와 같음)
+
 | 토큰 | 값 | 용도 |
 |------|----|------|
-| `--color-bg` | TODO | 페이지 배경. 3D 체험의 Unity 배경색(`backgroundColor`)과 맞춘다 |
-| `--color-text` | TODO | 본문 |
-| `--color-accent` | TODO | 버튼 · 강조 |
-| `--color-danger` | TODO | 오류 |
+| `--color-bg` | `#FBF6EC` | 페이지 배경. 3D 체험의 Unity 배경색(`backgroundColor`)도 같은 값 |
+| `--color-text` | `#22283A` | 본문 |
+| `--color-accent` | `#B8502A` | 버튼 · 강조 |
+| `--color-danger` | `#B3261E` | 오류 |
 ### 지원 브라우저
 - 데스크톱 최신 Chrome · Edge (Unity WebGL 테스트 기준)
 - 모바일 · 다른 브라우저는 Unity 쪽에서 아직 검증되지 않았다. 모바일에서 3D 체험이 무거우면 텍스트로 계속하는 안내를 보여 준다 <!-- TODO: 모바일 지원 범위 -->
