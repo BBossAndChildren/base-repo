@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "protocol": "career-experience",
+  "requestId": "req-start-001",
+  "action": "start_experience",
+  "sessionId": "session-example-001",
+  "experienceId": "experience-example-001",
+  "roomId": "office",
+  "scenarioId": "career-net-253-office-documents",
+  "scenarioVersion": "v001"
+}
