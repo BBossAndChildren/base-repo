@@ -84,7 +84,8 @@ export const mockGameApi: GameApi = {
       playerId,
       sessionId: uuid(),
       profile: body,
-      state: { age: body.age, elapsedDays: 0 },
+      // 시작값은 docs/game/03-rules.md (자금 50 · 에너지 70)
+      state: { age: body.age, elapsedDays: 0, funds: 50, energy: 70 },
       messages: [
         {
           role: 'narrator',
@@ -159,6 +160,10 @@ export const mockGameApi: GameApi = {
       const from = play.state.age
       play.state.age = from + 1
       response.stateChanges.push({ field: 'age', from, to: play.state.age })
+      // 하루 활동: 에너지 -5 (03-rules.md 의 하루 활동 효과, 0 아래로 내려가지 않음)
+      const energyFrom = typeof play.state.energy === 'number' ? play.state.energy : 70
+      play.state.energy = Math.max(0, energyFrom - 5)
+      response.stateChanges.push({ field: 'energy', from: energyFrom, to: play.state.energy })
     }
 
     play.ended = ended
