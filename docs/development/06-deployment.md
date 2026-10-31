@@ -335,9 +335,14 @@ docker compose cp backend:/app/backend/staticfiles/. ./staticfiles/
 > **GPU 단일 서버 — 현재 적용 (2026-11-01)**
 > - AI API(`BBossAndChildren/AI` 의 `ai_server`, Qwen3-4B, 현재 `/ai/v1/chat` 만)는 **호스트의 Python(uvicorn)** 으로, 백엔드는 **Docker** 로 돈다
 > - 연결 경로: 백엔드 컨테이너 → `host.docker.internal` (compose `extra_hosts: host-gateway`) → 호스트 AI
-> - AI 는 **Docker 내부망 주소에만** 연다: `uvicorn ai_server.app:create_app --factory --host 172.17.0.1 --port 8010 --workers 1`. 외부 인터페이스 · 공개 포트는 열지 않는다 (`172.17.0.1` 은 `ip -4 addr show docker0` 로 확인)
-> - 백엔드 `.env`: `AI_API_BASE_URL=http://host.docker.internal:8010`, `AI_SERVER_KEY=<AI 서버와 같은 값>` → `docker compose -f compose.yaml -f compose.gateway.yaml up -d --force-recreate backend`
-> - 연결 확인 (키 · 모델 없이): `docker compose -f compose.yaml -f compose.gateway.yaml exec backend python -c "import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:8010/openapi.json', timeout=5).status)"` → `200`
+> - **실제 적용 (2026-11-01): 중계기 방식.** AI 담당이 AI 를 `--host 127.0.0.1 --port 8010` 으로 띄워 두었고 끄지 않기로 했다. 컨테이너는 호스트의 `127.0.0.1` 에 닿지 않으므로, Docker 내부망 주소에만 여는 중계기를 둔다:
+>   `docker run -d --name ai-relay --restart unless-stopped --network host alpine/socat TCP-LISTEN:18010,bind=172.17.0.1,fork,reuseaddr TCP:127.0.0.1:8010`
+>   확인 `curl -s -o /dev/null -w '%{http_code}\n' http://172.17.0.1:18010/openapi.json` → `200`. 백엔드 `.env` 는 `AI_API_BASE_URL=http://host.docker.internal:18010`
+> - 다른 방법: AI 를 처음부터 **Docker 내부망 주소에만** 열면 중계기가 필요 없다: `uvicorn ai_server.app:create_app --factory --host 172.17.0.1 --port 8010 --workers 1` → `AI_API_BASE_URL=http://host.docker.internal:8010`. 어느 쪽이든 외부 인터페이스 · 공개 포트는 열지 않는다 (`172.17.0.1` 은 `ip -4 addr show docker0` 로 확인)
+> - 키: **AI 담당이 정한 기존 키**를 그대로 쓴다 (새로 만들지 않음). 백엔드 `.env` 에는 화면에 보이지 않게 넣는다: `read -rsp 'AI 서버 키 붙여넣기: ' K; echo; sed -i "s|^AI_SERVER_KEY=.*|AI_SERVER_KEY=$K|" .env; unset K` → 값이 들어갔는지는 `grep -c '^AI_SERVER_KEY=.\+' .env` (1). AI 담당이 키를 바꾸면 백엔드 `.env` 도 바꾸고 백엔드를 다시 띄운다
+> - 백엔드 `.env`: `AI_API_BASE_URL=<위 주소>`, `AI_SERVER_KEY=<AI 와 같은 값>` → `docker compose -f compose.yaml -f compose.gateway.yaml up -d --force-recreate backend`
+> - 연결 확인 (키 · 모델 없이): `docker compose -f compose.yaml -f compose.gateway.yaml exec backend python -c "import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:18010/openapi.json', timeout=5).status)"` → `200` (중계기를 안 쓰면 포트 8010)
+> - **2026-11-01 연결 확인**: 컨테이너 → AI `200`, 서버에서 채팅 턴 `code:200` (실제 Qwen 대사 + 확정 `state`), Vercel 사이트에서 대화 2턴 200 · 약 6초 · 2턴에서 1턴 내용을 기억 (headless Chrome)
 > - 한계: AI 는 한 번에 한 추론만(겹치면 503 `AI_BUSY`), 추천 · 결말 API 는 아직 없어 결말 화면은 오류가 난다
 
 > **GPU 단일 서버에서는** AI API 가 Django 와 같은 서버에서 돈다. 아래 "사설망으로 닿는가" 확인과 AI 전용 터널은 **이전 배포안(두 서버)** 의 절차라 쓰지 않는다. `AI_API_BASE_URL` 은 같은 서버의 내부 주소다. 단일 GPU 는 한 번에 한 추론만 처리해 겹친 요청은 503 이 될 수 있다 ([02](02-architecture.md#1-기술-스택))

@@ -209,6 +209,7 @@ docker compose build backend
 | 61 | Swagger 일시정지 · Unity 4개 요청 예시 #91 | `python manage.py test apps.game.tests.test_request_examples_schema`, 전체 test · check · makemigrations --check --dry-run · spectacular --validate --fail-on-warn · Ruff check/format | 신규 2개 포함 148개 통과; 5개 요청 예시가 입력 Serializer 검증 통과, 스키마 검증 · Ruff 90파일 통과 | 완료 |
 | 62 | 프론트 실제 연결 (로컬) | 로컬 Docker 백엔드(PostgreSQL + `compose.mock.yaml` 모의 AI) + 프론트 `VITE_USE_MOCK=false`, headless Chrome | 게스트 발급 → 시작 → 채팅(`requestId` 포함 200) → 재개 → 일시정지 · 이어 하기 → 지난 기록, 콘솔 오류 없음. 실제 GPU AI 미검증 | 서버 배포 · 실제 AI 대기 |
 | 63 | BE14·BE15 실제 파일 배치·게이트웨이 #107 | `check_intro_assets.py backend/deploy/assets/intro-assets`, 로컬 `compose.gateway.yaml` + curl, 전체 test · `test_intro_gateway.py` · Ruff | 인트로 71개(249,041,188 bytes) 확인, GLB 71/71 `model/gltf-binary`, 빌드 index·wasm·client.js·manifest 200, `frame-ancestors` 두 주소, 게이트웨이 경유 API·CORS 사전 요청 통과, 목록 밖 출처 차단. Django 148개 통과. GPU 서버 복사·터널·Vercel 로딩 미검증 | GPU 서버 배포 대기 |
+| 64 | 실제 AI 연결 (GPU 서버) #113 | 서버: 중계기 `ai-relay`(172.17.0.1:18010 → AI 127.0.0.1:8010), `.env` `AI_API_BASE_URL=http://host.docker.internal:18010` · 기존 키, 컨테이너에서 `/openapi.json`, 게이트웨이로 게스트 → 시작 → 턴. 배포 사이트 headless Chrome 대화 2턴 | 컨테이너 → AI 200, 턴 `code:200` (실제 Qwen 대사 · 확정 state), 사이트 대화 200 · 약 6초 · 이전 대화 기억. 추천 · 결말 API 는 AI 쪽 미구현, Cloudflare 502 변환(11 E3) 남음 | AI 쪽 추천 · 결말 구현 대기 |
 
 ## 5. 미확정·외부 의존 사항
 
@@ -216,6 +217,6 @@ docker compose build backend
 - 활성 시간은 서버에서 확인 가능한 요청 처리 구간을 누적한다. 프론트의 읽기/입력 구간을 포함한 전체 활성 시간은 별도 활성 구간 전달 연동이 필요하다.
 - BE15 실제 에셋 71개는 `backend/deploy/assets/intro-assets/`(git 제외)에 배치해 로컬 게이트웨이로 확인했다 (기록 63). GPU 서버 복사·터널·Vercel 에서의 실제 재생은 미검증이다.
 - `docs/game/`의 지침·세계관·시나리오·규칙·NPC 문서를 캐시해 사용한다. 작가 원문의 TODO는 승인된 콘텐츠로 간주하지 않는다. 필수 지침이 누락/비어 있으면 시작하지 않으며 통합 테스트는 별도 표시된 테스트 콘텐츠를 사용한다.
-- AI 주소·내부 키는 환경변수로 제공한다. 테스트 서버로 통신·오류를 검증해도 실제 GPU AI 검증은 `외부 연동 대기`로 남긴다.
+- AI 주소·내부 키는 환경변수로 제공한다. 실제 GPU AI 대화 연결은 2026-11-01 확인했다 (기록 64). 3D 추천 · 결말 호출은 AI 서버 구현 전이라 `외부 연동 대기`로 남긴다.
 - Unity 정산은 [원본 tx 명세](../unity/contracts/CONTRACT-SNAPSHOT.md)와 [수락 사례 16개](../unity/contracts/reconciliation-v003/acceptance-cases.json)를 따른다. Unity 원본과 작가 콘텐츠는 임의 수정하지 않는다.
 - 테스트 DB와 운영 DB를 구분하며 비밀값·사용자 실데이터는 문서·테스트·PR에 기록하지 않는다.
