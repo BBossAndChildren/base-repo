@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ensurePlayerId } from '../api'
 import { clearPlayerId, setPlayerId } from '../api/player'
 import type { StartPlayRequest } from '../types/api'
@@ -39,6 +39,15 @@ describe('mockGameApi', () => {
   ])('필수 값 누락이면 INVALID_INPUT (%s)', async (_label, body) => {
     await ensurePlayerId(api)
     await expect(api.startPlay(body)).rejects.toMatchObject({ type: 'INVALID_INPUT' })
+  })
+
+  it('발급한 게스트는 새로고침(모듈 다시 불러오기) 뒤에도 기억해 401 이 나지 않는다', async () => {
+    const playerId = await ensurePlayerId(api)
+    vi.resetModules()
+    const reloaded = await import('./mockGameApi')
+    reloaded.mockControl.setDelay(0)
+    setPlayerId(playerId)
+    await expect(reloaded.mockGameApi.startPlay(START)).resolves.toMatchObject({ playId: expect.any(String) })
   })
 
   it('모르는 게스트면 UNKNOWN_PLAYER', async () => {

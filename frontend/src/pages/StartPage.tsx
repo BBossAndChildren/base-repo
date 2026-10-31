@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { usePlayer } from '../app/playerContext'
 import { Button, Modal, Spinner } from '../components'
 import { useResumablePlay } from '../hooks/useResumablePlay'
 import { clearLastPlayId, setLastPlayId } from '../lib/lastPlay'
@@ -11,6 +12,7 @@ import type { OptionalField } from './start/options'
 /** 화면 1: 시작 (05-ui-ux.md) */
 export function StartPage({ optionalFields }: { optionalFields?: OptionalField[] } = {}) {
   const navigate = useNavigate()
+  const { resetPlayer } = usePlayer()
   const { play, checking } = useResumablePlay()
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [startingNew, setStartingNew] = useState(false)
@@ -47,6 +49,7 @@ export function StartPage({ optionalFields }: { optionalFields?: OptionalField[]
       {!checking && !showResume && (
         <StartForm
           optionalFields={optionalFields}
+          onUnknownPlayer={() => void resetPlayer()}
           onStarted={(play) => {
             setLastPlayId(play.playId)
             savePlaySession(play.playId, play.sessionId)

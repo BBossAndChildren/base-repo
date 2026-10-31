@@ -1,5 +1,6 @@
 // 백엔드 게임 API 구현 전 개발용 mock (docs/development/03-api.md 1부 예시 기준).
-// 메모리에만 저장하므로 새로고침하면 플레이가 사라진다 (게스트 ID 는 브라우저에 남는다).
+// 플레이는 메모리에만 저장하므로 새로고침하면 사라진다. 발급한 게스트는 실제 백엔드처럼 남도록 localStorage 에 기억한다
+// (새로고침 뒤 브라우저에 남은 게스트 ID 로 시작해도 401 이 나지 않게).
 //
 // 채팅 입력에 아래 단어가 들어 있으면 해당 상황을 흉내 낸다:
 //   "체험"   → 3D 체험 분기 (experience)
@@ -10,6 +11,7 @@
 import { ApiError } from '../api/errors'
 import type { GameApi } from '../api/gameApi'
 import { getPlayerId } from '../api/player'
+import { readStorage, removeStorage, writeStorage } from '../lib/storage'
 import type { ChatMessage, PlayState, StartPlayRequest, TurnResponse } from '../types/api'
 
 interface MockPlay {
@@ -24,7 +26,18 @@ interface MockPlay {
   startedAt: string
 }
 
-const players = new Set<string>()
+const PLAYERS_KEY = 'adult-prince.mockPlayers'
+
+function loadPlayers(): string[] {
+  try {
+    const saved: unknown = JSON.parse(readStorage(PLAYERS_KEY) ?? '[]')
+    return Array.isArray(saved) ? saved.filter((id): id is string => typeof id === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+const players = new Set<string>(loadPlayers())
 const plays = new Map<string, MockPlay>()
 let delayMs = 400
 
@@ -36,6 +49,7 @@ export const mockControl = {
   reset() {
     players.clear()
     plays.clear()
+    removeStorage(PLAYERS_KEY)
   },
 }
 
@@ -72,6 +86,7 @@ export const mockGameApi: GameApi = {
     await wait()
     const playerId = uuid()
     players.add(playerId)
+    writeStorage(PLAYERS_KEY, JSON.stringify([...players]))
     return { playerId }
   },
 

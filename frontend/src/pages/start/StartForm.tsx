@@ -24,6 +24,8 @@ interface StartFormProps {
   onStarted: (play: StartPlayResponse) => void
   /** 보여 줄 선택 항목. 기본은 7개 중 무작위 2개 (테스트에서 고정) */
   optionalFields?: OptionalField[]
+  /** 서버가 모르는 게스트(401)일 때. 게스트 ID 재발급 후 시작 화면 (05-ui-ux.md 5절) */
+  onUnknownPlayer?: () => void
 }
 
 const HINTS: Partial<Record<OptionalField, string>> = {
@@ -33,7 +35,7 @@ const HINTS: Partial<Record<OptionalField, string>> = {
 }
 
 /** 화면 1 시작 입력 (05-ui-ux.md 화면 1, 03 1-2) */
-export function StartForm({ onStarted, optionalFields }: StartFormProps) {
+export function StartForm({ onStarted, optionalFields, onUnknownPlayer }: StartFormProps) {
   const toast = useToast()
   const shown = useMemo(() => optionalFields ?? pickOptionalFields(), [optionalFields])
   const [values, setValues] = useState<StartFormValues>(EMPTY_FORM)
@@ -69,6 +71,7 @@ export function StartForm({ onStarted, optionalFields }: StartFormProps) {
       if (apiError.type === 'INVALID_INPUT') setServerError(apiError.message)
       else toast.show({ type: 'error', message: apiError.message })
       setSubmitting(false)
+      if (apiError.type === 'UNKNOWN_PLAYER') onUnknownPlayer?.()
     }
   }
 
