@@ -15,6 +15,10 @@ services:
       - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     volumes:
       - static_files:/app/backend/staticfiles
+    # 같은 서버의 호스트에서 도는 AI API 를 http://host.docker.internal:<포트> 로 부른다
+    # (컨테이너의 127.0.0.1 은 컨테이너 자신이다. 06-deployment.md 5-3)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       db:
         condition: service_healthy
