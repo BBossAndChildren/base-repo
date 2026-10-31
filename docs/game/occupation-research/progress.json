@@ -1,0 +1,28 @@
+{
+  "total": 552,
+  "official_detail_refetched": 552,
+  "with_environment_indicators": 470,
+  "with_performance_skills": 477,
+  "with_interview_candidates": 206,
+  "official_interviews_retrieved": 441,
+  "manually_reviewed": 552,
+  "deep_research_complete": 0,
+  "batch_341_552": {
+    "occupations": 212,
+    "additional_official_source_occupations": 89,
+    "additional_official_source_urls": 95,
+    "additional_official_source_unique_urls": 91,
+    "interview_candidate_bodies_reviewed": 152,
+    "interview_candidate_unique_bodies_reviewed": 149,
+    "interview_candidate_body_classifications": {
+      "direct": 41,
+      "specialty": 53,
+      "adjacent": 42,
+      "limited": 7,
+      "mismatch": 9
+    },
+    "deep_research_complete": 0
+  },
+  "updated_at": "2026-10-31T17:19:15+00:00",
+  "note": "재수집·추가 출처 확보·수작업 검토·심화조사 완료는 서로 다른 진행 단계다."
+}

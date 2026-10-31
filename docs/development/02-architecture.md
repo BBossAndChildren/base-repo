@@ -20,14 +20,14 @@
 | 앱 서버 | Gunicorn (WSGI) | 23.0.0 | 배포 환경에서 Django 실행 |
 | 컨테이너 | Docker · Docker Compose | Compose v2 | 기존 Python · Django · PostgreSQL 스택을 동일한 이미지와 실행 설정으로 재현 |
 | 프론트 연동 | django-cors-headers | 4.9.0 | 프론트가 다른 주소에서 호출하므로 CORS 허용 출처 지정 |
-| 직업 데이터 | 기존 JSON 파일 (직업 552개) | — | 백엔드 조회용. AI 의 직업 지식은 AI 서버 RAG 가 담당 |
+| 직업 데이터 | CareerNet 직업 552개와 조사 기록 | — | 백엔드 조회용. AI 서버는 BGE-M3 RAG로 검색하며 출처·직무 일치도를 함께 전달한다 ([조사 자료](../game/occupation-research/README.md)) |
 
 ### AI 서버
 | 구분 | 기술 | 버전 | 선택 이유 |
 |------|------|------|-----------|
 | 실행 환경 | 네이버 클라우드 GPU 서버 | — | 별도 AI 모델 서버 운영 · 추론 |
 | 모델 | 오픈소스 Qwen | TODO | 자체 GPU 서버에서 추론 |
-| 직업 지식 | RAG · BGE-M3 임베딩 | 벡터 DB와 배포 버전은 구현 시 고정 | 직업 데이터 552개를 검색해 프롬프트에 붙임 ([10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)) |
+| 직업 지식 | RAG · BGE-M3 임베딩 | 벡터 DB와 배포 버전은 구현 시 고정 | CareerNet 기본 프로필 552개와 근거·한계가 표시된 조사 요약을 검색해 프롬프트에 붙임 ([조사 자료](../game/occupation-research/README.md), [10 6절](10-prompt-assembly.md#6-직업-데이터-rag-ai-서버)) |
 | | | | |
 
 ### 웹 프론트
