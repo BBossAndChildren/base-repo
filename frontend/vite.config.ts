@@ -5,7 +5,7 @@ import { defineConfig, type Plugin } from 'vite'
 
 const LOCAL_BUILD_ROUTE = '/local-builds/career-suite-integration-v005/'
 // 다른 위치의 빌드를 쓰려면 UNITY_BUILD_DIR 로 지정한다
-const LOCAL_BUILD_DIR = resolve(process.env.UNITY_BUILD_DIR ?? resolve(__dirname, '../docs/unity/webgl/site'))
+const LOCAL_BUILD_DIR = resolve(process.env.UNITY_BUILD_DIR ?? resolve(import.meta.dirname, '../docs/unity/webgl/site'))
 const TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -43,4 +43,19 @@ function localUnityBuild(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), localUnityBuild()],
+  build: {
+    rolldownOptions: {
+      output: {
+        // Three.js 는 인트로 화면(lazy)에서만 쓴다. 한 덩어리면 500KB 를 넘어 경고가 나므로
+        // 렌더러(three.module) · 핵심(three.core) · 로더(addons)로 나눈다. 인트로 코드가 바뀌어도 이 청크들은 캐시를 재사용한다
+        codeSplitting: {
+          groups: [
+            { name: 'three-core', test: /node_modules[\\/]three[\\/]build[\\/]three\.core/ },
+            { name: 'three-renderer', test: /node_modules[\\/]three[\\/]build[\\/]three\.module/ },
+            { name: 'three-addons', test: /node_modules[\\/]three[\\/]examples/ },
+          ],
+        },
+      },
+    },
+  },
 })
