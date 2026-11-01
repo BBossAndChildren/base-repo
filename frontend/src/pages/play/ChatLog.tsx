@@ -9,11 +9,12 @@ const FOLLOW_THRESHOLD_PX = 80
 interface ChatLogProps {
   items: TimelineItem[]
   waiting: boolean
+  experienceBusy?: boolean
   onStartExperience: (id: string, offer: ExperienceOffer) => void
   onDeclineExperience: (id: string) => void
 }
 
-export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience }: ChatLogProps) {
+export function ChatLog({ items, waiting, experienceBusy = false, onStartExperience, onDeclineExperience }: ChatLogProps) {
   const logRef = useRef<HTMLOListElement>(null)
   // 사용자가 맨 아래 근처에 있을 때만 새 메시지를 따라 내려간다 (위쪽 대화를 읽는 중이면 그대로, 05 화면 2)
   const followRef = useRef(true)
@@ -42,7 +43,7 @@ export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience
               {item.text}
             </li>
           )
-        if (item.kind === 'experience') return <ExperienceItem key={item.id} item={item} onStart={onStartExperience} onDecline={onDeclineExperience} />
+        if (item.kind === 'experience') return <ExperienceItem key={item.id} item={item} disabled={waiting || experienceBusy} onStart={onStartExperience} onDecline={onDeclineExperience} />
         const { role, speaker, text } = item.message
         if (role === 'narrator')
           return (
@@ -83,10 +84,12 @@ export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience
 
 function ExperienceItem({
   item,
+  disabled,
   onStart,
   onDecline,
 }: {
   item: Extract<TimelineItem, { kind: 'experience' }>
+  disabled: boolean
   onStart: (id: string, offer: ExperienceOffer) => void
   onDecline: (id: string) => void
 }) {
@@ -117,8 +120,8 @@ function ExperienceItem({
           <p className="small muted">{item.status === 'done' ? '체험을 마쳤어요' : '체험하는 중이에요'}</p>
         ) : (
           <div className="row">
-            <Button onClick={() => onStart(item.id, offer)}>체험 시작</Button>
-            <Button variant="ghost" onClick={() => onDecline(item.id)}>
+            <Button disabled={disabled} onClick={() => onStart(item.id, offer)}>체험 시작</Button>
+            <Button variant="ghost" disabled={disabled} onClick={() => onDecline(item.id)}>
               다음에 할게요
             </Button>
           </div>

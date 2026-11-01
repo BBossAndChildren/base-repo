@@ -9,6 +9,7 @@ import type { CareerEvent, ClientStatus, ExperienceRuntime, Outbox, StorageAck, 
 import { ExperienceOverlay } from './ExperienceOverlay'
 
 const OFFER: ExperienceOffer = {
+  offerId: '00000000-0000-4000-8000-000000000173',
   buildId: 'career-suite-integration-v005',
   buildUrl: 'https://builds.example.test/builds/career-suite-integration-v005/',
   roomId: 'PAN-002',
@@ -146,7 +147,7 @@ describe('ExperienceOverlay', () => {
     )
     expect(await screen.findByRole('button', { name: '체험 종료하기' })).toBeInTheDocument()
     expect(screen.getByRole('note')).toHaveTextContent('효과음 켜기')
-    expect(getPendingExperience()?.roomId).toBe('PAN-002')
+    expect(getPendingExperience()).toMatchObject({ roomId: 'PAN-002', offerId: OFFER.offerId })
   })
 
   it('Unity 이벤트를 백엔드에 원본 그대로 보낸다', async () => {
