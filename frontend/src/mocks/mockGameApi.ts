@@ -13,7 +13,8 @@ import { ApiError } from '../api/errors'
 import type { GameApi } from '../api/gameApi'
 import { getPlayerId } from '../api/player'
 import { readStorage, removeStorage, writeStorage } from '../lib/storage'
-import type { ChatMessage, PlayState, StartPlayRequest, TurnResponse } from '../types/api'
+import type { CareerEvent } from '../types/unity'
+import type { ResumeExperienceState, ExperienceOffer, ChatMessage, PlayState, StartPlayRequest, TurnResponse } from '../types/api'
 
 interface MockPlay {
   /** requestId → 저장한 응답 (같은 ID · 같은 입력이면 그대로 돌려준다) */
@@ -27,6 +28,12 @@ interface MockPlay {
   state: PlayState
   messages: ChatMessage[]
   turn: number
+  hints: string[]
+  lastTurnId: string | null
+  experience: ExperienceOffer | null
+  experienceState: ResumeExperienceState | null
+  dismissedOffers: Set<string>
+  observedExperiences: Map<string, string>
   ended: boolean
   startedAt: string
 }
@@ -156,6 +163,12 @@ export const mockGameApi: GameApi = {
         { role: 'npc', speaker: '친구 민수', text: `${body.name}, 오늘 방과 후에 뭐 할 거야?` },
       ],
       turn: 0,
+      hints: [],
+      lastTurnId: null,
+      experience: null,
+      experienceState: null,
+      dismissedOffers: new Set(),
+      observedExperiences: new Map(),
       ended: false,
       startedAt: new Date().toISOString(),
     }
@@ -177,8 +190,24 @@ export const mockGameApi: GameApi = {
       activePlaySeconds: 0,
       scene: null,
       pendingChoices: [],
-      lastTurnId: null,
+      hints: play.experienceState && play.experienceState.lifecycleStatus !== 'offered' ? [] : [...play.hints],
+      lastTurnId: play.lastTurnId,
+      experience: play.experience,
+      experienceState: play.experienceState,
     }
+  },
+
+  async dismissExperienceOffer(playId, body) {
+    await wait()
+    const play = ownPlay(playId)
+    if (body.sessionId !== play.sessionId) throw new ApiError(400, 'INVALID_INPUT')
+    if (play.experienceState?.offerId !== body.offerId) throw new ApiError(404, 'NOT_FOUND')
+    if (play.dismissedOffers.has(body.offerId)) return { offerId: body.offerId, lifecycleStatus: 'declined' }
+    if (play.experienceState.lifecycleStatus !== 'offered') throw new ApiError(409, 'STATE_CONFLICT')
+    play.dismissedOffers.add(body.offerId)
+    play.experience = null
+    play.experienceState = { ...play.experienceState, lifecycleStatus: 'declined' }
+    return { offerId: body.offerId, lifecycleStatus: 'declined' }
   },
 
   async setPaused(playId, paused) {
@@ -250,6 +279,7 @@ export const mockGameApi: GameApi = {
     } else if (message.includes('체험')) {
       response.messages.push({ role: 'npc', speaker: '선배 지윤', text: '이번 주 축제 준비를 같이 해 볼래? 행사 일정표를 짜는 일이야.' })
       response.experience = {
+        offerId: response.turnId,
         buildId: 'career-suite-integration-v005',
         // 개발 서버가 docs/unity/webgl/site 를 이 경로로 제공한다 (vite.config.ts)
         buildUrl: '/local-builds/career-suite-integration-v005/',
@@ -275,6 +305,10 @@ export const mockGameApi: GameApi = {
       response.stateChanges.push({ field: 'energy', from: energyFrom, to: play.state.energy })
     }
 
+    play.hints = [...response.hints]
+    play.lastTurnId = response.turnId
+    play.experience = response.experience
+    play.experienceState = response.experience ? { offerId: response.turnId, lifecycleStatus: 'offered', experienceId: null, outcome: null } : null
     play.ended = ended
     play.messages.push(userMessage, ...response.messages)
     play.stateVersion += 1
@@ -335,4 +369,17 @@ export const mockGameApi: GameApi = {
         })),
     }
   },
+}
+
+/** mock에서도 관측한 같은 제안을 다시 미시작 카드로 만들지 않는다 */
+export function observeMockExperience(playId: string, event: CareerEvent): void {
+  const play = plays.get(playId)
+  if (!play || play.sessionId !== event.sessionId) return
+  const key = `${event.sessionId}|${event.experienceId}`
+  if (!play.observedExperiences.has(key) && play.experience?.offerId && ['buildId', 'roomId', 'scenarioId', 'scenarioVersion'].every((field) => event[field] === play.experience?.[field as keyof ExperienceOffer])) {
+    play.observedExperiences.set(key, play.experience.offerId)
+  }
+  if (play.observedExperiences.get(key) !== play.experienceState?.offerId || !play.experienceState) return
+  play.experience = null
+  play.experienceState = { ...play.experienceState, lifecycleStatus: event.type === 'experience.ended' ? 'ended' : 'started', experienceId: event.experienceId, outcome: event.type === 'experience.ended' ? event.result.outcome : null }
 }

@@ -7,6 +7,7 @@ export const httpGameApi: GameApi = {
   createPlayer: () => request('POST', '/api/v1/players', { anonymous: true }),
   startPlay: (body) => request('POST', '/api/v1/plays', { body, timeoutMs: CHAT_TIMEOUT_MS }),
   getPlay: (playId) => request('GET', `/api/v1/plays/${id(playId)}`),
+  dismissExperienceOffer: (playId, body) => request('POST', `/api/v1/plays/${id(playId)}/experience-offers/dismiss`, { body }),
   setPaused: (playId, paused) => request('PATCH', `/api/v1/plays/${id(playId)}`, { body: { paused } }),
   suggestExperience: (playId, exclude = []) => request('POST', `/api/v1/plays/${id(playId)}/experience-offers`, { body: exclude.length > 0 ? { exclude } : {} }),
   sendTurn: (playId, body) => request('POST', `/api/v1/plays/${id(playId)}/turns`, { body, timeoutMs: CHAT_TIMEOUT_MS }),

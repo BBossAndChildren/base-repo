@@ -4,12 +4,14 @@ import { ApiError, gameApi } from '../../api'
 import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
+import { getPendingExperience } from '../../lib/pendingExperience'
 import type { ExperienceOffer, ExperienceSuggestion, NpcSummary, PendingChoice, PlayResume, PlayState, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
 import { ExperienceCard } from './ExperienceCard'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
+import { resumeTimeline } from './resumeExperience'
 import { StatusBar, StatusPanel } from './StatusPanel'
 import { changedStatusFields, pickStatus, type StatusField, type StatusValues } from './statusModel'
 import { summarizeTurn } from './elapsed'
@@ -60,7 +62,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const toast = useToast()
   const navigate = useNavigate()
   const { resetPlayer } = usePlayer()
-  const [items, setItems] = useState<TimelineItem[]>(() => messagesToTimeline(play.messages))
+  const [items, setItems] = useState<TimelineItem[]>(() => resumeTimeline(play, getPendingExperience()))
   // 관계를 이름으로 보여 주기 위한 만난 인물 목록 (턴마다 갱신)
   const npcsRef = useRef<NpcSummary[]>(play.npcs ?? [])
   // 경과 요약에서 이번 턴 전 · 후를 비교하기 위한 마지막 확정 상태
@@ -71,6 +73,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [choices, setChoices] = useState<PendingChoice[]>(() => usableChoices(play.pendingChoices))
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
+  const [experienceBusy, setExperienceBusy] = useState(false)
   const [ended, setEnded] = useState(play.ended)
   const [paused, setPaused] = useState(play.paused === true)
   const [pausing, setPausing] = useState(false)
@@ -139,7 +142,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
 
   async function send() {
     const message = draft.trim()
-    if (!message || waiting || ended) return
+    if (!message || waiting || experienceBusy || ended) return
     const pendingId = nextId('u')
     // 안내 카드를 두고 계속 입력하면 체험을 하지 않은 것으로 본다 (05 화면 2)
     setItems((prev) => [...declineOpenOffers(prev), { kind: 'message', id: pendingId, message: { role: 'user', speaker: '나', text: message } }])
@@ -211,7 +214,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   async function reloadLatest() {
     try {
       const latest = await gameApi.getPlay(play.playId)
-      setItems(messagesToTimeline(latest.messages))
+      setItems(resumeTimeline(latest, getPendingExperience()))
       if (latest.npcs) npcsRef.current = latest.npcs
       stateRef.current = latest.state
       setStatus(pickStatus(latest.state, npcsRef.current))
@@ -223,6 +226,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   }
 
   function startExperience(id: string, offer: ExperienceOffer) {
+    if (waiting || experienceBusy) return
     setItems((prev) => prev.map((item) => (item.id === id && item.kind === 'experience' ? { ...item, status: 'started' } : item)))
     if (onStartExperience) onStartExperience(offer)
     else setActiveExperience({ cardId: id, offer })
@@ -238,6 +242,11 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   function closeExperience(exit: ExperienceExit) {
     const cardId = activeExperience?.cardId
     setActiveExperience(null)
+    if (exit === 'skipped' && cardId && cardId !== CARD_EXPERIENCE) {
+      setItems((prev) => prev.map((item) => item.id === cardId && item.kind === 'experience' ? { ...item, status: 'offered' } : item))
+      void declineExperience(cardId)
+      return
+    }
     // 카드로 한 체험이 끝나면 다음 체험을 새로 고른다 (해 본 체험은 백엔드가 뺀다)
     if (cardId === CARD_EXPERIENCE && exit !== 'skipped') void loadSuggestion(false)
     // 체험을 하지 못했으면(불러오기 실패 · 건너뛰기) 카드를 "다음에 하기로 했어요" 로, 했으면 "마쳤어요" 로
@@ -249,13 +258,29 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     })
   }
 
-  function declineExperience(id: string) {
-    setItems((prev) => prev.map((item) => (item.id === id && item.kind === 'experience' ? { ...item, status: 'declined' } : item)))
+  async function declineExperience(id: string) {
+    if (experienceBusy) return
+    const item = items.find((row) => row.id === id && row.kind === 'experience')
+    if (!item || item.kind !== 'experience') return
+    setExperienceBusy(true)
+    try {
+      if (item.offer.offerId) {
+        const ack = await gameApi.dismissExperienceOffer(play.playId, { sessionId: play.sessionId, offerId: item.offer.offerId })
+        if (ack.offerId !== item.offer.offerId || ack.lifecycleStatus !== 'declined') throw new ApiError(502, 'UNKNOWN')
+      }
+      setItems((prev) => prev.map((row) => row.id === id && row.kind === 'experience' ? { ...row, status: 'declined' } : row))
+      setHints([])
+    } catch (error) {
+      const apiError = error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN')
+      toast.show({ type: 'error', message: apiError.message })
+    } finally {
+      setExperienceBusy(false)
+    }
   }
 
   const pauseAction =
     ended || paused ? null : (
-      <Button variant="ghost" size="sm" onClick={() => void togglePause(true)} disabled={pausing || waiting}>
+      <Button variant="ghost" size="sm" onClick={() => void togglePause(true)} disabled={pausing || waiting || experienceBusy}>
         일시정지
       </Button>
     )
@@ -265,7 +290,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       suggestion={suggestion}
       loading={suggesting}
       failed={suggestFailed}
-      disabled={waiting || paused || activeExperience !== null}
+      disabled={waiting || experienceBusy || paused || activeExperience !== null}
       onStart={startSuggested}
       onShuffle={() => void loadSuggestion(suggestion !== null)}
     />
@@ -276,7 +301,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       <StatusBar values={status} changed={changed} actions={pauseAction} extra={wide ? null : experienceCard} />
       <div className="play">
         <section className="chat" aria-label="이야기">
-          <ChatLog items={items} waiting={waiting} onStartExperience={startExperience} onDeclineExperience={declineExperience} />
+          <ChatLog items={items} waiting={waiting} experienceBusy={experienceBusy} onStartExperience={startExperience} onDeclineExperience={declineExperience} />
           {ended ? (
             <div className="chat-footer">
               <div className="chat-ended" role="status">
@@ -296,7 +321,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
               </div>
             </div>
           ) : (
-            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} choices={choices} disabled={waiting} waiting={waiting} />
+            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} choices={choices} disabled={waiting || experienceBusy} waiting={waiting} />
           )}
         </section>
         <div className="play-side">

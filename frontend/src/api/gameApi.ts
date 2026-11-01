@@ -1,5 +1,6 @@
 import type {
   CreatePlayerResponse,
+  DismissExperienceOfferResponse,
   ExperienceSuggestion,
   MyPlaysResponse,
   PauseResponse,
@@ -19,6 +20,8 @@ export interface GameApi {
   startPlay(body: StartPlayRequest): Promise<StartPlayResponse>
   /** 1-7 플레이 재개 */
   getPlay(playId: string): Promise<PlayResume>
+  /** 미시작 채팅 제안의 명시적 거절. 저장 확인 뒤에만 카드를 접는다 */
+  dismissExperienceOffer(playId: string, body: { sessionId: string; offerId: string }): Promise<DismissExperienceOfferResponse>
   /** 일시정지 · 재개 (PATCH 1-7 리소스) */
   setPaused(playId: string, paused: boolean): Promise<PauseResponse>
   /** 1-11 화면 카드용 3D 체험 추천. exclude 를 주면 다시 고르기(무작위) */

@@ -3,6 +3,7 @@ import { ApiError } from '../api/errors'
 import type { ExperienceApi } from '../api/experienceApi'
 import { canonicalJson } from '../lib/experience/canonical'
 import type { CareerEvent } from '../types/unity'
+import { observeMockExperience } from './mockGameApi'
 
 const events = new Map<string, string>()
 const ended = new Set<string>()
@@ -21,12 +22,13 @@ export const mockExperienceStore = {
 }
 
 export const mockExperienceApi: ExperienceApi = {
-  async sendEvent(_playId, event: CareerEvent) {
+  async sendEvent(playId, event: CareerEvent) {
     const key = `${event.sessionId}|${event.eventId}`
     const body = canonicalJson(event)
     const old = events.get(key)
     if (old !== undefined && old !== body) throw new ApiError(409, 'UNKNOWN', '같은 이벤트 ID 에 다른 내용이에요.')
     events.set(key, body)
+    observeMockExperience(playId, event)
     if (event.type === 'experience.ended') {
       ended.add(event.experienceId)
       pending.delete(event.experienceId)

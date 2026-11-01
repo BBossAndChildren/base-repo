@@ -172,7 +172,7 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
       }
     }
     experienceIdRef.current = experienceId
-    setPendingExperience({ playId, sessionId, experienceId, roomId: offer.roomId })
+    setPendingExperience({ playId, sessionId, experienceId, roomId: offer.roomId, offerId: offer.offerId })
     try {
       await client.start(
         { buildId: offer.buildId, roomId: offer.roomId, scenarioId: offer.scenarioId, scenarioVersion: offer.scenarioVersion },

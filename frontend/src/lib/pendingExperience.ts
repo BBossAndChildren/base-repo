@@ -8,6 +8,8 @@ export interface PendingExperience {
   sessionId: string
   experienceId: string
   roomId: string
+  /** 알려진 채팅 제안만 연결한다. 이전 기록에는 없을 수 있다 */
+  offerId?: string
 }
 
 export function getPendingExperience(): PendingExperience | null {
