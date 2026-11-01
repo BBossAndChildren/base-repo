@@ -41,6 +41,56 @@ def target_npc(npcs, message):
     return best[1] if best else None
 
 
+# 게임 시작 장면의 기본 인물 (#182, 12 결정 32). 인물이 없으면 AI 가 출력 예시의 자리표시 "이름" 을
+# 발화자로 쓰고, 백엔드가 그것을 NPC 로 등록해 계속 "이름" 으로만 대화하던 문제를 막는다.
+OPENING_ROLE = {
+    "초등학생": "친구",
+    "중학생": "친구",
+    "고등학생": "친구",
+    "대학생": "동기",
+    "직장인": "동료",
+    "구직 중": "선배",
+}
+OPENING_NAMES = ("지우", "서연", "민준", "하린", "도윤", "예린", "시우", "유나", "준호", "수아")
+OPENING_NPC_KEY = "opening"
+# AI 가 발화자 자리에 실제 이름 대신 내보내는 자리표시 (출력 형식 예시를 그대로 베낀 경우)
+PLACEHOLDER_SPEAKERS = {
+    "이름",
+    "name",
+    "npc",
+    "speaker",
+    "화자",
+    "인물",
+    "등장인물",
+    "{이름}",
+    "<이름>",
+}
+
+
+def is_placeholder_speaker(name):
+    return not isinstance(name, str) or name.strip().casefold() in PLACEHOLDER_SPEAKERS | {""}
+
+
+def opening_npc_name(play):
+    """상황에 맞는 관계 + 플레이마다 달라지는 이름 (예: "친구 지우")"""
+    situation = (play.state or {}).get("profile", {}).get("situation")
+    role = OPENING_ROLE.get(situation, "이웃")
+    index = int(hashlib.sha256(str(play.pk).encode()).hexdigest(), 16) % len(OPENING_NAMES)
+    return f"{role} {OPENING_NAMES[index]}"
+
+
+def seed_opening_scene(play):
+    """게임 시작 때 기본 인물을 만들고 첫 장면의 발화자로 둔다"""
+    NPC.objects.get_or_create(
+        play=play, key=OPENING_NPC_KEY, defaults={"name": opening_npc_name(play)}
+    )
+    play.progress = {
+        **(play.progress or {}),
+        "scene": {"id": "opening", "npcIds": [OPENING_NPC_KEY], "speakerNpcId": OPENING_NPC_KEY},
+    }
+    play.save(update_fields=["progress"])
+
+
 def npc_list(play):
     """만난 인물 이름 목록 (화면의 인물별 관계 표시용). 비공개 기억 · 해석은 넣지 않는다"""
     return [{"id": npc.key, "name": npc.name} for npc in play.npcs.order_by("id")]
@@ -113,6 +163,14 @@ def ai_context(play, state, past, scene):
 
 def plan_memory(play, scene, data, events, message, key, game_date):
     known = {npc.key: npc.name for npc in play.npcs.all()}
+    # 발화자 자리표시("이름" 등)는 지금 장면 발화자 이름으로 바로잡는다.
+    # 장면이 비어 있으면 기본 인물 이름 (#182)
+    fallback = known.get(scene.get("speakerNpcId")) or next(
+        (known[npc_id] for npc_id in scene.get("npcIds", []) if npc_id in known), None
+    )
+    for item in data["messages"]:
+        if item.get("role") == "npc" and is_placeholder_speaker(item.get("speaker")):
+            item["speaker"] = fallback or opening_npc_name(play)
     previous_known = dict(known)
     proposed = data.get("scene")
     next_scene = copy.deepcopy(scene)
@@ -155,6 +213,25 @@ def plan_memory(play, scene, data, events, message, key, game_date):
             ids.append(npc_id)
         if ids:
             next_scene = {"id": "first-meeting", "npcIds": ids, "speakerNpcId": ids[0]}
+    # 처음 등장하는 인물(아직 모르는 이름)은 새 NPC 로 등록해 장면에 넣는다
+    # (기억이 없어 샐 것이 없음, #182).
+    # 이미 아는 다른 인물이 장면 밖에서 말하는 것은 그 인물의 비공개 기억이 섞일 수 있어 거부한다
+    known_names = set(known.values())
+    for name in dict.fromkeys(
+        item["speaker"] for item in data["messages"] if item["role"] == "npc"
+    ):
+        if name in known_names:
+            continue
+        if len(next_scene["npcIds"]) >= 10:
+            raise RuleViolation("장면 인물이 너무 많습니다")
+        npc_id = "npc-" + hashlib.sha256(name.encode()).hexdigest()[:20]
+        known[npc_id] = name
+        known_names.add(name)
+        next_scene = {
+            **next_scene,
+            "npcIds": [*next_scene["npcIds"], npc_id],
+            "speakerNpcId": next_scene.get("speakerNpcId") or npc_id,
+        }
     allowed_names = {known[npc_id] for npc_id in next_scene["npcIds"]}
     if any(
         item["speaker"] not in allowed_names for item in data["messages"] if item["role"] == "npc"
