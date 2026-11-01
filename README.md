@@ -29,11 +29,11 @@
                                                         ├─ /builds/ → Unity WebGL 빌드
                                                         └─ /intro-assets/ → 인트로 3D 모델
 ```
-GPU 서버 한 대 운영 (2026-11-01 합의, [12 결정 27](docs/development/12-decisions.md)). 이식 · 연동은 아직 검증 전이다.
+GPU 서버 한 대 운영 (2026-11-01 합의, [12 결정 27](docs/development/12-decisions.md)). 2026-11-01 배포 확인: Vercel 사이트 → 터널 → 게이트웨이 → Django · PostgreSQL · AI 대화(Qwen) 연결, 3D 빌드 · 인트로 에셋 제공.
 상세: [02-architecture.md](docs/development/02-architecture.md) · [06-deployment.md](docs/development/06-deployment.md)
 
 ## 4. API 명세 (요약)
-게스트 발급 · 게임 시작 · 채팅 턴 · 재개 · 결말 · 지난 기록, 3D 이벤트 · 정산 · 생존 신호 · 미수신 기록, 백엔드 → AI 대화 생성 · 3D 추천.
+게스트 발급 · 게임 시작 · 채팅 턴 · 재개 · 일시정지 · 결말 · 지난 기록, 3D 이벤트 · 정산 · 생존 신호 · 미수신 기록 (11개), 백엔드 → AI 대화 생성 · 3D 추천 · 결말 (3개). Swagger: `/api/docs/`. 구현 · 테스트 기록: [backend.md](docs/development/backend.md)
 상세: [docs/development/03-api.md](docs/development/03-api.md)
 
 ## 5. DB 구조 (요약)
@@ -51,7 +51,22 @@ npm run dev                  # http://localhost:5173
 # 인트로까지 보려면 .env.local 에 VITE_INTRO_ASSET_BASE=https://<터널 주소>/intro-assets/ (백엔드 BE15)
 ```
 
-**백엔드** — 상세: [backend/README.md](backend/README.md) <!-- TODO: 백엔드 담당이 실행 방법 확정 후 정리 -->
+**백엔드** (Docker · Docker Compose) — 상세: [backend/README.md](backend/README.md)
+```bash
+cd backend
+python3 scripts/init_local_env.py        # .env 가 없을 때 한 번 (개발용 비밀값 생성, 기존 파일은 덮어쓰지 않음)
+docker compose -f compose.yaml -f compose.dev.yaml up --build -d --wait   # Django + PostgreSQL
+docker compose exec backend python manage.py test                         # PostgreSQL 테스트
+# Swagger: http://127.0.0.1:8000/api/docs/
+```
+- AI 서버 없이도 실행된다. 채팅은 AI 서버(`AI_API_BASE_URL` · `AI_SERVER_KEY`)가 있어야 하고, 결말은 AI 가 없으면 백엔드가 기록으로 만든다
+- 프론트를 로컬 백엔드에 붙이려면 `frontend/.env.local` 에 `VITE_USE_MOCK=false`, `VITE_API_BASE_URL=http://127.0.0.1:8000` 을 넣는다 (`init_local_env.py` 가 만든 `.env` 는 `http://localhost:5173` 을 이미 허용)
+
+**서버 코드 업데이트** — `git pull` 뒤 `cd backend && docker compose -f compose.yaml -f compose.gateway.yaml up -d --build --wait` ([06 5-1 코드 업데이트할 때](docs/development/06-deployment.md))
+
+**내부 테스트 페이지** (배포 주소 기준, 메뉴에는 없음)
+- `/work`: 서버의 3D 빌드에서 체험 하나를 무작위로 골라 바로 실행 (기록은 백엔드에 저장하지 않음)
+- `/work/state`: 이 브라우저 마지막 플레이의 숨겨진 상태 (관계 · 흥미 · 빚 · 미납 · 가족 지원 등)
 ### 배포
 [06-deployment.md](docs/development/06-deployment.md) — VPN · SSH 접속, 코드 받기, Gunicorn · Nginx · 터널, Vercel
 ### 환경변수
