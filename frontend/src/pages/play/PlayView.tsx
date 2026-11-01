@@ -4,13 +4,14 @@ import { ApiError, gameApi } from '../../api'
 import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
-import type { ExperienceOffer, NpcSummary, PendingChoice, PlayResume, TurnResponse } from '../../types/api'
+import type { ExperienceOffer, NpcSummary, PendingChoice, PlayResume, PlayState, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
 import { StatusBar, StatusPanel } from './StatusPanel'
 import { changedStatusFields, pickStatus, type StatusField, type StatusValues } from './statusModel'
+import { summarizeTurn } from './elapsed'
 import { usableChoices } from './pendingChoices'
 import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from './timeline'
 
@@ -44,6 +45,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [items, setItems] = useState<TimelineItem[]>(() => messagesToTimeline(play.messages))
   // 관계를 이름으로 보여 주기 위한 만난 인물 목록 (턴마다 갱신)
   const npcsRef = useRef<NpcSummary[]>(play.npcs ?? [])
+  // 경과 요약에서 이번 턴 전 · 후를 비교하기 위한 마지막 확정 상태
+  const stateRef = useRef<PlayState | null>(play.state)
   const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state, play.npcs ?? []))
   const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
   const [hints, setHints] = useState<string[]>([])
@@ -64,13 +67,17 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   }, [changed])
 
   function applyTurn(turn: TurnResponse) {
-    const added: TimelineItem[] = messagesToTimeline(turn.messages)
+    // 시간이 흐른 턴이면 무엇이 달라졌는지 먼저 짧게 요약한다 (05 9절 경과 요약, #147)
+    const summary = summarizeTurn(turn.events, stateRef.current, turn.state)
+    const added: TimelineItem[] = summary.lines.map((text) => ({ kind: 'system', id: nextId('s'), text }))
+    added.push(...messagesToTimeline(turn.messages))
     const updates: Partial<Record<StatusField, number>> = {}
     for (const change of turn.stateChanges) {
       if (change.field.includes('.') || typeof change.to !== 'number') continue
       updates[change.field as StatusField] = change.to
-      if (change.field === 'age') added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
+      if (change.field === 'age' && !summary.timePassed) added.push({ kind: 'system', id: nextId('s'), text: `시간이 흘렀어요 · ${change.to}세` })
     }
+    if (turn.state) stateRef.current = turn.state
     const changedFields = changedStatusFields(turn.stateChanges.map((change) => change.field))
     // 턴 응답의 state 가 백엔드 확정 값이다. 없을 때(이전 형식)만 stateChanges 로 맞춘다
     if (turn.npcs) npcsRef.current = turn.npcs
@@ -137,6 +144,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     try {
       const result = await gameApi.setPaused(play.playId, next)
       setPaused(result.paused)
+      stateRef.current = result.state
       setStatus(pickStatus(result.state, npcsRef.current))
     } catch (error) {
       const apiError = error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN')
@@ -160,6 +168,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       const latest = await gameApi.getPlay(play.playId)
       setItems(messagesToTimeline(latest.messages))
       if (latest.npcs) npcsRef.current = latest.npcs
+      stateRef.current = latest.state
       setStatus(pickStatus(latest.state, npcsRef.current))
       setChoices(usableChoices(latest.pendingChoices))
       setEnded(latest.ended)
