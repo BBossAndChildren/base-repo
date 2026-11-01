@@ -13,7 +13,12 @@ class DesignMigrationTests(TransactionTestCase):
     def test_existing_rows_are_backfilled_without_losing_unity_payload(self):
         executor = MigrationExecutor(connection)
         executor.migrate([self.migrate_from])
-        self.addCleanup(lambda: MigrationExecutor(connection).migrate([self.migrate_to]))
+        # 정리는 고정 번호가 아니라 최신 마이그레이션까지 (새 테이블이 다른 테스트에서 빠지지 않게)
+        self.addCleanup(
+            lambda: MigrationExecutor(connection).migrate(
+                MigrationExecutor(connection).loader.graph.leaf_nodes()
+            )
+        )
         old = executor.loader.project_state([self.migrate_from]).apps
         Player = old.get_model("game", "Player")
         Play = old.get_model("game", "Play")

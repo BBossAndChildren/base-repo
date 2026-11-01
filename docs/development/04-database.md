@@ -49,6 +49,14 @@ erDiagram
 | state_changes | jsonb | NULL | 이 턴에 실제 반영한 변경 |
 | created_at | timestamptz | NOT NULL | |
 
+### experience_offers
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | bigint | PK | |
+| play_id | uuid | FK plays, NOT NULL | (play_id, created_at 내림차순) 인덱스 |
+| payload | jsonb | NOT NULL | 화면 카드로 준 체험 추천 (1-3 `experience` 와 같은 모양). 이 값과 일치하는 3D 이벤트를 받는다 (03 1-11, #163) |
+| created_at | timestamptz | NOT NULL | |
+
 ### experiences
 | 컬럼 | 타입 | 제약 | 설명 |
 |------|------|------|------|

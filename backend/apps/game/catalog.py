@@ -26,7 +26,11 @@ def load_catalog():
         manifest = json.loads(DEFAULT_MANIFEST.read_text(encoding="utf-8"))
         supported = {identity(item): item for item in manifest["supported"]}
         experiences = [
-            item | {"title": supported[identity(item)]["title"]}
+            item
+            | {
+                "title": supported[identity(item)]["title"],
+                "roomName": supported[identity(item)].get("roomName", ""),
+            }
             for item in catalog["experiences"]
             if identity(item) in supported
         ]
