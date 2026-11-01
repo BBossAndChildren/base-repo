@@ -391,7 +391,8 @@ cloudflared tunnel --url http://127.0.0.1:<AI 포트>
 
 ### 5-4. 웹 프론트 — Vercel
 - Vercel 에 `base-repo` 를 연결하고 **Root Directory 를 `frontend`** 로 설정한다. **https 는 Vercel 이 자동으로 처리한다**
-- **본 배포 브랜치는 `develop`** (저장소 기본 브랜치). develop 에 머지되면 배포 주소에 바로 반영된다. `main` 머지(릴리스)를 기다리지 않는다 (2026-11-01 배포 번들로 확인)
+- **배포 브랜치는 `main`** (2026-11-01 팀 규칙). 모든 작업은 develop 머지 뒤 릴리스 PR(develop → main, merge commit) · 동기화(main → develop)까지 마친다
+- 주의: 2026-11-01 확인 때 Vercel 은 develop 머지만으로도 배포 주소(base-repo-zeta)가 바뀌었다 (Production Branch 가 저장소 기본 브랜치 develop 으로 잡힌 것으로 보임). main 만 배포하려면 Vercel → Settings → Git → **Production Branch 를 `main`** 으로 바꾼다
 - 배포 주소: **https://base-repo-zeta.vercel.app/** — **2026-11-01 부터 실제 백엔드 모드** (`VITE_USE_MOCK=false`, `VITE_API_BASE_URL` = GPU 서버 터널 주소, `VITE_INTRO_ASSET_BASE` 는 넣지 않음). 현재 터널 주소는 서버의 `grep trycloudflare.com ~/cloudflared.log`. 2026-11-01 이 주소로 바꿨고, Vercel 프로젝트는 이것 하나만 남긴다 (이전 `base-repo-ck83` 은 쓰지 않음, 11 F11).
 - Vercel 주소가 바뀌면 Nginx `frame-ancestors` · `Access-Control-Allow-Origin`(`/builds/` · `/intro-assets/`) 과 Django `CORS_ALLOWED_ORIGINS` 를 함께 바꾼다
 - `docs/` 만 바뀐 커밋으로 재배포되지 않게 하는 설정(`ignoreCommand`)과 새로고침 404 를 막는 rewrites 는 `frontend/vercel.json` 에 들어 있다
