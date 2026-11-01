@@ -97,7 +97,10 @@ function fakeRuntime() {
   return {
     runtime,
     client,
-    ready: () => act(() => onStatus?.({ value: 'ready', sessionId: 'session-1', experienceId: null })),
+    ready: async () => {
+      await waitFor(() => expect(onStatus).toBeDefined())
+      act(() => onStatus?.({ value: 'ready', sessionId: 'session-1', experienceId: null }))
+    },
     emit: (e: CareerEvent) => act(() => onEvent?.(e)),
   }
 }
@@ -156,7 +159,7 @@ describe('ExperienceOverlay', () => {
   it('준비되면 [체험 시작하기] 를 눌러 시작하고, 체험 중에는 [체험 종료하기] 와 효과음 안내', async () => {
     const { ready, client, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     expect(client.start).toHaveBeenCalledWith(
       { buildId: OFFER.buildId, roomId: OFFER.roomId, scenarioId: OFFER.scenarioId, scenarioVersion: OFFER.scenarioVersion },
@@ -170,7 +173,7 @@ describe('ExperienceOverlay', () => {
   it('Unity 이벤트를 백엔드에 원본 그대로 보낸다', async () => {
     const { ready, emit, api, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     const e = event('object.selected', getPendingExperience()!.experienceId)
     emit(e)
@@ -180,7 +183,7 @@ describe('ExperienceOverlay', () => {
   it('종료하면 저장 중 안내 후 체험 결과로 닫히고, 미확인 체험 기억을 지운다', async () => {
     const { ready, client, onClose, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     let resolveEnd!: (e: CareerEvent) => void
     client.end.mockReturnValueOnce(new Promise((resolve) => (resolveEnd = resolve)))
@@ -195,7 +198,7 @@ describe('ExperienceOverlay', () => {
     const api = fakeApi()
     const { ready, emit, onClose, user } = renderOverlay({ api })
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     const pending = getPendingExperience()!
     const earlier = event('object.selected', pending.experienceId)
@@ -219,7 +222,7 @@ describe('ExperienceOverlay', () => {
     const api = fakeApi({ sendEvent: vi.fn(() => new Promise<StorageAck>((resolve) => (acknowledge = resolve))) })
     const { ready, emit, onClose, user } = renderOverlay({ api })
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     const pending = getPendingExperience()!
     const ended = event('experience.ended', pending.experienceId, 'completed')
@@ -242,7 +245,7 @@ describe('ExperienceOverlay', () => {
   it('Unity 가 스스로 체험을 끝내도 결과로 닫힌다', async () => {
     const { ready, emit, onClose, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     emit(event('experience.ended', getPendingExperience()!.experienceId, 'aborted'))
     await waitFor(() => expect(onClose).toHaveBeenCalledWith('aborted'))
@@ -251,7 +254,7 @@ describe('ExperienceOverlay', () => {
   it('종료 응답이 5초 안에 없으면 미수신 기록을 보내고 토스트 후 닫는다 (기억은 남겨 다음에 정산)', async () => {
     const { ready, client, api, onClose, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     client.end.mockRejectedValueOnce(Object.assign(new Error('RESPONSE_UNCONFIRMED'), { code: 'RESPONSE_UNCONFIRMED' }))
     await user.click(await screen.findByRole('button', { name: '체험 종료하기' }))
@@ -265,7 +268,7 @@ describe('ExperienceOverlay', () => {
     setPendingExperience({ playId: 'play-1', sessionId: 'session-1', experienceId: 'old-exp', roomId: 'PAN-002' })
     const { ready, api, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     expect(api.reconcile).toHaveBeenCalledWith('play-1', expect.objectContaining({ experienceId: 'old-exp', trigger: 'NEW_PLAY_START', protocol: 'career-experience-resolution' }))
     expect(await screen.findByText('종료 응답을 받지 못해 이전 체험을 중단 처리했어요.')).toBeInTheDocument()
@@ -275,7 +278,7 @@ describe('ExperienceOverlay', () => {
   it('시작이 실패하면 오류 모달 → [텍스트로 계속하기]', async () => {
     const { ready, client, onClose, user } = renderOverlay()
     await screen.findByTitle('직업 3D 체험')
-    ready()
+    await ready()
     client.start.mockRejectedValueOnce(Object.assign(new Error('UNKNOWN_ROOM'), { code: 'UNKNOWN_ROOM' }))
     await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
     const dialog = await screen.findByRole('dialog', { name: '3D 체험을 종료했어요' })
