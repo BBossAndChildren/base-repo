@@ -13,6 +13,7 @@ from .common import (
 from .ending import get_or_generate_result
 from .events import store_event
 from .experiences import heartbeat, mark_pending
+from .memory import npc_list
 from .models import Message, Play, Player
 from .pause import set_paused
 from .reconciliation import reconcile
@@ -188,6 +189,7 @@ class ResumeView(PlayerRequiredView):
                     "scene", {"id": "opening", "npcIds": [], "speakerNpcId": None}
                 ),
                 "pendingChoices": play.progress.get("pendingChoices", []),
+                "npcs": npc_list(play),
                 "lastTurnId": str(
                     play.turns.order_by("-number").values_list("id", flat=True).first() or ""
                 )

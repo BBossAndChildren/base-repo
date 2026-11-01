@@ -496,8 +496,9 @@ AI 요청의 `player`에는 확정 상태와 현재 장면, 발화 NPC 식별자
 | `interests` | 분야별 1~5, 기록이 없거나 단계 미확인이면 null/키 없음. 시작 입력 분야도 단계는 임의로 평가하지 않고 null로 보관 |
 | `relationship` | NPC 식별자별 가상 관계 값0~100. 해당 장면의 인물·입력 인용/사건 출처가 있어야 변경 |
 | `debts/arrears` | 부채 `{id,creditor,balance,sourceAction}`, 미납 `{id,creditor,amount,gameDate}`. `debt`는 부채 잔액 합계, 미납은 별도. 자동 대출 없음 |
-| 턴 응답 | 기존 필드 + `state`, `stateVersion`, `pendingChoices`, 공개 `events`. 성공 응답 전체를 `(playId,requestId)`로 저장해 재전송에 그대로 반환 |
-| 재개 응답 | 기존 필드 + `paused`, `stateVersion`, `activePlaySeconds`, `scene`, `pendingChoices`, `lastTurnId` |
+| 턴 응답 | 기존 필드 + `state`, `stateVersion`, `pendingChoices`, 공개 `events`, `npcs`. 성공 응답 전체를 `(playId,requestId)`로 저장해 재전송에 그대로 반환 |
+| 재개 응답 | 기존 필드 + `paused`, `stateVersion`, `activePlaySeconds`, `scene`, `pendingChoices`, `npcs`, `lastTurnId` |
+| `npcs` | 이 플레이에서 만난 인물 `[{id, name}]` (2026-11-01, #143). `id` 는 `state.relationship` 의 키. 화면의 인물별 관계 표시용이며 비공개 기억 · 해석은 넣지 않는다 |
 
 PATCH 요청은 `{"paused":true}`/`{"paused":false}`, 응답은 `{code:200,data:{state,paused,stateVersion,activePlaySeconds}}`다. 같은 paused 값의 재전송은 버전을 증가시키지 않는다. 생성 중 정지하면 해당 생성은 `STATE_CONFLICT`로 저장을 취소하고 기존 확정 상태를 유지한다. 이미 완료된 requestId의 조회성 재전송은 정지·종료 상태에서도 저장 응답을 반환한다.
 
