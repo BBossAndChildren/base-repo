@@ -35,11 +35,20 @@ def make_handler(key):
                     ):
                         raise ValueError
                     message = data["input"]
+                    player = data.get("player", {})
+                    speaker = next(
+                        (
+                            npc["name"]
+                            for npc in player.get("npcs", [])
+                            if npc["id"] == player.get("speakingNpcId")
+                        ),
+                        "테스트 AI",
+                    )
                     payload = {
                         "messages": [
                             {
                                 "role": "npc",
-                                "speaker": "테스트 AI",
+                                "speaker": speaker,
                                 "text": "[테스트 서버 · 실제 모델 아님] " + message,
                             }
                         ],

@@ -160,12 +160,15 @@
     "playId": "uuid",
     "sessionId": "uuid",
     "state": { },
-    "messages": [ { "role": "narrator", "speaker": "나레이션", "text": "..." } ]
+    "messages": [ { "role": "narrator", "speaker": "나레이션", "text": "..." }, { "role": "npc", "speaker": "승언", "text": "..." } ],
+    "hints": [ "요즘 좋아하는 일이 뭔지 같이 이야기해 볼래", "오늘은 하루 쉬고 싶어" ]
   }
 }
 ```
 - `sessionId` 는 Unity 연동에 쓰는 플레이 단위 ID. 프론트는 이 플레이의 모든 3D 체험에 같은 값을 쓴다
 - `state` 는 백엔드가 확정한 현재 값이다. 상세 기획 반영 설계는 아래 [게임 상태와 턴 확장](#게임-상태와-턴-확장-2026-10-31)을 따른다.
+- 시작 응답은 현재 나이·상황에 맞춘 첫 장면과 NPC 인사, 자유 입력과 함께 고를 수 있는 `hints`를 포함한다. 희망 직업은 탐색 힌트에만 쓰며 현재 직업으로 자동 확정하지 않는다.
+- 첫 장면·NPC·대화는 AI 호출 없이 함께 저장한다. 첫 장면은 내부 0번 턴이며 첫 사용자 입력은 1번 턴으로 이어지고, AI에 첫 장면과 발화 NPC를 전달한다.
 
 실패
 | code | 조건 |
@@ -289,10 +292,11 @@
 
 응답 (성공)
 ```json
-{ "code": 200, "data": { "playId": "uuid", "sessionId": "uuid", "state": { }, "messages": [ ], "ended": false } }
+{ "code": 200, "data": { "playId": "uuid", "sessionId": "uuid", "state": { }, "messages": [ ], "hints": [ ], "ended": false } }
 ```
 - `sessionId` 는 게임 시작(1-2) 때 받은 값과 같다. 다른 기기 · 브라우저에서 이어 해도 3D 체험에 같은 `sessionId` 를 쓸 수 있게 돌려준다
 - 재접속만으로는 진행 중이던 3D 체험을 정산하지 않는다 (정산은 [1-8](#1-8-종료-응답-없는-체험-정산))
+- `hints`는 마지막 확정 턴의 행동 예시다. 첫 입력 전에는 시작 힌트를 복원하고, 저장된 힌트가 없는 이전 플레이는 빈 배열을 반환한다. 첫 장면에 대응하는 빈 사용자 메시지는 표시하지 않는다.
 
 ### 1-8. 종료 응답 없는 체험 정산
 `POST /api/v1/plays/{playId}/experience-reconcile` · 인증: `X-Player-Id`

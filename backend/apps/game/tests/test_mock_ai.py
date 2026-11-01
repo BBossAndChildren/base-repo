@@ -45,6 +45,24 @@ class MockAITests(SimpleTestCase):
         self.assertTrue(response.json()["data"]["lifeEnded"])
         self.assertIn("실제 모델 아님", response.json()["data"]["messages"][0]["text"])
 
+    def test_mock_uses_current_scene_speaker(self):
+        response = self.client.post(
+            "/ai/v1/chat",
+            headers={"X-Internal-Key": self.key},
+            json={
+                "input": "안녕",
+                "guidelines": "테스트",
+                "scenario": "테스트",
+                "player": {
+                    "speakingNpcId": "b",
+                    "npcs": [{"id": "a", "name": "승언"}, {"id": "b", "name": "성준"}],
+                },
+                "history": [],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["data"]["messages"][0]["speaker"], "성준")
+
     def test_recommendation_endpoint_uses_only_provided_candidates(self):
         response = self.client.post(
             "/ai/v1/experience-recommendation",
