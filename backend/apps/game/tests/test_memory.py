@@ -1,14 +1,16 @@
+import json
 import uuid
 from unittest.mock import patch
 
-from django.test import TestCase
+import httpx
+from django.test import TestCase, override_settings
 
 from apps.game.memory import ai_context, current_scene
 from apps.game.models import NPC, GameEvent, InformationTransfer, NPCMemory, Play, Player, Turn
 from apps.game.state import initial_state
 
 from . import test_turns as turns_fixture
-from .test_ai_chat import ai_response
+from .test_ai_chat import REAL_ASYNC_CLIENT, ai_response
 
 
 class MemoryTests(TestCase):
@@ -65,6 +67,54 @@ class MemoryTests(TestCase):
         player, filtered = ai_context(self.play, self.play.state, history, current_scene(self.play))
         self.assertEqual([item["eventId"] for item in player["memories"]], ["secret"])
         self.assertEqual(len(filtered), 1)
+
+    def test_long_history_limit_preserves_npc_scope_and_current_input(self):
+        for index in range(20):
+            private = index == 18
+            Turn.objects.create(
+                play=self.play,
+                number=index + 1,
+                input=f"지수 비밀 {index}" if private else f"입력 {index}",
+                response={
+                    "messages": [
+                        {"role": "narrator", "speaker": "나레이션", "text": f"장면 {index}"},
+                        {
+                            "role": "npc",
+                            "speaker": "지수" if private else "민수",
+                            "text": f"지수 비밀 응답 {index}" if private else f"응답 {index}",
+                        },
+                    ]
+                },
+                context={"npcIds": ["b" if private else "a"]},
+            )
+
+        def handler(request):
+            body = json.loads(request.content)
+            self.assertEqual(len(body["history"]), 40)
+            self.assertNotIn("지수 비밀", json.dumps(body, ensure_ascii=False))
+            self.assertEqual(body["history"][-1]["text"], "응답 19")
+            self.assertEqual(body["input"], "현재 질문")
+            self.assertEqual(body["player"]["speakingNpcId"], "a")
+            self.assertEqual(
+                body["player"]["memoryScope"], {"playId": str(self.play.pk), "npcId": "a"}
+            )
+            self.assertEqual(body["player"]["memories"][0]["eventId"], "secret")
+            return httpx.Response(200, json={"code": 200, "data": self.data})
+
+        with (
+            override_settings(AI_API_BASE_URL="http://ai.invalid", AI_SERVER_KEY=str(uuid.uuid4())),
+            patch(
+                "apps.game.ai.httpx.AsyncClient",
+                side_effect=lambda **kwargs: REAL_ASYNC_CLIENT(
+                    transport=httpx.MockTransport(handler), **kwargs
+                ),
+            ),
+        ):
+            response = self.post({"message": "현재 질문"})
+        self.assertEqual(response.status_code, 200, response.content)
+        self.play.refresh_from_db()
+        self.assertEqual(self.play.state["elapsedDays"], 0)
+        self.assertEqual(self.play.turns.count(), 21)
 
     def test_transfer_requires_sender_knowledge_and_confirmed_trigger(self):
         self.data["transfers"] = [

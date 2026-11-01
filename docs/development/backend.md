@@ -212,6 +212,9 @@ docker compose build backend
 | 64 | 실제 AI 연결 (GPU 서버) #113 | 서버: 중계기 `ai-relay`(172.17.0.1:18010 → AI 127.0.0.1:8010), `.env` `AI_API_BASE_URL=http://host.docker.internal:18010` · 기존 키, 컨테이너에서 `/openapi.json`, 게이트웨이로 게스트 → 시작 → 턴. 배포 사이트 headless Chrome 대화 2턴 | 컨테이너 → AI 200, 턴 `code:200` (실제 Qwen 대사 · 확정 state), 사이트 대화 200 · 약 6초 · 이전 대화 기억. 추천 · 결말 API 는 AI 쪽 미구현, Cloudflare 502 변환(11 E3) 남음 | AI 쪽 추천 · 결말 구현 대기 |
 | 65 | 허용 출처 zeta 하나로 #122 | `python3 backend/scripts/test_intro_gateway.py`, 전체 `python manage.py test`, Ruff | 게이트웨이 PASS (zeta 허용 · 이전 `base-repo-ck83` · 목록 밖 출처는 CORS 헤더 없음), Django 148개 통과. GPU 서버 반영(pull · `.env` · 재기동)은 서버 작업 | 서버 반영 대기 |
 
+| 69 | 긴 대화 AI 메시지 상한 (#161) | 새 `test_ai_chat`·`test_memory` 회귀 2개 → 관련 `test_ai_chat test_memory test_turns test_ai_contracts` 실행 (로컬 PostgreSQL16) | 수정 전 60/57개 메시지로 2개 실패, 실제 AI 요청 클래스도 60개 입력을 too_long으로 거부. 공통 호출을 최신 40개로 제한 후 관련 35개 통과; 이번 입력·확정 상태·NPC 기억 권한 보존 및 다른 NPC 비공개 기록 제외 확인 | 전체 회귀 실행 |
+| 70 | 긴 대화 전체 검사 (#161) | 전체 `python manage.py test --verbosity 1 --noinput` · check · makemigrations/migrate check · spectacular `--validate --fail-on-warn` · Ruff check/format · Docker build | 실제 로컬 PostgreSQL16·모의 HTTP 172개 통과, Ruff 96파일 및 스키마·빌드 통과. 실제 AI `ChatRequest`가 수정 후 40개 payload를 수락하고 현재 입력 보존 확인. 실제 GPU 모델 추론은 별도 통합 검증 중으로 이 PR에서는 미검증 | Draft PR 준비 가능 |
+
 ## 5. 미확정·외부 의존 사항
 
 - 미배정 자산·비용은 0, 미확정 급여·성적·흥미 단계는 null로 두며 현실 수치를 추정하지 않는다. AI의 사망 제안만으로 종료하지 않고 건강 0 지속/과로 확정 판정을 사용한다. 이전 추상 상태는 다음 유효 턴에서 전환하고 원본을 비공개 보존한다.

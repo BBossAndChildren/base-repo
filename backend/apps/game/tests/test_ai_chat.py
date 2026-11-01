@@ -126,6 +126,41 @@ class AIChatTests(SimpleTestCase):
         ):
             chat({"profile": {}}, turns, "다음", time.monotonic() + 1)
 
+    def test_multiple_messages_keep_latest_forty_and_current_input(self):
+        turns = [
+            {
+                "input": str(i),
+                "messages": [
+                    {"role": "narrator", "speaker": "나레이션", "text": f"장면 {i}"},
+                    {"role": "npc", "speaker": "민수", "text": f"대사 {i}"},
+                ],
+            }
+            for i in range(23)
+        ]
+        state = {"profile": {}, "funds": 12345, "speakingNpcId": "a"}
+
+        def handler(request):
+            body = json.loads(request.content)
+            self.assertEqual(len(body["history"]), 40)
+            self.assertEqual(
+                body["history"][0], {"role": "npc", "speaker": "민수", "text": "대사 9"}
+            )
+            self.assertEqual(body["history"][-1]["text"], "대사 22")
+            self.assertEqual(body["input"], "현재 입력")
+            self.assertEqual(body["player"]["funds"], 12345)
+            self.assertEqual(body["player"]["speakingNpcId"], "a")
+            return httpx.Response(200, json=ai_response())
+
+        with patch(
+            "apps.game.ai.httpx.AsyncClient",
+            side_effect=lambda **kwargs: REAL_ASYNC_CLIENT(
+                transport=httpx.MockTransport(handler), **kwargs
+            ),
+        ):
+            chat(state, turns, "현재 입력", time.monotonic() + 1)
+        self.assertEqual(len(turns), 23)
+        self.assertEqual(state, {"profile": {}, "funds": 12345, "speakingNpcId": "a"})
+
     def test_branch_shape_is_validated(self):
         def valid(request):
             body = ai_response()
