@@ -55,6 +55,12 @@ export interface PlayState {
   [key: string]: unknown
 }
 
+/** 이 플레이에서 만난 인물 (03 게임 상태와 턴 확장 `npcs`). id 는 state.relationship 의 키 */
+export interface NpcSummary {
+  id: string
+  name: string
+}
+
 /** 메시지 형식 (03 메시지 형식) */
 export type MessageRole = 'user' | 'npc' | 'narrator'
 
@@ -141,6 +147,8 @@ export interface TurnResponse {
   pendingChoices?: PendingChoice[]
   /** 이번 턴의 공개 사건 */
   events?: unknown[]
+  /** 이번 턴 저장 후 만난 인물 */
+  npcs?: NpcSummary[]
 }
 
 /** 백엔드가 기다리는 선택 (03 게임 상태와 턴 확장). 보기를 골라 다음 입력으로 보낸다 */
@@ -217,5 +225,7 @@ export interface PlayResume {
   activePlaySeconds?: number
   scene?: unknown
   pendingChoices?: PendingChoice[]
+  /** 만난 인물 이름 목록 */
+  npcs?: NpcSummary[]
   lastTurnId?: string | null
 }

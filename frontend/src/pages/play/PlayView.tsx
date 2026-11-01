@@ -4,7 +4,7 @@ import { ApiError, gameApi } from '../../api'
 import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
-import type { ExperienceOffer, PendingChoice, PlayResume, TurnResponse } from '../../types/api'
+import type { ExperienceOffer, NpcSummary, PendingChoice, PlayResume, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
@@ -42,7 +42,9 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const navigate = useNavigate()
   const { resetPlayer } = usePlayer()
   const [items, setItems] = useState<TimelineItem[]>(() => messagesToTimeline(play.messages))
-  const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state))
+  // 관계를 이름으로 보여 주기 위한 만난 인물 목록 (턴마다 갱신)
+  const npcsRef = useRef<NpcSummary[]>(play.npcs ?? [])
+  const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state, play.npcs ?? []))
   const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
   const [hints, setHints] = useState<string[]>([])
   const [choices, setChoices] = useState<PendingChoice[]>(() => usableChoices(play.pendingChoices))
@@ -71,7 +73,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     }
     const changedFields = changedStatusFields(turn.stateChanges.map((change) => change.field))
     // 턴 응답의 state 가 백엔드 확정 값이다. 없을 때(이전 형식)만 stateChanges 로 맞춘다
-    if (turn.state) setStatus(pickStatus(turn.state))
+    if (turn.npcs) npcsRef.current = turn.npcs
+    if (turn.state) setStatus(pickStatus(turn.state, npcsRef.current))
     else if (Object.keys(updates).length > 0) setStatus((prev) => ({ ...prev, ...updates }) as StatusValues)
     if (changedFields.length > 0) setChanged(new Set(changedFields))
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
@@ -134,7 +137,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     try {
       const result = await gameApi.setPaused(play.playId, next)
       setPaused(result.paused)
-      setStatus(pickStatus(result.state))
+      setStatus(pickStatus(result.state, npcsRef.current))
     } catch (error) {
       const apiError = error instanceof ApiError ? error : new ApiError(0, 'UNKNOWN')
       if (apiError.type === 'ALREADY_ENDED') {
@@ -156,7 +159,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     try {
       const latest = await gameApi.getPlay(play.playId)
       setItems(messagesToTimeline(latest.messages))
-      setStatus(pickStatus(latest.state))
+      if (latest.npcs) npcsRef.current = latest.npcs
+      setStatus(pickStatus(latest.state, npcsRef.current))
       setChoices(usableChoices(latest.pendingChoices))
       setEnded(latest.ended)
     } catch {

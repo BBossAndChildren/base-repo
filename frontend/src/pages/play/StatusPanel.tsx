@@ -57,7 +57,8 @@ function StatusDetails({ values, changed }: { values: StatusValues; changed: Rea
   const showMoney = values.funds !== undefined || values.debt !== undefined
   const housing = values.housing && values.housing.type !== 'unknown' ? values.housing : undefined
   const development = values.development && values.development.value !== null ? values.development : undefined
-  if (!showMoney && meters.length === 0 && !housing && !development) return <Placeholder />
+  const people = values.people ?? []
+  if (!showMoney && meters.length === 0 && !housing && !development && people.length === 0) return <Placeholder />
   return (
     <>
       {showMoney && (
@@ -70,6 +71,12 @@ function StatusDetails({ values, changed }: { values: StatusValues; changed: Rea
             <dt>빚</dt>
             <dd>{won(values.debt ?? 0)}</dd>
           </div>
+          {values.income !== undefined && values.income > 0 && (
+            <div className="status-money-row">
+              <dt>월 수입</dt>
+              <dd>{won(values.income)}</dd>
+            </div>
+          )}
           {housing && (
             <div className={cx('status-money-row', changed.has('housing') && 'is-changed')}>
               <dt>주거</dt>
@@ -94,6 +101,16 @@ function StatusDetails({ values, changed }: { values: StatusValues; changed: Rea
             />
           )}
         </ul>
+      )}
+      {people.length > 0 && (
+        <section className={cx('status-people', changed.has('people') && 'is-changed')} aria-label="주변 인물">
+          <h3 className="status-subtitle">주변 인물</h3>
+          <ul className="status-meters">
+            {people.map((person) => (
+              <Meter key={person.id} field="relationship" label={person.name} value={person.value} changed={false} />
+            ))}
+          </ul>
+        </section>
       )}
     </>
   )

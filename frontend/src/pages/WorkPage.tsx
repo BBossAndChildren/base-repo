@@ -134,7 +134,7 @@ export function WorkPage() {
       <p className="work-kicker">내부 테스트용 · 기록은 백엔드에 저장하지 않아요</p>
       <h1>3D 체험 테스트</h1>
       <p className="muted small">
-        빌드 <code>{buildId}</code> · 체험 {rows.length}개
+        빌드 <code>{buildId}</code> · 체험 {rows.length}개 · <a href="/work/state">숨겨진 상태 보기</a>
       </p>
       {picked ? (
         <section className="card work-card" aria-label="고른 체험">

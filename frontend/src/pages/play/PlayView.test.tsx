@@ -223,6 +223,13 @@ describe('PlayView', () => {
     spy.mockRestore()
   })
 
+  it('주변 인물과의 관계를 이름과 함께 보여 준다 (#145)', async () => {
+    await setup({ mapPlay: (play) => ({ ...play, npcs: [{ id: 'minsu', name: '친구 민수' }], state: { ...play.state, relationship: { minsu: 64 } } }) })
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    const people = within(panel).getByRole('region', { name: '주변 인물' })
+    expect(within(people).getByRole('meter', { name: '친구 민수' })).toHaveAttribute('aria-valuenow', '64')
+  })
+
   it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
     await setup({ mapPlay: (play) => ({ ...play, pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
     expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()

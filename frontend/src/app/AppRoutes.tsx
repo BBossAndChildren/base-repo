@@ -10,6 +10,7 @@ import { PlayPage } from '../pages/PlayPage'
 import { ResultPage } from '../pages/ResultPage'
 import { StartPage } from '../pages/StartPage'
 import { WorkPage } from '../pages/WorkPage'
+import { WorkStatePage } from '../pages/WorkStatePage'
 import { AppLayout } from './AppLayout'
 
 // 인트로는 Three.js 를 포함해 무거우므로 따로 나눠 불러온다 (05-ui-ux.md 화면 0)
@@ -41,6 +42,7 @@ export function AppRoutes() {
         <Route path="history" element={<HistoryPage />} />
         {/* 내부 테스트용 3D 체험 (메뉴에 넣지 않음) */}
         <Route path="work" element={<WorkPage />} />
+        <Route path="work/state" element={<WorkStatePage />} />
         {import.meta.env.DEV && <Route path="dev/components" element={<ComponentsPreviewPage />} />}
         {import.meta.env.DEV && <Route path="dev/play" element={<DevPlayPreviewPage />} />}
         {import.meta.env.DEV && <Route path="dev/result" element={<DevResultPreviewPage />} />}

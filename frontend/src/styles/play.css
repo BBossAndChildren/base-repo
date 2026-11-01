@@ -66,6 +66,11 @@
 .status-meter-fill.is-energy { background: var(--color-success); }
 .status-meter-fill.is-stress { background: var(--color-warning); }
 .status-meter-fill.is-development { background: var(--color-ink); }
+.status-meter-fill.is-relationship { background: var(--color-focus); }
+.status-meter-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 주변 인물 관계 (05 화면 2, #145) */
+.status-people { margin-top: var(--space-4); border-radius: var(--radius-md); }
+.status-subtitle { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); margin: 0 0 var(--space-2); }
 .status-meter-value { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--color-text); }
 @media (prefers-reduced-motion: reduce) { .status-meter-fill { transition: none; } }
 .is-changed { animation: pulse 1.6s ease-out 1; }
