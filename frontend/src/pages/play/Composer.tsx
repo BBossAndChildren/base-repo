@@ -8,6 +8,8 @@ interface ComposerProps {
   onChange: (value: string) => void
   onSubmit: () => void
   hints: string[]
+  /** 서버 힌트가 없을 때만 보여 주는 현재 화면의 입력 예시 */
+  inputExamples?: string[]
   /** 백엔드가 기다리는 선택 (05 9절). 보기를 누르면 입력칸에 채운다 */
   choices?: PendingChoice[]
   disabled: boolean
@@ -17,9 +19,10 @@ interface ComposerProps {
 export const MESSAGE_MAX = 300
 
 /** 입력 · 힌트 (05 화면 2) */
-export function Composer({ value, onChange, onSubmit, hints, choices = [], disabled, waiting }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, hints, inputExamples = [], choices = [], disabled, waiting }: ComposerProps) {
   const inputId = useId()
   const canSend = !disabled && value.trim().length > 0
+  const shownHints = hints.length > 0 ? hints : choices.length === 0 ? inputExamples : []
 
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -44,10 +47,10 @@ export function Composer({ value, onChange, onSubmit, hints, choices = [], disab
           ))}
         </div>
       )}
-      {hints.length > 0 && !disabled && (
+      {shownHints.length > 0 && !disabled && (
         <div className="hints" role="group" aria-label="이렇게 말해 볼 수 있어요">
-          <span className="hints-label">힌트</span>
-          {hints.map((hint) => (
+          <span className="hints-label">{hints.length > 0 ? '힌트' : '입력 예시'}</span>
+          {shownHints.map((hint) => (
             <button key={hint} type="button" className="chip chip-hint" onClick={() => onChange(hint)}>
               {hint}
             </button>
