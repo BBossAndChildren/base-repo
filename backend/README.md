@@ -22,7 +22,7 @@ docker compose -f compose.yaml -f compose.dev.yaml stop
 
 Swagger: http://127.0.0.1:8000/api/docs/ (`BACKEND_PORT` 기본값 8000). 호스트 포트를 바꾼 경우 `docker compose port backend 8000`으로 실제 주소를 확인한다. 기본 `docker compose up --build -d --wait`는 Gunicorn WSGI로 실행한다. 컨테이너에서는 DB를 `db:5432`로 연결하며, 기존 호스트 PostgreSQL 데이터는 자동으로 옮기지 않는다. 개발 DB를 호스트 도구로 볼 때는 기본 `127.0.0.1:5433`을 사용한다.
 
-게임 콘텐츠는 시작 시 `docs/game/`에서 읽어 캐시하고 HTML 주석을 제외한다. `GAME_CONTENT_DIR`로 문서 폴더를, `GAME_GUIDELINES_PATH`·`GAME_SCENARIO_PATH`로 개별 파일을 지정할 수 있다. 설정을 생략하면 기본 경로를 쓴다. 필수 가이드라인 또는 `06-life-career-design.md`가 없거나 비면 시작하지 않으며, 문서를 수정한 뒤에는 백엔드를 재시작한다.
+게임 콘텐츠는 시작 시 `docs/game/`에서 읽어 캐시하고 HTML 주석을 제외한다. `GAME_CONTENT_DIR`로 문서 폴더를, `GAME_GUIDELINES_PATH`·`GAME_SCENARIO_PATH`·`GAME_CAREER_MATCHING_PATH`(직업체험 매칭 지침, 기본 `07-career-matching-and-rating-v001.md`, 없으면 생략)로 개별 파일을 지정할 수 있다. 설정을 생략하면 기본 경로를 쓴다. 필수 가이드라인 또는 `06-life-career-design.md`가 없거나 비면 시작하지 않으며, 문서를 수정한 뒤에는 백엔드를 재시작한다.
 
 AI 서버 호출 3개: `POST /ai/v1/chat`(대화·검증할 행동 제안), `/ai/v1/experience-recommendation`(허용 후보 중 선택), `/ai/v1/ending`(결말·추천 3개). `AI_API_BASE_URL`·`AI_SERVER_KEY` 설정이 필요하다. 내부 키·전체 제한 시간·1회 재요청·응답 검증을 적용하며 모의 서버 검증은 실제 GPU/RAG 검증과 구분한다.
 

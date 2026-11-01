@@ -81,6 +81,18 @@ describe('체험에서 이야기로 복귀', () => {
     if (exit === 'pending') expect(getPendingExperience()).toEqual(pending)
   })
 
+  it('독립 카드 체험 완료 시 다음 추천을 받고 이전 힌트 대신 회고 예시를 보여 준다', async () => {
+    const suggest = vi.spyOn(mockGameApi, 'suggestExperience')
+    const { user, send } = await setup()
+    const card = screen.getByRole('region', { name: '3D 직업 체험' })
+    await user.click(await within(card).findByRole('button', { name: '내 업무 체험하기' }))
+    await user.click(within(screen.getByRole('dialog', { name: '체험 테스트' })).getByRole('button', { name: 'completed' }))
+    await waitFor(() => expect(suggest).toHaveBeenCalledTimes(2))
+    expect(screen.queryByRole('button', { name: OLD_HINT })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: REFLECTION_EXAMPLE })).toBeInTheDocument()
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
   it('다음에 하기로 한 제안의 이전 힌트를 지우며 완료 예시를 만들지 않는다', async () => {
     const { user, send } = await setup()
     await user.click(screen.getByRole('button', { name: '다음에 할게요' }))

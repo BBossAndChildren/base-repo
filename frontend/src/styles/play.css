@@ -40,7 +40,7 @@
 .composer .btn { min-height: 48px; }
 .composer-status { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-2); min-height: 1.2em; }
 
-.status-panel { position: sticky; top: calc(var(--header-h) + var(--space-5)); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.status-panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
 .status-head { background: var(--color-ink); color: var(--color-on-ink); padding: var(--space-4) var(--space-5); }
 .status-head .label { font-size: var(--text-xs); opacity: .85; }
 .status-age { font-family: var(--font-heading); font-size: var(--text-3xl); font-weight: 700; line-height: 1.1; }
@@ -105,3 +105,28 @@
 @media (prefers-reduced-motion: reduce) { .is-changed { animation: none; } }
 .job-kicker { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
 .status-actions { margin-top: var(--space-4); display: flex; justify-content: flex-end; }
+
+/* 상태 패널 + 3D 체험 카드 묶음 (12 결정 31, #171) */
+.play-side { position: sticky; top: calc(var(--header-h) + var(--space-5)); display: grid; gap: var(--space-4); align-content: start; max-height: calc(100dvh - var(--header-h) - 2 * var(--space-5)); overflow-y: auto; }
+.exp-suggest { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--space-4); display: grid; gap: var(--space-3); }
+.exp-suggest-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); }
+.exp-suggest-kicker { font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
+.exp-suggest-title { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.exp-suggest-title h2 { margin: 0; font-size: var(--text-2xl); line-height: 1.2; }
+.exp-suggest-shuffle { flex: none; width: 36px; height: 36px; border-radius: var(--radius-pill); display: grid; place-items: center; background: transparent; border: 0; color: var(--color-text); cursor: pointer; }
+.exp-suggest-shuffle:hover:not(:disabled) { background: var(--color-surface-2); }
+.exp-suggest-shuffle:disabled { opacity: .4; cursor: default; }
+.exp-room { position: relative; height: 180px; border-radius: var(--radius-md); background: var(--color-surface-2); overflow: hidden; display: grid; place-items: center; }
+.exp-room.is-large { height: min(48vh, 360px); margin-bottom: var(--space-3); }
+.exp-room canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.exp-room-fallback { display: grid; justify-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: 700; color: var(--color-text-muted); text-align: center; padding: var(--space-3); }
+.exp-suggest-task { margin: 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+.exp-suggest-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.exp-suggest-actions .btn { flex: 1 1 auto; }
+.exp-suggest-link { background: none; border: 0; padding: var(--space-2); font-weight: 700; font-size: var(--text-sm); color: var(--color-focus); cursor: pointer; white-space: nowrap; }
+.exp-suggest-link:hover { text-decoration: underline; }
+@media (max-width: 1023px) {
+  .play-side { position: static; max-height: none; overflow: visible; }
+  .status-bar .exp-suggest { margin-top: var(--space-4); box-shadow: none; }
+  .status-bar .exp-room { height: 150px; }
+}

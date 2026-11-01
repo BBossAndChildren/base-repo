@@ -227,3 +227,5 @@ docker compose build backend
 | 57 | #111 여러 NPC 이름이 있는 입력의 대화 상대 선택 | `python manage.py test apps.game.tests.test_memory` → 전체 `python manage.py test` (Docker) | 1차 9개 중 1개 실패(같은 절에 두 이름이 있으면 앞 이름 선택) → 대상 조사 우선 규칙 추가 후 9개 통과, 전체 164개 통과 | 장면 선택 회귀 확인 |
 | 58 | 건강 자연 회복 · 나이별 상한 (#141) | `python manage.py test` (Docker) | 1차 168개 중 1개 실패(기존 "건강 0 6개월" 테스트가 평온한 생활이라 새 규칙으로 회복됨) → 테스트를 스트레스 60 으로 고치고 회복으로 사망을 피하는 사례 추가, 169개 통과 | 노화 결말 유지 확인 |
 | 59 | 재개 · 턴 응답 npcs (#143) | `python manage.py test` · spectacular `--fail-on-warn` (Docker) · Ruff | PostgreSQL 170개 통과, OpenAPI 검증 통과. 이름만 · 비공개 기억 미포함 확인 | 프론트 인물별 관계 표시 가능 |
+| 60 | BE16 3D 체험 카드 추천 · 카드 추천 이벤트 수락 (#163) | `python manage.py test apps.game.tests.test_experience_offers` → 전체 `python manage.py test` · makemigrations/migrate · spectacular · Ruff (Docker) | 신규 9개 통과. 전체 1차 179개 중 2개 오류(마이그레이션 테스트가 정리 때 0021 로 고정 복구해 새 `experience_offers` 테이블이 빠짐) → 정리를 최신 마이그레이션으로 바꾼 뒤 179개 통과 | 프론트 체험 카드 진행 가능 |
+| 61 | BE3 직업체험 매칭 지침(07) AI 대화 요청에 포함 | `python manage.py test` (Docker) · Ruff | PostgreSQL 182개 통과 (콘텐츠 3개 추가: 06 뒤에 넣기 · 경로 바꾸기 · 없으면 생략 · 실제 저장소 문서 포함) | 실제 AI 응답 반영은 AI 쪽 |

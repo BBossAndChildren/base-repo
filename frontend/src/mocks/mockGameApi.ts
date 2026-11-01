@@ -86,6 +86,32 @@ function validateStart(body: StartPlayRequest): void {
   if (missing) throw new ApiError(400, 'INVALID_INPUT')
 }
 
+/** mock 카드 추천 (개발 서버가 docs/unity/webgl/site 를 /local-builds/ 로 제공) */
+const MOCK_SUGGESTIONS = [
+  {
+    buildId: 'career-suite-integration-v005',
+    buildUrl: '/local-builds/career-suite-integration-v005/',
+    roomId: 'PAN-002',
+    scenarioId: 'career-net-951-experience',
+    scenarioVersion: 'v002',
+    title: '주민 문화행사 준비',
+    jobs: ['행사기획자'],
+    roomName: '협업·기획 사무실',
+    description: '「행사 요청서」의 행사명·날짜·인원 항목을 직접 입력·저장하고 일정 카드를 시간 순서 칸에 배치합니다.',
+  },
+  {
+    buildId: 'career-suite-integration-v005',
+    buildUrl: '/local-builds/career-suite-integration-v005/',
+    roomId: 'PAN-001',
+    scenarioId: 'career-net-98-experience',
+    scenarioVersion: 'v002',
+    title: '공용 사무실 업무',
+    jobs: ['사무원'],
+    roomName: '공용 업무 사무실',
+    description: '사무실에서 서류를 정리하고 일정을 확인합니다.',
+  },
+]
+
 export const mockGameApi: GameApi = {
   async createPlayer() {
     await wait()
@@ -165,6 +191,24 @@ export const mockGameApi: GameApi = {
       play.stateVersion += 1
     }
     return { state: { ...play.state }, paused: play.paused, stateVersion: play.stateVersion, activePlaySeconds: 0 }
+  },
+
+  async suggestExperience(playId, exclude = []) {
+    await wait()
+    const play = ownPlay(playId)
+    if (play.ended) throw new ApiError(409, 'ALREADY_ENDED')
+    if (play.paused) throw new ApiError(409, 'PLAY_PAUSED')
+    // 백엔드처럼 희망 직업 → 무작위. mock 은 로컬 빌드에 있는 두 체험만 번갈아 준다
+    const rooms = [MOCK_SUGGESTIONS[0], MOCK_SUGGESTIONS[1]]
+    const pool = rooms.filter((row) => !exclude.includes(row.scenarioId))
+    const row = pool[0] ?? rooms[exclude.length % rooms.length]
+    const dream = exclude.length === 0 && play.profile.hasDreamJob && play.profile.dreamJob
+    return {
+      ...row,
+      basis: dream ? 'dreamJob' : 'random',
+      job: dream ? (play.profile.dreamJob as string) : row.jobs[0],
+      reason: dream ? '되고 싶다고 한 일을 3D 공간에서 미리 해 봐요.' : '아직 해 보지 않은 일을 골랐어요. 3D 공간에서 해 봐요.',
+    }
   },
 
   async sendTurn(playId, body) {

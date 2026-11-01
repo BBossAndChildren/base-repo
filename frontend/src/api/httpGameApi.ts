@@ -8,6 +8,7 @@ export const httpGameApi: GameApi = {
   startPlay: (body) => request('POST', '/api/v1/plays', { body, timeoutMs: CHAT_TIMEOUT_MS }),
   getPlay: (playId) => request('GET', `/api/v1/plays/${id(playId)}`),
   setPaused: (playId, paused) => request('PATCH', `/api/v1/plays/${id(playId)}`, { body: { paused } }),
+  suggestExperience: (playId, exclude = []) => request('POST', `/api/v1/plays/${id(playId)}/experience-offers`, { body: exclude.length > 0 ? { exclude } : {} }),
   sendTurn: (playId, body) => request('POST', `/api/v1/plays/${id(playId)}/turns`, { body, timeoutMs: CHAT_TIMEOUT_MS }),
   getResult: (playId) => request('GET', `/api/v1/plays/${id(playId)}/result`, { timeoutMs: CHAT_TIMEOUT_MS }),
   listMyPlays: () => request('GET', '/api/v1/players/me/plays'),
