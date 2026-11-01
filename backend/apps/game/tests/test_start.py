@@ -1,10 +1,14 @@
 import json
 import uuid
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.game.models import Message, Play, Player
+from apps.game.models import NPC, Message, Play, Player, Turn
+from apps.game.state import initial_state
+
+from .test_ai_chat import ai_response
 
 
 class StartTests(TestCase):
@@ -40,11 +44,79 @@ class StartTests(TestCase):
         self.assertIsNone(play.state["development"]["value"])
         self.assertEqual(play.state["relationship"], {})
         self.assertEqual(play.state["interests"], {})
-        self.assertEqual(Message.objects.get(play=play, turn=0).role, "narrator")
+        data = response.json()["data"]
+        self.assertEqual(Message.objects.filter(play=play, turn=0).count(), 2)
+        self.assertEqual(data["messages"][0]["role"], "narrator")
+        self.assertIn("중학생", data["messages"][0]["text"])
+        self.assertEqual(data["messages"][1]["speaker"], "승언")
+        self.assertEqual(NPC.objects.get(play=play).name, "승언")
+        self.assertEqual(play.progress["scene"]["speakerNpcId"], "opening-companion")
+        self.assertEqual(Turn.objects.get(play=play, number=0).response["hints"], data["hints"])
+        self.assertTrue(data["hints"])
+
+    def test_worker_opening_uses_adult_companion_without_assigning_dream_job(self):
+        profile = self.body | {
+            "age": 30,
+            "situation": "직장인",
+            "hasDreamJob": True,
+            "dreamJob": "사서",
+        }
+        response = self.post(profile)
+        self.assertEqual(response.status_code, 200, response.content)
+        data = response.json()["data"]
+        self.assertEqual(data["messages"][1]["speaker"], "성준")
+        self.assertIn("30세", data["messages"][0]["text"])
+        self.assertIn("사서", data["hints"][0])
+        self.assertEqual(data["state"]["occupation"], initial_state(profile)["occupation"])
+        self.assertIsNone(data["state"]["occupation"]["currentJob"])
+        self.assertEqual(NPC.objects.get(play_id=data["playId"]).name, "성준")
+
+    def test_opening_and_latest_hints_resume_and_first_ai_turn_sees_scene(self):
+        started = self.post(self.body).json()["data"]
+        play = Play.objects.get(pk=started["playId"])
+        headers = {"HTTP_X_PLAYER_ID": str(self.player.pk)}
+        resumed = self.client.get(reverse("resume", args=[play.pk]), **headers).json()["data"]
+        self.assertEqual(resumed["messages"], started["messages"])
+        self.assertEqual(resumed["hints"], started["hints"])
+        data = ai_response()["data"]
+        data["messages"][0]["speaker"] = "승언"
+        data["hints"] = ["내일은 다른 일을 해볼래"]
+        with patch("apps.game.turns.ai.chat", return_value=data) as chat:
+            response = self.client.post(
+                reverse("turns", args=[play.pk]),
+                json.dumps({"requestId": str(uuid.uuid4()), "message": "이야기하고 싶어"}),
+                content_type="application/json",
+                **headers,
+            )
+        self.assertEqual(response.status_code, 200, response.content)
+        player, history = chat.call_args.args[:2]
+        self.assertEqual(player["speakingNpcId"], "opening-companion")
+        self.assertEqual(player["npcs"], [{"id": "opening-companion", "name": "승언"}])
+        self.assertEqual(history, [{"input": "", "messages": started["messages"]}])
         self.assertEqual(
-            response.json()["data"]["messages"][0],
-            {"role": "narrator", "speaker": "나레이션", "text": "플레이가 시작되었습니다."},
+            list(play.turns.order_by("number").values_list("number", flat=True)), [0, 1]
         )
+        resumed = self.client.get(reverse("resume", args=[play.pk]), **headers).json()["data"]
+        self.assertEqual(resumed["hints"], data["hints"])
+        self.assertEqual(resumed["messages"][:2], started["messages"])
+        self.assertEqual(
+            [item["text"] for item in resumed["messages"] if item["role"] == "user"],
+            ["이야기하고 싶어"],
+        )
+        self.assertFalse(Message.objects.filter(play=play, role="user", text="").exists())
+        self.assertEqual(resumed["lastTurnId"], response.json()["data"]["turnId"])
+
+    def test_opening_storage_failure_rolls_back_all_play_records(self):
+        with (
+            patch(
+                "apps.game.views.Message.objects.bulk_create", side_effect=RuntimeError("storage")
+            ),
+            self.assertRaisesRegex(RuntimeError, "storage"),
+        ):
+            self.post(self.body)
+        for model in (Play, NPC, Turn, Message):
+            self.assertFalse(model.objects.exists(), model.__name__)
+        self.assertTrue(Player.objects.filter(pk=self.player.pk).exists())
 
     def test_each_play_has_distinct_session_id(self):
         first = self.post(self.body).json()["data"]["sessionId"]
@@ -109,3 +181,7 @@ class StartTests(TestCase):
         state = schema["components"]["schemas"]["PlayData"]["properties"]["state"]
         self.assertIn("age", state["description"])
         self.assertIn("원화", state["description"])
+        for name in ("PlayData", "ResumeData"):
+            hints = schema["components"]["schemas"][name]["properties"]["hints"]
+            self.assertEqual(hints["type"], "array")
+            self.assertEqual(hints["items"]["type"], "string")

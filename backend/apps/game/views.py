@@ -1,3 +1,4 @@
+from django.db import transaction
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +15,8 @@ from .ending import get_or_generate_result
 from .events import store_event
 from .experiences import heartbeat, mark_pending
 from .memory import npc_list
-from .models import Message, Play, Player
+from .models import NPC, Message, Play, Player, Turn
+from .opening import opening
 from .pause import set_paused
 from .reconciliation import reconcile
 from .serializers import (
@@ -105,22 +107,36 @@ class PlaysView(PlayerRequiredView):
         serializer = StartPlaySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         state = initial_state(serializer.validated_data)
-        messages = [{"role": "narrator", "speaker": "나레이션", "text": "플레이가 시작되었습니다."}]
-        play = Play.objects.create(
-            player=self.player,
-            profile=serializer.validated_data,
-            state=state,
-            messages=messages,
-        )
-        Message.objects.create(
-            play=play, turn=0, role="narrator", speaker="나레이션", text=messages[0]["text"]
-        )
+        first = opening(serializer.validated_data)
+        messages = first["messages"]
+        with transaction.atomic():
+            play = Play.objects.create(
+                player=self.player,
+                profile=serializer.validated_data,
+                state=state,
+                messages=messages,
+                progress={"scene": first["scene"]},
+            )
+            NPC.objects.create(play=play, key=first["npc"]["id"], name=first["npc"]["name"])
+            Turn.objects.create(
+                play=play,
+                number=0,
+                input="",
+                response={"messages": messages, "hints": first["hints"]},
+                context={
+                    "npcIds": first["scene"]["npcIds"],
+                    "responseNpcIds": first["scene"]["npcIds"],
+                    "sceneId": first["scene"]["id"],
+                },
+            )
+            Message.objects.bulk_create([Message(play=play, turn=0, **item) for item in messages])
         return success(
             {
                 "playId": str(play.pk),
                 "sessionId": str(play.session_id),
                 "state": state,
                 "messages": messages,
+                "hints": first["hints"],
             }
         )
 
@@ -175,12 +191,14 @@ class ResumeView(PlayerRequiredView):
             elif role == "narrator" and speaker == "narrator":
                 speaker = "나레이션"
             messages.append({"role": role, "speaker": speaker, "text": item["text"]})
+        latest = play.turns.order_by("-number").values_list("response", flat=True).first()
         return success(
             {
                 "playId": str(play.pk),
                 "sessionId": str(play.session_id),
                 "state": play.state,
                 "messages": messages,
+                "hints": latest.get("hints", []) if latest else [],
                 "ended": is_ended(play),
                 "paused": play.paused,
                 "stateVersion": play.state_version,

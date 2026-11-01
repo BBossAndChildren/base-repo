@@ -223,13 +223,14 @@ def run_turn(play, message, base_url, request_id):
                 {"input": turn.input, "messages": turn.response["messages"]} for turn in past
             ]
             for turn in [*player_history, {"input": message, "messages": data["messages"]}][-20:]:
-                current.messages.append(
-                    {
-                        "role": "user",
-                        "speaker": current.state.get("profile", {}).get("name", ""),
-                        "text": turn["input"],
-                    }
-                )
+                if turn["input"]:
+                    current.messages.append(
+                        {
+                            "role": "user",
+                            "speaker": current.state.get("profile", {}).get("name", ""),
+                            "text": turn["input"],
+                        }
+                    )
                 current.messages.extend({"role": "npc", **item} for item in turn["messages"])
             if ended:
                 current.ended_at = timezone.now()

@@ -212,6 +212,11 @@ docker compose build backend
 | 64 | 실제 AI 연결 (GPU 서버) #113 | 서버: 중계기 `ai-relay`(172.17.0.1:18010 → AI 127.0.0.1:8010), `.env` `AI_API_BASE_URL=http://host.docker.internal:18010` · 기존 키, 컨테이너에서 `/openapi.json`, 게이트웨이로 게스트 → 시작 → 턴. 배포 사이트 headless Chrome 대화 2턴 | 컨테이너 → AI 200, 턴 `code:200` (실제 Qwen 대사 · 확정 state), 사이트 대화 200 · 약 6초 · 이전 대화 기억. 추천 · 결말 API 는 AI 쪽 미구현, Cloudflare 502 변환(11 E3) 남음 | AI 쪽 추천 · 결말 구현 대기 |
 | 65 | 허용 출처 zeta 하나로 #122 | `python3 backend/scripts/test_intro_gateway.py`, 전체 `python manage.py test`, Ruff | 게이트웨이 PASS (zeta 허용 · 이전 `base-repo-ck83` · 목록 밖 출처는 CORS 헤더 없음), Django 148개 통과. GPU 서버 반영(pull · `.env` · 재기동)은 서버 작업 | 서버 반영 대기 |
 
+| 66 | 시작 장면·힌트·첫 AI 컨텍스트·재개·원자 저장 (#154) | `python manage.py test apps.game.tests.test_start --verbosity 1 --noinput` (로컬 PostgreSQL16 Unix socket 전용) | 12개 통과. 학생/직장인·희망 직업 무자동취업·0번 장면 뒤 1번 입력·빈 입력 미표시·첫 NPC 전달·저장 실패 전체 롤백 확인 | 전체 회귀 가능 |
+| 67 | 첫 장면 HTTP 통합 회귀 (#154) | 전체 `python manage.py test --verbosity 1 --noinput` → 모의 AI 발화자 수정 후 `test_mock_ai test_api_flow test_start test_resume test_turns` | 전체 173개 중 1개 실패: 모의 AI가 현재 장면 밖 이름을 발화. 모의 서버를 현재 발화 NPC에 맞춘 뒤 관련 33개 통과 | 전체 재실행 필요 |
+
+| 68 | 첫 장면 최종 회귀·계약·빌드 (#154) | 전체 `python manage.py test --verbosity 1 --noinput`; check; makemigrations/migrate 검사; spectacular `--validate --fail-on-warn`; Ruff check/format; Docker build | 실제 PostgreSQL16·규칙·모의 HTTP 174개 통과(4.148초), OpenAPI 시작/재개 hints·Ruff 97파일·이미지 빌드 통과. 운영 DB 사용 없음; 실제 GPU·브라우저 통합은 별도 검증 | PR 준비 가능 |
+
 ## 5. 미확정·외부 의존 사항
 
 - 미배정 자산·비용은 0, 미확정 급여·성적·흥미 단계는 null로 두며 현실 수치를 추정하지 않는다. AI의 사망 제안만으로 종료하지 않고 건강 0 지속/과로 확정 판정을 사용한다. 이전 추상 상태는 다음 유효 턴에서 전환하고 원본을 비공개 보존한다.

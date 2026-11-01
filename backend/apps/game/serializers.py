@@ -99,6 +99,11 @@ class PlayDataSerializer(serializers.Serializer):
         )
     )
     messages = MessageSerializer(many=True)
+    hints = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        help_text="자유 입력과 함께 선택할 수 있는 다음 행동 예시",
+    )
 
 
 class PlayResponseSerializer(serializers.Serializer):
@@ -127,6 +132,11 @@ class ResumeDataSerializer(serializers.Serializer):
     sessionId = serializers.UUIDField(help_text="게임 시작 때 발급한 Unity 세션 ID")
     state = serializers.JSONField()
     messages = MessageSerializer(many=True)
+    hints = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        help_text="자유 입력과 함께 선택할 수 있는 다음 행동 예시",
+    )
     ended = serializers.BooleanField()
 
 
