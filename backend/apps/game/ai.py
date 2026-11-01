@@ -74,7 +74,7 @@ def chat(state, turns, message, deadline, attempts=2):
         "guidelines": guidelines,
         "scenario": scenario,
         "player": player,
-        "history": history,
+        "history": history[-40:],
         "input": message,
     }
     return call_ai("/ai/v1/chat", payload, AIChatResponseSerializer, deadline, attempts)
