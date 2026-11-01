@@ -16,10 +16,14 @@ interface ComposerProps {
 
 export const MESSAGE_MAX = 300
 
+const INPUT_EXAMPLES = ['지금 할 수 있는 일을 알려줘', '상황을 조금 더 설명해 줘']
+
 /** 입력 · 힌트 (05 화면 2) */
 export function Composer({ value, onChange, onSubmit, hints, choices = [], disabled, waiting }: ComposerProps) {
   const inputId = useId()
   const canSend = !disabled && value.trim().length > 0
+  const shownHints = hints.length > 0 ? hints : choices.length === 0 ? INPUT_EXAMPLES : []
+  const helpId = `${inputId}-help`
 
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -28,6 +32,9 @@ export function Composer({ value, onChange, onSubmit, hints, choices = [], disab
 
   return (
     <div className="chat-footer">
+      <p id={helpId} className="small muted">
+        이야기를 읽고 하고 싶은 말이나 행동을 적어 보세요. 보기를 누른 뒤 고쳐 보내도 괜찮아요.
+      </p>
       {choices.length > 0 && !disabled && (
         <div className="choices" role="group" aria-label="선택이 필요해요">
           {choices.map((choice, index) => (
@@ -44,10 +51,10 @@ export function Composer({ value, onChange, onSubmit, hints, choices = [], disab
           ))}
         </div>
       )}
-      {hints.length > 0 && !disabled && (
+      {shownHints.length > 0 && !disabled && (
         <div className="hints" role="group" aria-label="이렇게 말해 볼 수 있어요">
-          <span className="hints-label">힌트</span>
-          {hints.map((hint) => (
+          <span className="hints-label">{hints.length > 0 ? '힌트' : '입력 예시'}</span>
+          {shownHints.map((hint) => (
             <button key={hint} type="button" className="chip chip-hint" onClick={() => onChange(hint)}>
               {hint}
             </button>
@@ -62,6 +69,7 @@ export function Composer({ value, onChange, onSubmit, hints, choices = [], disab
           id={inputId}
           className="input"
           placeholder="하고 싶은 말이나 행동을 자유롭게 적어 보세요"
+          aria-describedby={helpId}
           autoComplete="off"
           enterKeyHint="send"
           maxLength={MESSAGE_MAX}
