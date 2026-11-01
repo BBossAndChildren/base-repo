@@ -111,7 +111,35 @@ class NPCSummarySerializer(serializers.Serializer):
     name = serializers.CharField(help_text="화면에 보일 이름")
 
 
+class ExperienceOfferSerializer(serializers.Serializer):
+    offerId = serializers.UUIDField(required=False, help_text="채팅 체험 제안을 만든 턴 ID")
+    buildId = serializers.CharField(help_text="Unity 허용 목록의 빌드 ID")
+    buildUrl = serializers.URLField(help_text="현재 요청 주소를 기준으로 생성한 빌드 URL")
+    roomId = serializers.CharField(help_text="Unity 방 ID")
+    scenarioId = serializers.CharField(help_text="Unity 시나리오 ID")
+    scenarioVersion = serializers.CharField(help_text="Unity 시나리오 버전")
+    title = serializers.CharField(help_text="3D 안내 카드 제목")
+    jobs = serializers.ListField(child=serializers.CharField(), help_text="체험 관련 직업")
+    reason = serializers.CharField(help_text="AI 분기 이유")
+
+
+class ExperienceResumeStateSerializer(serializers.Serializer):
+    offerId = serializers.UUIDField()
+    lifecycleStatus = serializers.CharField(
+        help_text="offered/declined/unavailable 또는 저장된 체험 상태"
+    )
+    experienceId = serializers.CharField(allow_null=True)
+    outcome = serializers.CharField(allow_null=True, help_text="실제 종료 이벤트의 결과만 반환")
+
+
 class ResumeDataSerializer(serializers.Serializer):
+    experience = ExperienceOfferSerializer(required=False, allow_null=True)
+    experienceState = ExperienceResumeStateSerializer(required=False, allow_null=True)
+    hints = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        help_text="현재 마지막 턴의 유효한 안내; 체험 처리 후 비움",
+    )
     scene = serializers.JSONField(help_text="마지막 확정 장면·발화 NPC. 비공개 기억은 제외")
     npcs = NPCSummarySerializer(
         many=True, help_text="이 플레이에서 만난 인물 이름 목록. 비공개 기억 · 해석은 없음"
@@ -268,15 +296,19 @@ class TurnInputSerializer(StrictSerializer):
     )
 
 
-class ExperienceOfferSerializer(serializers.Serializer):
-    buildId = serializers.CharField(help_text="Unity 허용 목록의 빌드 ID")
-    buildUrl = serializers.URLField(help_text="현재 요청 주소를 기준으로 생성한 빌드 URL")
-    roomId = serializers.CharField(help_text="Unity 방 ID")
-    scenarioId = serializers.CharField(help_text="Unity 시나리오 ID")
-    scenarioVersion = serializers.CharField(help_text="Unity 시나리오 버전")
-    title = serializers.CharField(help_text="3D 안내 카드 제목")
-    jobs = serializers.ListField(child=serializers.CharField(), help_text="체험 관련 직업")
-    reason = serializers.CharField(help_text="AI 분기 이유")
+class ExperienceDismissInputSerializer(StrictSerializer):
+    sessionId = serializers.UUIDField(help_text="현재 플레이의 세션 ID")
+    offerId = serializers.UUIDField(help_text="거절할 현재 채팅 체험 제안의 offerId(턴 ID)")
+
+
+class ExperienceDismissDataSerializer(serializers.Serializer):
+    offerId = serializers.UUIDField()
+    lifecycleStatus = serializers.ChoiceField(choices=["declined"])
+
+
+class ExperienceDismissResponseSerializer(serializers.Serializer):
+    code = serializers.IntegerField()
+    data = ExperienceDismissDataSerializer()
 
 
 class ExperienceSuggestionInputSerializer(serializers.Serializer):

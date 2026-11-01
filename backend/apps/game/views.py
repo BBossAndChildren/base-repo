@@ -12,6 +12,7 @@ from .common import (
 )
 from .ending import get_or_generate_result
 from .events import store_event
+from .experience_resume import dismiss_experience, resume_experience
 from .experiences import heartbeat, mark_pending
 from .memory import npc_list
 from .models import Message, Play, Player
@@ -21,6 +22,8 @@ from .reconciliation import reconcile
 from .serializers import (
     EventAckResponseSerializer,
     EventInputSerializer,
+    ExperienceDismissInputSerializer,
+    ExperienceDismissResponseSerializer,
     ExperienceSuggestionInputSerializer,
     ExperienceSuggestionResponseSerializer,
     GameErrorResponseSerializer,
@@ -161,6 +164,7 @@ class ResumeView(PlayerRequiredView):
     )
     def get(self, request, play_id):
         play = owned_play(self.player, play_id)
+        latest_turn = play.turns.order_by("-number").first()
         messages = []
         for item in play.messages:
             speaker = item.get("speaker", "")
@@ -193,12 +197,40 @@ class ResumeView(PlayerRequiredView):
                 ),
                 "pendingChoices": play.progress.get("pendingChoices", []),
                 "npcs": npc_list(play),
-                "lastTurnId": str(
-                    play.turns.order_by("-number").values_list("id", flat=True).first() or ""
-                )
-                or None,
+                "lastTurnId": str(latest_turn.pk) if latest_turn else None,
+                **resume_experience(play, latest_turn, request.build_absolute_uri("/")),
             }
         )
+
+
+@extend_schema(parameters=PLAY_PARAMETERS)
+class ExperienceDismissView(PlayerRequiredView):
+    @extend_schema(
+        tags=["플레이"],
+        summary="채팅 체험 제안 거절",
+        description=(
+            "현재 채팅 제안을 명시적으로 닫습니다. 같은 요청은 중복 저장하지 않고 "
+            "관측된 체험은 거절하지 않습니다."
+        ),
+        examples=[
+            OpenApiExample(
+                "현재 채팅 제안 닫기",
+                request_only=True,
+                value={
+                    "sessionId": SAMPLE_SESSION_ID,
+                    "offerId": "10000000-0000-4000-8000-000000000001",
+                },
+            )
+        ],
+        request=ExperienceDismissInputSerializer,
+        responses=api_responses(ExperienceDismissResponseSerializer, 400, 401, 404, 409),
+    )
+    def post(self, request, play_id):
+        play = owned_play(self.player, play_id)
+        serializer = ExperienceDismissInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        return success(dismiss_experience(play, data["sessionId"], data["offerId"]))
 
 
 @extend_schema(parameters=PLAYER_PARAMETERS)
