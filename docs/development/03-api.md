@@ -95,6 +95,7 @@
 | POST | `/api/v1/plays/{playId}/experience-reconcile` | 종료 응답 없는 체험 정산 (응답 감싸지 않음) | |
 | POST | `/api/v1/plays/{playId}/experience-heartbeat` | 체험 생존 신호 (응답 감싸지 않음) | |
 | POST | `/api/v1/plays/{playId}/experience-pending` | 종료 응답 미수신 기록 (응답 감싸지 않음) | |
+| POST | `/api/v1/plays/{playId}/experience-offers` | 3D 체험 추천 받기 (화면 카드, 채팅 분기 없이) | BE16 |
 | GET | `/api/v1/plays/{playId}/result` | 결말 · 추천 직업 | |
 | GET | `/api/v1/players/me/plays` | 지난 플레이 기록 목록 | |
 
@@ -331,6 +332,49 @@
 ```json
 { "sessionId": "…", "experienceId": "…", "lifecycleStatus": "pending_reconciliation" }
 ```
+
+### 1-11. 3D 체험 추천 받기 (화면 카드)
+`POST /api/v1/plays/{playId}/experience-offers` · 인증: `X-Player-Id` (2026-11-01, #163 · [12 결정 31](12-decisions.md))
+
+> 채팅의 3D 분기(1-3 `experience`)는 AI 가 `branch` 를 보내야 생긴다. AI 가 보내지 않아도 게임 화면 상태 패널 아래 **체험 카드**에서 언제든 3D 체험을 할 수 있게 백엔드가 하나를 고른다 ([05 화면 2](05-ui-ux.md#화면-2-게임-playplayid)).
+
+요청
+```json
+{ "exclude": ["career-net-951-experience"] }
+```
+- `exclude` (선택): [다른 체험] 으로 다시 고를 때 이미 보여 준 `scenarioId` 목록. 주면 직업과 상관없이 무작위로 고른다
+
+응답 (성공)
+```json
+{
+  "code": 200,
+  "data": {
+    "buildId": "career-suite-integration-v005",
+    "buildUrl": "https://<현재 터널 주소>/builds/career-suite-integration-v005/",
+    "roomId": "PAN-002",
+    "scenarioId": "career-net-951-experience",
+    "scenarioVersion": "v002",
+    "title": "주민 문화행사 준비",
+    "jobs": ["행사기획자"],
+    "reason": "되고 싶다고 한 일을 3D 공간에서 미리 해 봐요.",
+    "basis": "dreamJob",
+    "job": "행사기획자",
+    "roomName": "협업·기획 사무실",
+    "description": "「행사 요청서」의 행사명·날짜·인원 항목을 …"
+  }
+}
+```
+- 고르는 순서: `occupation.currentJob` 과 이어지는 체험(`basis: currentJob`) → `profile.dreamJob`(`dreamJob`) → 무작위(`random`). 이미 해 본 체험(`state.experiences`)과 `exclude` 는 뺀다
+- 앞 8개 필드는 1-3 의 `experience` 와 같은 모양이라 프론트는 같은 3D 체험 화면(화면 3)으로 시작한다
+- 받은 추천은 `experience_offers` 에 기록한다. 3D 이벤트 · 생존 신호(1-4 · 1-9)는 **가장 최근 채팅 분기 또는 최근 카드 추천 5개 중 하나와 일치**하면 받는다 (전에는 가장 최근 채팅 분기만)
+
+실패
+| code | 조건 |
+|------|------|
+| 400 | `exclude` 형식 오류 |
+| 401 · 404 | 모르는 플레이어 · 내 플레이가 아님 |
+| 409 `ALREADY_ENDED` · `PLAY_PAUSED` | 끝났거나 일시정지 중인 플레이 |
+| 503 `CONTENT_UNAVAILABLE` | 서버에 체험 카탈로그가 없음 |
 
 ---
 
