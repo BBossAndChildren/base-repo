@@ -1,5 +1,6 @@
 import type {
   CreatePlayerResponse,
+  ExperienceSuggestion,
   MyPlaysResponse,
   PauseResponse,
   PlayResult,
@@ -20,6 +21,8 @@ export interface GameApi {
   getPlay(playId: string): Promise<PlayResume>
   /** 일시정지 · 재개 (PATCH 1-7 리소스) */
   setPaused(playId: string, paused: boolean): Promise<PauseResponse>
+  /** 1-11 화면 카드용 3D 체험 추천. exclude 를 주면 다시 고르기(무작위) */
+  suggestExperience(playId: string, exclude?: string[]): Promise<ExperienceSuggestion>
   /** 1-3 채팅 한 턴 */
   sendTurn(playId: string, body: TurnRequest): Promise<TurnResponse>
   /** 1-5 결말 · 추천 직업 */

@@ -252,6 +252,29 @@ describe('PlayView', () => {
     spy.mockRestore()
   })
 
+  it('상태 패널 아래 3D 체험 카드로 언제든 체험을 시작하고, 다시 고르면 본 체험을 뺀다 (#171)', async () => {
+    const onStartExperience = vi.fn()
+    const suggest = vi.spyOn(mockGameApi, 'suggestExperience')
+    const { user } = await setup({ onStartExperience })
+    const card = await screen.findByRole('region', { name: '3D 직업 체험' })
+    expect(await within(card).findByRole('heading', { name: '행사기획자' })).toBeInTheDocument()
+    expect(suggest).toHaveBeenCalledWith(expect.any(String), [])
+    await user.click(within(card).getByRole('button', { name: '다른 체험 고르기' }))
+    expect(suggest).toHaveBeenLastCalledWith(expect.any(String), ['career-net-951-experience'])
+    expect(await within(card).findByRole('heading', { name: '사무원' })).toBeInTheDocument()
+    await user.click(within(card).getByRole('button', { name: '내 업무 체험하기' }))
+    expect(onStartExperience).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'career-net-98-experience' }))
+    expect(within(log()).getByText('「공용 사무실 업무」 3D 체험을 시작했어요')).toBeInTheDocument()
+    suggest.mockRestore()
+  })
+
+  it('일시정지 중이면 체험 카드를 고르지 않는다', async () => {
+    const suggest = vi.spyOn(mockGameApi, 'suggestExperience')
+    await setup({ mapPlay: (play) => ({ ...play, paused: true }) })
+    expect(suggest).not.toHaveBeenCalled()
+    suggest.mockRestore()
+  })
+
   it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
     await setup({ mapPlay: (play) => ({ ...play, pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
     expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()

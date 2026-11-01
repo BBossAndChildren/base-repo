@@ -174,6 +174,18 @@ export interface PendingChoice {
   }
 }
 
+/** 1-11 화면 카드용 3D 체험 추천. 앞 8개 필드는 ExperienceOffer 와 같아 같은 3D 체험 화면으로 시작한다 */
+export interface ExperienceSuggestion extends ExperienceOffer {
+  /** 고른 근거: 현재 직업 · 희망 직업 · 무작위 */
+  basis: 'currentJob' | 'dreamJob' | 'random'
+  /** 카드에 크게 보일 직업명 */
+  job: string
+  /** Unity 방 이름 */
+  roomName: string
+  /** 체험에서 하는 일 */
+  description: string
+}
+
 // 일시정지 · 재개 (03 게임 상태와 턴 확장, PATCH /api/v1/plays/{playId})
 export interface PauseResponse {
   state: PlayState
