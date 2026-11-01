@@ -13,7 +13,7 @@ from .common import (
 from .ending import get_or_generate_result
 from .events import store_event
 from .experiences import heartbeat, mark_pending
-from .memory import npc_list
+from .memory import npc_list, seed_opening_scene
 from .models import Message, Play, Player
 from .offers import suggest
 from .pause import set_paused
@@ -118,6 +118,8 @@ class PlaysView(PlayerRequiredView):
         Message.objects.create(
             play=play, turn=0, role="narrator", speaker="나레이션", text=messages[0]["text"]
         )
+        # 첫 장면에 상황에 맞는 기본 인물을 둔다 (AI 가 실제 이름으로 말하게, #182)
+        seed_opening_scene(play)
         return success(
             {
                 "playId": str(play.pk),

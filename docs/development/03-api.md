@@ -166,6 +166,7 @@
 ```
 - `sessionId` 는 Unity 연동에 쓰는 플레이 단위 ID. 프론트는 이 플레이의 모든 3D 체험에 같은 값을 쓴다
 - `state` 는 백엔드가 확정한 현재 값이다. 상세 기획 반영 설계는 아래 [게임 상태와 턴 확장](#게임-상태와-턴-확장-2026-10-31)을 따른다.
+- 첫 장면에는 상황에 맞는 기본 인물 한 명이 있다 (재개 응답 `npcs` · `scene`, [12 결정 32](12-decisions.md))
 
 실패
 | code | 조건 |
@@ -554,6 +555,7 @@ PATCH 요청은 `{"paused":true}`/`{"paused":false}`, 응답은 `{code:200,data:
 |---|---|
 | `actions[]` | 아래 행동 객체 목록. 각각 `kind`, 이번 입력에 실제 있는 `evidenceQuote` 필수. 직접 `stateChanges.funds/health/occupation` 조작은 거부 |
 | `scene` | `{id,npcIds,speakerNpcId,npcs:[{id,name}]}`. 발화자는 참여자여야 하고 기존 NPC를 장면에 추가하려면 사용자 입력 근거가 필요 |
+| 시작 장면 · 발화자 (2026-11-01, #182) | 게임 시작 때 상황에 맞는 **기본 인물**을 만들어 첫 장면의 발화자로 둔다 (`npcId: "opening"`, 이름 예: 학생 "친구 지우" · 대학생 "동기 …" · 직장인 "동료 …" · 구직 중 "선배 …" · 기타 "이웃 …", 이름은 플레이마다 다름). AI `player` 의 `speakingNpcId` · `npcs` 로 전달. AI 대사의 `speaker` 가 자리표시(`이름` · `NPC` 등)면 현재 장면 발화자 이름으로 바꿔 저장한다. **처음 등장하는 이름**은 새 NPC 로 등록해 장면에 넣고, **이미 아는 다른 인물**이 장면 밖에서 말하면 거부한다 (비공개 기억 보호) |
 | `memoryUpdates[]` | `{npcId,eventId,emotion?,interpretation?}`. 그 NPC가 아는 사건만 허용; 확정 사실은 변경 불가 |
 | `transfers[]` | `{fromNpcId,toNpcId,eventId,trigger}`. 전달자가 이미 아는 현재 플레이 사건만, `trigger:timePassed/importantEvent`의 서버 확정 근거가 있어야 수신자 기억에 추가 |
 
