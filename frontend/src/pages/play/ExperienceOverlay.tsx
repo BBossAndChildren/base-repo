@@ -16,7 +16,7 @@ const FINAL_FLUSH_WAIT_MS = 5_000
 export const EXPERIENCE_BACKGROUND = '#101e24'
 
 
-type Phase = 'loading' | 'ready' | 'starting' | 'running' | 'ending' | 'error'
+type Phase = 'loading' | 'ready' | 'starting' | 'running' | 'ending' | 'save-error' | 'error'
 
 interface ExperienceOverlayProps {
   playId: string
@@ -45,6 +45,7 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
   const clientRef = useRef<ExperienceClient | null>(null)
   const outboxRef = useRef<Outbox | null>(null)
   const experienceIdRef = useRef<string | null>(null)
+  const endedEventRef = useRef<CareerEvent | null>(null)
   const closedRef = useRef(false)
   const readyRef = useRef(false)
 
@@ -89,14 +90,26 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
     }
   }, [buildUrl, offer, fetchManifest, loadRuntime, toast, close, fail])
 
+  const closeIfStored = useCallback(() => {
+    const ended = endedEventRef.current
+    if (!ended || closedRef.current) return false
+    const saved = outboxRef.current?.state().rows.some((row) => row.id === `${ended.sessionId}|${ended.eventId}` && row.status === 'stored')
+    if (!saved) return false
+    clearPendingExperience()
+    close(ended.result.outcome === 'pending' ? 'aborted' : ended.result.outcome)
+    return true
+  }, [close])
+
   const finish = useCallback(
     async (ended: CareerEvent) => {
-      clearPendingExperience()
-      // 저장 확인을 잠시 기다린다. 남은 이벤트는 전송 큐가 계속 다시 보낸다
+      if (closedRef.current) return
+      endedEventRef.current = ended
+      setPhase('ending')
+      // flush는 전송 실패에도 resolve하므로 종료 이벤트의 실제 ACK를 확인한다
       await Promise.race([outboxRef.current?.flush(), new Promise((resolve) => setTimeout(resolve, FINAL_FLUSH_WAIT_MS))])
-      close(ended.result.outcome === 'pending' ? 'aborted' : ended.result.outcome)
+      if (!closeIfStored() && !closedRef.current) setPhase('save-error')
     },
-    [close],
+    [closeIfStored],
   )
 
   // 2) iframe 이 생기면 전송 큐 · 연결 클라이언트 만들기
@@ -122,7 +135,7 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
     })
     clientRef.current = client
     client.setPresentation({ backgroundColor: EXPERIENCE_BACKGROUND })
-    const flushTimer = setInterval(() => void outbox.flush(), FLUSH_MS)
+    const flushTimer = setInterval(() => void outbox.flush().then(closeIfStored), FLUSH_MS)
     // Unity 가 정해진 시간 안에 준비되지 않으면 불러오기 실패로 본다
     const readyTimer = setTimeout(() => {
       if (!readyRef.current) fail(EXPERIENCE_MESSAGES.loadFailed)
@@ -133,7 +146,7 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
       client.dispose()
       clientRef.current = null
     }
-  }, [loaded, sessionId, playId, api, finish, fail])
+  }, [loaded, sessionId, playId, api, finish, fail, closeIfStored])
 
   // 3) 체험 중 생존 신호 (30초)
   useEffect(() => {
@@ -275,6 +288,15 @@ export function ExperienceOverlay({ playId, sessionId, offer, onClose, loadRunti
           </span>
         </div>
       )}
+
+      <Modal
+        open={phase === 'save-error'}
+        icon="!"
+        title="체험 기록을 아직 저장하지 못했어요"
+        actions={<Button onClick={() => { if (endedEventRef.current) void finish(endedEventRef.current) }}>저장 다시 시도</Button>}
+      >
+        <p>기록을 보관하고 있어요. 연결을 확인하고 다시 시도해 주세요. 저장을 확인하면 이야기로 돌아가요.</p>
+      </Modal>
 
       <Modal open={phase === 'error'} icon="!" title="3D 체험을 종료했어요" actions={<Button onClick={() => close('error')}>텍스트로 계속하기</Button>}>
         <p>{EXPERIENCE_MESSAGES.errorBody}</p>

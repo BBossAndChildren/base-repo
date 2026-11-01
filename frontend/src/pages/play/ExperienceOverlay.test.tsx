@@ -43,7 +43,7 @@ function event(type: string, experienceId: string, outcome: CareerEvent['result'
 
 /** Unity 연결 코드 대신 끼우는 가짜. 테스트가 준비 · 이벤트 · 응답을 직접 일으킨다 */
 function fakeRuntime() {
-  const sent: CareerEvent[] = []
+  const rows: Array<{ event: CareerEvent; status: 'pending' | 'stored' }> = []
   let onStatus: ((status: ClientStatus) => void) | undefined
   let onEvent: ((event: CareerEvent) => void) | undefined
   let outbox: Outbox | undefined
@@ -59,11 +59,21 @@ function fakeRuntime() {
     createOutbox: (options) => {
       send = options.send
       outbox = {
-        enqueue: (e) => sent.push(e),
-        flush: async () => {
-          for (const e of sent.splice(0)) await send?.(e)
+        enqueue: (e) => {
+          if (!rows.some((row) => row.event.eventId === e.eventId)) rows.push({ event: e, status: 'pending' })
         },
-        state: () => ({ rows: [], persistenceError: null }),
+        flush: async () => {
+          for (const row of rows) {
+            if (row.status === 'stored') continue
+            try {
+              const ack = await send?.(row.event)
+              if (ack?.stored === true && ack.eventId === row.event.eventId && ack.sessionId === row.event.sessionId) row.status = 'stored'
+            } catch {
+              // Unity 원본처럼 전송 실패는 pending으로 남기고 flush는 정상 종료한다
+            }
+          }
+        },
+        state: () => ({ rows: rows.map(({ event: e, status }) => ({ id: `${e.sessionId}|${e.eventId}`, status })), persistenceError: null }),
       }
       return outbox
     },
@@ -73,7 +83,15 @@ function fakeRuntime() {
         options.outbox.enqueue(e)
         options.onEvent?.(e)
       }
-      return client
+      return {
+        ...client,
+        end: async (ids) => {
+          const ended = await client.end(ids)
+          options.outbox.enqueue(ended)
+          options.onEvent?.(ended)
+          return ended
+        },
+      }
     },
   }
   return {
@@ -171,6 +189,54 @@ describe('ExperienceOverlay', () => {
     resolveEnd(event('experience.ended', getPendingExperience()!.experienceId, 'completed'))
     await waitFor(() => expect(onClose).toHaveBeenCalledWith('completed'))
     expect(getPendingExperience()).toBeNull()
+  })
+
+  it('종료 저장 실패 시 이전 이벤트 ACK로 완료하지 않고 기록을 보존하며, 재시도 ACK 후에만 닫는다', async () => {
+    const api = fakeApi()
+    const { ready, emit, onClose, user } = renderOverlay({ api })
+    await screen.findByTitle('직업 3D 체험')
+    ready()
+    await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
+    const pending = getPendingExperience()!
+    const earlier = event('object.selected', pending.experienceId)
+    emit(earlier)
+    await waitFor(() => expect(api.sendEvent).toHaveBeenCalledWith('play-1', earlier))
+    vi.mocked(api.sendEvent).mockRejectedValue(new Error('NETWORK'))
+    const ended = event('experience.ended', pending.experienceId, 'completed')
+    emit(ended)
+    await waitFor(() => expect(api.sendEvent).toHaveBeenCalledWith('play-1', ended))
+    expect(onClose).not.toHaveBeenCalled()
+    expect(getPendingExperience()).toEqual(pending)
+    const retry = await screen.findByRole('button', { name: '저장 다시 시도' })
+    vi.mocked(api.sendEvent).mockImplementation(async (_playId, e) => ({ stored: true, sessionId: e.sessionId, eventId: e.eventId }))
+    await user.click(retry)
+    await waitFor(() => expect(onClose).toHaveBeenCalledWith('completed'))
+    expect(getPendingExperience()).toBeNull()
+  })
+
+  it('종료 저장 확인이 지연되면 기록을 보존하고, 뒤늦은 ACK 뒤에 복귀한다', async () => {
+    let acknowledge!: (ack: StorageAck) => void
+    const api = fakeApi({ sendEvent: vi.fn(() => new Promise<StorageAck>((resolve) => (acknowledge = resolve))) })
+    const { ready, emit, onClose, user } = renderOverlay({ api })
+    await screen.findByTitle('직업 3D 체험')
+    ready()
+    await user.click(await screen.findByRole('button', { name: '체험 시작하기' }))
+    const pending = getPendingExperience()!
+    const ended = event('experience.ended', pending.experienceId, 'completed')
+    vi.useFakeTimers()
+    try {
+      emit(ended)
+      await act(async () => { await vi.advanceTimersByTimeAsync(5001) })
+      expect(screen.getByRole('button', { name: '저장 다시 시도' })).toBeInTheDocument()
+      expect(onClose).not.toHaveBeenCalled()
+      expect(getPendingExperience()).toEqual(pending)
+      await act(async () => { acknowledge({ stored: true, sessionId: ended.sessionId, eventId: ended.eventId }) })
+      vi.useRealTimers()
+      await waitFor(() => expect(onClose).toHaveBeenCalledWith('completed'))
+      expect(getPendingExperience()).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('Unity 가 스스로 체험을 끝내도 결과로 닫힌다', async () => {
