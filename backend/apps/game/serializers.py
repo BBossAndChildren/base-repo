@@ -289,6 +289,31 @@ class ExperienceOfferSerializer(serializers.Serializer):
     reason = serializers.CharField(help_text="AI 분기 이유")
 
 
+class ExperienceSuggestionInputSerializer(serializers.Serializer):
+    exclude = serializers.ListField(
+        child=serializers.CharField(max_length=200),
+        required=False,
+        default=list,
+        max_length=600,
+        help_text="다시 고르기: 이미 보여 준 scenarioId 목록. 주면 직업과 상관없이 무작위로 고른다",
+    )
+
+
+class ExperienceSuggestionSerializer(ExperienceOfferSerializer):
+    basis = serializers.ChoiceField(
+        choices=["currentJob", "dreamJob", "random"],
+        help_text="고른 근거: 현재 직업 · 희망 직업 · 무작위",
+    )
+    job = serializers.CharField(help_text="카드에 크게 보일 직업명")
+    roomName = serializers.CharField(allow_blank=True, help_text="Unity 방 이름")
+    description = serializers.CharField(allow_blank=True, help_text="체험에서 하는 일 (카탈로그)")
+
+
+class ExperienceSuggestionResponseSerializer(serializers.Serializer):
+    code = serializers.IntegerField()
+    data = ExperienceSuggestionSerializer()
+
+
 class ExperienceNoticeSerializer(serializers.Serializer):
     type = serializers.ChoiceField(choices=["EXPERIENCE_SKIPPED"])
     message = serializers.CharField()
