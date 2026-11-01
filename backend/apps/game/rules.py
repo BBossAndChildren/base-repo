@@ -17,8 +17,21 @@ from .state import initial_state
 AGING_HEALTH_LOSS = ((95, 20), (85, 10), (75, 6), (65, 3))
 
 
+# 건강 회복 (#141): 스트레스 50 미만 · 과로 아닌 날을 회복일로 쌓고 30일마다 건강 +2.
+# 휴일은 2일, 휴가일은 3일로 센다. 상한은 시작 건강 80 에서 나이별 노화 감소를 뺀 값.
+HEALTH_BASELINE = 80
+RECOVERY_DAYS = 30
+RECOVERY_GAIN = 2
+RECOVERY_WEIGHT = {"holiday": 2, "vacation": 3}
+
+
 def aging_loss(age):
     return next((loss for minimum, loss in AGING_HEALTH_LOSS if age >= minimum), 0)
+
+
+def health_ceiling(age):
+    """자연 회복 건강 상한. 65세부터 그 나이까지의 노화 감소를 뺀 값 (시작 나이와 무관)"""
+    return max(0, HEALTH_BASELINE - sum(aging_loss(year) for year in range(65, age + 1)))
 
 
 class RuleViolation(ValueError):
@@ -173,6 +186,19 @@ def evolve(state, progress, actions, message, key, rng=None):
             },
         )
 
+    def recover(activity):
+        ceiling = health_ceiling(state["age"])
+        if state["stress"] >= 50 or progress["overwork"] or state["health"] >= ceiling:
+            progress["healthRecoveryDays"] = 0
+            return
+        days = progress.get("healthRecoveryDays", 0) + RECOVERY_WEIGHT.get(activity, 1)
+        if days >= RECOVERY_DAYS:
+            days -= RECOVERY_DAYS
+            gain = min(RECOVERY_GAIN, ceiling - state["health"])
+            state["health"] += gain
+            event("healthRecovered", {"healthGain": gain, "ceiling": ceiling})
+        progress["healthRecoveryDays"] = days
+
     def health_and_pressure(day, fatigue):
         nonlocal ended
         if state["stress"] >= 70:
@@ -314,6 +340,7 @@ def evolve(state, progress, actions, message, key, rng=None):
                 state["stress"] += stress
                 bounds()
                 monthly(today)
+                recover(activity)
                 health_and_pressure(today, activity in {"work", "overtime"})
                 if pending or ended:
                     break

@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.test import SimpleTestCase, TestCase
 
 from apps.game.models import Turn
-from apps.game.rules import RuleViolation, add_months, evolve
+from apps.game.rules import RuleViolation, add_months, evolve, health_ceiling
 from apps.game.state import initial_state
 
 from . import test_turns as turns_fixture
@@ -102,7 +102,8 @@ class LifeRuleTests(SimpleTestCase):
         self.assertEqual(progress["highStressMonths"], 0)
 
     def test_zero_health_six_calendar_months_and_recovery_reset(self):
-        self.state["health"] = 0
+        # 스트레스가 높으면 자연 회복이 없어 건강 0 이 이어진다
+        self.state.update(health=0, stress=60)
         state, progress, events, _, ended = self.advance(
             181, progress={"zeroHealthSince": "2026-01-01"}
         )
@@ -263,6 +264,45 @@ class LifeRuleTests(SimpleTestCase):
         state, _, events, _, ended = self.advance(900, progress=progress)
         self.assertTrue(ended)
         self.assertEqual(events[-2]["facts"], {"cause": "zeroHealthSixMonths"})
+
+    def test_health_recovers_two_every_thirty_calm_days_up_to_ceiling(self):
+        self.state["health"] = 70
+        state, progress, events, *_ = self.advance(30)
+        self.assertEqual(state["health"], 72)
+        self.assertIn("healthRecovered", [row["kind"] for row in events])
+        state, *_ = self.advance(29, state=state, progress=progress)
+        self.assertEqual(state["health"], 72)  # 아직 30일이 안 됨
+
+    def test_holiday_and_vacation_recover_faster(self):
+        self.state["health"] = 70
+        state, *_ = self.advance(15, "holiday")
+        self.assertEqual(state["health"], 72)
+        state, *_ = self.advance(10, "vacation")
+        self.assertEqual(state["health"], 72)
+
+    def test_no_recovery_under_stress_or_overwork_or_at_ceiling(self):
+        self.state.update(health=70, stress=60)
+        state, *_ = self.advance(60)
+        self.assertEqual(state["health"], 70)
+        self.state.update(health=80, stress=20)
+        state, *_ = self.advance(60)
+        self.assertEqual(state["health"], 80)
+
+    def test_calm_rest_recovers_from_zero_health_and_avoids_death(self):
+        self.state["health"] = 0
+        state, progress, events, _, ended = self.advance(
+            181, progress={"zeroHealthSince": "2026-01-01"}
+        )
+        self.assertFalse(ended)
+        self.assertGreater(state["health"], 0)
+        self.assertNotIn("zeroHealthSince", progress)
+
+    def test_ceiling_follows_age_even_when_life_started_old(self):
+        self.assertEqual((health_ceiling(64), health_ceiling(65), health_ceiling(83)), (80, 77, 0))
+        self.state.update(age=84, health=0)
+        progress = {"confirmedAdvance": {"days": 200, "activity": "vacation"}}
+        _, _, events, _, ended = self.advance(200, "vacation", progress=progress)
+        self.assertTrue(ended)  # 상한 0 이라 회복되지 않고 6개월 뒤 사망
 
 
 class RuleTurnTests(TestCase):
