@@ -240,6 +240,8 @@ export interface DismissExperienceOfferResponse {
 
 // 1-7
 export interface PlayResume {
+  /** 마지막 확정 턴의 힌트. 처리된 체험 안내는 서버가 비운다 */
+  hints?: string[]
   /** 서버가 현재 미시작 제안으로 확인한 체험만 제공한다 (#167) */
   experience?: ExperienceOffer | null
   experienceState?: ResumeExperienceState | null

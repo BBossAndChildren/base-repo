@@ -28,6 +28,7 @@ interface MockPlay {
   state: PlayState
   messages: ChatMessage[]
   turn: number
+  hints: string[]
   lastTurnId: string | null
   experience: ExperienceOffer | null
   experienceState: ResumeExperienceState | null
@@ -162,6 +163,7 @@ export const mockGameApi: GameApi = {
         { role: 'npc', speaker: '친구 민수', text: `${body.name}, 오늘 방과 후에 뭐 할 거야?` },
       ],
       turn: 0,
+      hints: [],
       lastTurnId: null,
       experience: null,
       experienceState: null,
@@ -188,6 +190,7 @@ export const mockGameApi: GameApi = {
       activePlaySeconds: 0,
       scene: null,
       pendingChoices: [],
+      hints: play.experienceState && play.experienceState.lifecycleStatus !== 'offered' ? [] : [...play.hints],
       lastTurnId: play.lastTurnId,
       experience: play.experience,
       experienceState: play.experienceState,
@@ -302,6 +305,7 @@ export const mockGameApi: GameApi = {
       response.stateChanges.push({ field: 'energy', from: energyFrom, to: play.state.energy })
     }
 
+    play.hints = [...response.hints]
     play.lastTurnId = response.turnId
     play.experience = response.experience
     play.experienceState = response.experience ? { offerId: response.turnId, lifecycleStatus: 'offered', experienceId: null, outcome: null } : null
