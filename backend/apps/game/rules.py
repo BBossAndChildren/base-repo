@@ -61,6 +61,16 @@ def source(value):
     return value
 
 
+def explicit_cancellation(message, target):
+    # 질문·조건부·부정문에서 일부 단어만 뽑아 취소로 오인하지 않는다.
+    decision = (
+        r"(?:(?:거절|취소)(?:할게(?:요)?|합니다|하겠습니다|해(?:줘|주세요)|할래(?:요)?|하자|한다)?"
+        r"|안\s*(?:할게(?:요)?|하겠습니다|할래(?:요)?))"
+    )
+    subject = rf"(?:(?:(?:이|그|이번)\s*)?(?:{target})(?:은|는|을|를)?\s*)?"
+    return re.fullmatch(subject + decision + r"[.!。]*", message.strip()) is not None
+
+
 def add_months(day, count):
     number = day.year * 12 + day.month - 1 + count
     year, month = divmod(number, 12)
@@ -270,6 +280,12 @@ def evolve(state, progress, actions, message, key, rng=None):
             progress.pop("idleSince", None)
         bounds()
 
+    if len(actions) > 1 and any(
+        isinstance(action, dict) and action.get("kind") in {"declineOffer", "cancelAdvance"}
+        for action in actions
+    ):
+        raise RuleViolation("거절·취소는 다른 행동과 함께 처리할 수 없습니다")
+
     for index, action in enumerate(actions):
         if pending or ended:
             break
@@ -308,7 +324,7 @@ def evolve(state, progress, actions, message, key, rng=None):
                         "kind": "confirmAdvance",
                         "days": days,
                         "activity": activity,
-                        "options": ["기간 진행 확인", "기간 변경"],
+                        "options": ["기간 진행 확인", "기간 변경", "진행 취소"],
                     }
                 )
                 continue
@@ -355,6 +371,39 @@ def evolve(state, progress, actions, message, key, rng=None):
             if not choice or not re.search(r"확인|진행|좋아|네|응|할게", message):
                 raise RuleViolation("긴 기간 진행의 앞선 제안과 확인이 필요합니다")
             progress["confirmedAdvance"] = {"days": choice["days"], "activity": choice["activity"]}
+        elif kind == "cancelAdvance":
+            previous = progress.get("pendingChoices", [])
+            choice = next((row for row in previous if row["kind"] == "confirmAdvance"), None)
+            target = r"(?:\d+\s*(?:일|개월|년)\s*)?(?:(?:기간|시간)\s*)?진행|기간|시간|계획"
+            if not choice or not explicit_cancellation(message, target):
+                raise RuleViolation("앞선 기간 진행 제안과 명시적인 취소가 필요합니다")
+            duration = re.search(r"(\d+)\s*(일|개월|년)", message)
+            if duration:
+                count, unit = int(duration[1]), duration[2]
+                minimum, maximum = {"일": (1, 1), "개월": (28, 31), "년": (365, 366)}[unit]
+                if not count * minimum <= choice["days"] <= count * maximum:
+                    raise RuleViolation("취소할 기간이 앞선 제안과 다릅니다")
+            pending = [row for row in previous if row["kind"] != "confirmAdvance"]
+            progress.pop("confirmedAdvance", None)
+            event("cancelAdvance", {"days": choice["days"], "activity": choice["activity"]})
+        elif kind == "declineOffer":
+            offer = progress.get("pendingOffer")
+            target = {"job": "취업|입사", "housing": "이사|주거", "loan": "대출"}.get(
+                (offer or {}).get("kind")
+            )
+            if (
+                not target
+                or offer.get("id") != action.get("offerId")
+                or not explicit_cancellation(message, "제안|조건|계약|" + target)
+            ):
+                raise RuleViolation("앞선 제안과 명시적인 거절이 필요합니다")
+            pending = [
+                row
+                for row in progress.get("pendingChoices", [])
+                if not (row["kind"] == "offer" and row.get("offer", {}).get("id") == offer["id"])
+            ]
+            progress.pop("pendingOffer")
+            event("declineOffer", {"offerId": offer["id"], "offerKind": offer["kind"]})
         elif kind == "loan":
             # 새 부채는 앞서 제시한 구체적인 조건을 사용자가 수락한 경우만 생성한다.
             if not re.search(r"수락|빌릴|빌려|대출|좋아|네|응", message):
@@ -505,5 +554,7 @@ def evolve(state, progress, actions, message, key, rng=None):
     state["debt"] = sum(row["balance"] for row in state["debts"])
     if state["funds"] < 0:
         raise RuleViolation("자금은 마이너스가 될 수 없습니다")
+    if not actions:
+        pending = progress.get("pendingChoices", [])
     progress["pendingChoices"] = pending
     return state, progress, events, pending, ended
