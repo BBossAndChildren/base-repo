@@ -312,7 +312,10 @@ def evolve(state, progress, actions, message, key, rng=None):
                     }
                 )
                 continue
-            if activity in {"prepare", "jobSearch"}:
+            if activity in {"prepare", "jobSearch"} and state["occupation"]["status"] not in {
+                "employed",
+                "student",
+            }:
                 state["occupation"]["status"] = (
                     "preparing" if activity == "prepare" else "searching"
                 )
@@ -505,5 +508,7 @@ def evolve(state, progress, actions, message, key, rng=None):
     state["debt"] = sum(row["balance"] for row in state["debts"])
     if state["funds"] < 0:
         raise RuleViolation("자금은 마이너스가 될 수 없습니다")
+    if not actions:
+        pending = progress.get("pendingChoices", [])
     progress["pendingChoices"] = pending
     return state, progress, events, pending, ended

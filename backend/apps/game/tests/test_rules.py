@@ -71,6 +71,28 @@ class LifeRuleTests(SimpleTestCase):
         self.assertEqual(state["funds"], 1800000)
         self.assertEqual(len(progress["ledger"]), 2)
 
+    def test_preparation_keeps_existing_work_or_studies(self):
+        for situation in ("직장인", "중학생", "기타"):
+            for activity in ("prepare", "jobSearch"):
+                with self.subTest(situation=situation, activity=activity):
+                    state = initial_state({"age": 30, "situation": situation})
+                    state["gameDate"] = "2026-01-01"
+                    if situation == "직장인":
+                        state["occupation"]["currentJob"] = "기존 직업"
+                    before = copy.deepcopy(state)
+                    state, progress, *_ = self.advance(31, activity, state=state)
+                    if situation in {"직장인", "중학생"}:
+                        self.assertEqual(state["occupation"], before["occupation"])
+                    else:
+                        self.assertEqual(
+                            state["occupation"]["status"],
+                            "preparing" if activity == "prepare" else "searching",
+                        )
+                    salary = sum(
+                        row["amount"] for row in progress["ledger"] if row["kind"] == "salary"
+                    )
+                    self.assertEqual(salary, before["occupation"]["monthlySalary"] or 0)
+
     def test_insufficient_funds_records_arrears_and_stops_time(self):
         self.state["funds"] = 100
         self.state["housing"]["livingCost"] = 300
@@ -164,6 +186,22 @@ class LifeRuleTests(SimpleTestCase):
         state, *_ = self.evolve(actions, state, progress)
         self.assertEqual(state["elapsedDays"], 730)
         self.assertEqual(state["age"], 17)
+
+    def test_long_advance_survives_question_then_clears_on_confirmation(self):
+        state, progress, _, proposed, _ = self.advance(730)
+        state, progress, _, pending, _ = evolve(
+            state, progress, [], "왜 2년인가요?", "follow-up-question"
+        )
+        self.assertEqual(pending, proposed)
+        self.assertEqual(state["elapsedDays"], 0)
+        actions = [
+            {"kind": "confirmAdvance", "evidenceQuote": "확인"},
+            {"kind": "advance", "days": 730, "activity": "idle", "evidenceQuote": "확인"},
+        ]
+        state, progress, _, pending, _ = self.evolve(actions, state, progress)
+        self.assertEqual(state["elapsedDays"], 730)
+        self.assertEqual(pending, [])
+        self.assertEqual(progress["pendingChoices"], [])
 
     def test_loan_requires_prior_offer_then_repayment_updates_total_debt(self):
         with self.assertRaises(RuleViolation):
@@ -308,6 +346,59 @@ class LifeRuleTests(SimpleTestCase):
 class RuleTurnTests(TestCase):
     setUp = turns_fixture.TurnTests.setUp
     post = turns_fixture.TurnTests.post
+
+    def test_preparation_turn_keeps_job_and_persists_monthly_salary(self):
+        state = initial_state({"age": 30, "situation": "직장인"})
+        state["gameDate"] = "2026-01-01"
+        state["occupation"]["currentJob"] = "기존 직업"
+        self.play.state = state
+        self.play.save(update_fields=["state"])
+        self.data["actions"] = [
+            {"kind": "advance", "days": 31, "activity": "prepare", "evidenceQuote": "준비"}
+        ]
+        with patch("apps.game.turns.ai.chat", return_value=self.data):
+            response = self.post({"message": "이직 준비를 할게"})
+        self.assertEqual(response.status_code, 200, response.content)
+        self.play.refresh_from_db()
+        self.assertEqual(self.play.state["occupation"], state["occupation"])
+        self.assertEqual(self.play.state["funds"], 5_756_880)
+        self.assertEqual(response.json()["data"]["state"], self.play.state)
+
+    def test_offer_survives_question_retry_and_resume_then_accepts_once(self):
+        self.play.state = initial_state({"age": 15, "situation": "중학생"})
+        self.play.save(update_fields=["state"])
+        self.data["actions"] = [
+            {"kind": "loanOffer", "amount": 100, "creditor": "지인", "evidenceQuote": "대출"}
+        ]
+        with patch("apps.game.turns.ai.chat", return_value=self.data) as chat:
+            proposal = self.post({"message": "대출 조건 알려줘"}).json()["data"]
+            pending = proposal["pendingChoices"]
+            self.data["actions"] = []
+            question = {"requestId": str(uuid.uuid4()), "message": "조건을 더 설명해줘"}
+            first = self.post(question)
+            self.assertEqual(first.status_code, 200, first.content)
+            self.assertEqual(self.post(question).json(), first.json())
+            self.assertEqual(chat.call_count, 2)
+            self.assertEqual(first.json()["data"]["pendingChoices"], pending)
+            resumed = self.client.get(
+                f"/api/v1/plays/{self.play.pk}", HTTP_X_PLAYER_ID=str(self.player.pk)
+            ).json()["data"]
+            self.assertEqual(resumed["pendingChoices"], pending)
+            self.data["actions"] = [
+                {"kind": "loan", "offerId": pending[0]["offer"]["id"], "evidenceQuote": "수락"}
+            ]
+            accept = {"requestId": str(uuid.uuid4()), "message": "수락할게"}
+            accepted = self.post(accept)
+            self.assertEqual(accepted.status_code, 200, accepted.content)
+            self.assertEqual(chat.call_args.args[0]["pendingChoices"], pending)
+            self.assertEqual(self.post(accept).json(), accepted.json())
+        self.play.refresh_from_db()
+        self.assertEqual(self.play.state["debt"], 100)
+        self.assertEqual(self.play.state["funds"], 100_100)
+        self.assertEqual(len(self.play.state["debts"]), 1)
+        self.assertEqual(self.play.progress["pendingChoices"], [])
+        self.assertNotIn("pendingOffer", self.play.progress)
+        self.assertEqual(self.play.turns.count(), 3)
 
     def test_invalid_rule_retries_once_then_no_success_data_is_saved(self):
         data = ai_response()["data"]
