@@ -19,6 +19,9 @@ def read_markdown(path, required=True):
     return text
 
 
+CAREER_MATCHING_FILE = "07-career-matching-and-rating-v001.md"
+
+
 def content_bundle():
     root = Path(settings.GAME_CONTENT_DIR)
     guidelines = read_markdown(settings.GAME_GUIDELINES_PATH)
@@ -33,4 +36,8 @@ def content_bundle():
         text for path in paths if (text := read_markdown(str(path), required=False))
     )
     scenario += "\n\n[최신 규칙: 이전 초안과 충돌하면 아래 문서를 우선 적용]\n" + latest_rules
+    # 직업체험 매칭 · 만족도(별점) · 최종 선택 지침 (선택 문서, 10 1절). 없으면 넣지 않는다
+    matching_path = settings.GAME_CAREER_MATCHING_PATH or str(root / CAREER_MATCHING_FILE)
+    if matching := read_markdown(matching_path, required=False):
+        scenario += "\n\n[직업체험 매칭 · 만족도 · 최종 선택 지침]\n" + matching
     return guidelines, scenario
