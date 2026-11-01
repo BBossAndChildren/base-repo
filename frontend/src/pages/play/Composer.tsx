@@ -8,6 +8,8 @@ interface ComposerProps {
   onChange: (value: string) => void
   onSubmit: () => void
   hints: string[]
+  /** 대기 선택이 없을 때 서버 힌트와 별도로 보여 주는 입력 예시 */
+  inputExamples?: string[]
   /** 백엔드가 기다리는 선택 (05 9절). 보기를 누르면 입력칸에 채운다 */
   choices?: PendingChoice[]
   disabled: boolean
@@ -16,13 +18,14 @@ interface ComposerProps {
 
 export const MESSAGE_MAX = 300
 
-const INPUT_EXAMPLES = ['지금 할 수 있는 일을 알려줘', '상황을 조금 더 설명해 줘']
+const INPUT_EXAMPLES = ['하루 공부할게', '하루 쉴게']
 
 /** 입력 · 힌트 (05 화면 2) */
-export function Composer({ value, onChange, onSubmit, hints, choices = [], disabled, waiting }: ComposerProps) {
+export function Composer({ value, onChange, onSubmit, hints, inputExamples = INPUT_EXAMPLES, choices = [], disabled, waiting }: ComposerProps) {
   const inputId = useId()
   const canSend = !disabled && value.trim().length > 0
-  const shownHints = hints.length > 0 ? hints : choices.length === 0 ? INPUT_EXAMPLES : []
+  const shownExamples = [...new Set(inputExamples.map((text) => text.trim()).filter(Boolean))]
+  const shownHints = [...new Set(hints.map((text) => text.trim()).filter(Boolean))].filter((hint) => !shownExamples.includes(hint))
   const helpId = `${inputId}-help`
 
   function submit(event: FormEvent) {
@@ -51,12 +54,22 @@ export function Composer({ value, onChange, onSubmit, hints, choices = [], disab
           ))}
         </div>
       )}
-      {shownHints.length > 0 && !disabled && (
+      {choices.length === 0 && shownHints.length > 0 && !disabled && (
         <div className="hints" role="group" aria-label="이렇게 말해 볼 수 있어요">
-          <span className="hints-label">{hints.length > 0 ? '힌트' : '입력 예시'}</span>
+          <span className="hints-label">힌트</span>
           {shownHints.map((hint) => (
             <button key={hint} type="button" className="chip chip-hint" onClick={() => onChange(hint)}>
               {hint}
+            </button>
+          ))}
+        </div>
+      )}
+      {choices.length === 0 && shownExamples.length > 0 && !disabled && (
+        <div className="hints" role="group" aria-label="입력 예시">
+          <span className="hints-label">입력 예시</span>
+          {shownExamples.map((example) => (
+            <button key={example} type="button" className="chip chip-hint" onClick={() => onChange(example)}>
+              {example}
             </button>
           ))}
         </div>

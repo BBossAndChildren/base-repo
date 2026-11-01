@@ -100,7 +100,8 @@ describe('PlayView', () => {
     await user.click(screen.getByRole('button', { name: '방과 후에 할 만한 일을 물어본다' }))
     expect(input).toHaveValue('방과 후에 할 만한 일을 물어본다')
     expect(input).toHaveAccessibleDescription(/보기를 누른 뒤 고쳐 보내도 괜찮아요/)
-    expect(screen.queryByRole('button', { name: '지금 할 수 있는 일을 알려줘' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '하루 공부할게' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '하루 쉴게' })).toBeInTheDocument()
     expect(spy).not.toHaveBeenCalled()
     await user.clear(input)
     await user.type(input, '다른 활동도 알려줘')
@@ -114,9 +115,9 @@ describe('PlayView', () => {
       mapPlay: (play) => ({ ...play, hints, messages: [{ role: 'narrator', speaker: '나레이션', text: '플레이가 시작되었습니다.' }] }),
     })
     expect(screen.getByText('입력 예시')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: '지금 할 수 있는 일을 알려줘' }))
-    expect(input).toHaveValue('지금 할 수 있는 일을 알려줘')
-    expect(within(log()).queryByText('지금 할 수 있는 일을 알려줘')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '하루 공부할게' }))
+    expect(input).toHaveValue('하루 공부할게')
+    expect(within(log()).queryByText('하루 공부할게')).not.toBeInTheDocument()
   })
 
   it('보내면 내 말이 오른쪽에 붙고, 응답과 힌트가 온다', async () => {
@@ -303,7 +304,8 @@ describe('PlayView', () => {
   it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
     await setup({ mapPlay: (play) => ({ ...play, hints: [], pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
     expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: '지금 할 수 있는 일을 알려줘' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '하루 공부할게' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '하루 쉴게' })).not.toBeInTheDocument()
   })
 
   it('턴 응답의 state 를 확정 값으로 상태 패널에 쓴다', async () => {
