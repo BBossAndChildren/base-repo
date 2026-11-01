@@ -67,7 +67,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const stateRef = useRef<PlayState | null>(play.state)
   const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state, play.npcs ?? []))
   const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
-  const [hints, setHints] = useState<string[]>([])
+  const [hints, setHints] = useState<string[]>(play.hints ?? [])
   const [choices, setChoices] = useState<PendingChoice[]>(() => usableChoices(play.pendingChoices))
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
@@ -131,7 +131,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     if (changedFields.length > 0) setChanged(new Set(changedFields))
     if (turn.experience) added.push({ kind: 'experience', id: nextId('e'), offer: turn.experience, status: 'offered' })
     if (turn.notice) toast.show({ message: turn.notice.message })
-    setItems((prev) => [...prev, ...added])
+    // 다음 행동이 확정된 뒤에만 이전 체험 제안을 접는다
+    setItems((prev) => [...declineOpenOffers(prev), ...added])
     setHints(turn.hints)
     setChoices(usableChoices(turn.pendingChoices))
     if (turn.ended) setEnded(true)
@@ -141,10 +142,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     const message = draft.trim()
     if (!message || waiting || ended) return
     const pendingId = nextId('u')
-    // 안내 카드를 두고 계속 입력하면 체험을 하지 않은 것으로 본다 (05 화면 2)
-    setItems((prev) => [...declineOpenOffers(prev), { kind: 'message', id: pendingId, message: { role: 'user', speaker: '나', text: message } }])
+    setItems((prev) => [...prev, { kind: 'message', id: pendingId, message: { role: 'user', speaker: '나', text: message } }])
     setDraft('')
-    setHints([])
     const previousChoices = choices
     setChoices([])
     setWaiting(true)
@@ -215,6 +214,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       if (latest.npcs) npcsRef.current = latest.npcs
       stateRef.current = latest.state
       setStatus(pickStatus(latest.state, npcsRef.current))
+      setHints(latest.hints ?? [])
       setChoices(usableChoices(latest.pendingChoices))
       setEnded(latest.ended)
     } catch {

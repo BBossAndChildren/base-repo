@@ -26,6 +26,7 @@ interface MockPlay {
   profile: StartPlayRequest
   state: PlayState
   messages: ChatMessage[]
+  hints: string[]
   turn: number
   ended: boolean
   startedAt: string
@@ -155,12 +156,13 @@ export const mockGameApi: GameApi = {
         },
         { role: 'npc', speaker: '친구 민수', text: `${body.name}, 오늘 방과 후에 뭐 할 거야?` },
       ],
+      hints: ['방과 후에 할 만한 일을 물어본다', '오늘은 쉬고 싶다고 말한다'],
       turn: 0,
       ended: false,
       startedAt: new Date().toISOString(),
     }
     plays.set(play.playId, play)
-    return { playId: play.playId, sessionId: play.sessionId, state: { ...play.state }, messages: [...play.messages] }
+    return { playId: play.playId, sessionId: play.sessionId, state: { ...play.state }, messages: [...play.messages], hints: [...play.hints] }
   },
 
   async getPlay(playId) {
@@ -171,6 +173,7 @@ export const mockGameApi: GameApi = {
       sessionId: play.sessionId,
       state: { ...play.state },
       messages: [...play.messages],
+      hints: [...play.hints],
       ended: play.ended,
       paused: play.paused,
       stateVersion: play.stateVersion,
@@ -276,6 +279,7 @@ export const mockGameApi: GameApi = {
     }
 
     play.ended = ended
+    play.hints = [...response.hints]
     play.messages.push(userMessage, ...response.messages)
     play.stateVersion += 1
     response.state = { ...play.state }

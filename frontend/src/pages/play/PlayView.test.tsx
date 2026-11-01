@@ -94,6 +94,32 @@ describe('PlayView', () => {
     expect(within(panel).queryByRole('meter')).not.toBeInTheDocument()
   })
 
+  it('첫 장면과 재개 응답의 힌트를 보여 주고, 선택해도 자동으로 보내지 않는다', async () => {
+    const spy = vi.spyOn(mockGameApi, 'sendTurn')
+    const { user, input } = await setup()
+    await user.click(screen.getByRole('button', { name: '방과 후에 할 만한 일을 물어본다' }))
+    expect(input).toHaveValue('방과 후에 할 만한 일을 물어본다')
+    expect(input).toHaveAccessibleDescription(/보기를 누른 뒤 고쳐 보내도 괜찮아요/)
+    expect(screen.getByRole('button', { name: '하루 공부할게' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '하루 쉴게' })).toBeInTheDocument()
+    expect(spy).not.toHaveBeenCalled()
+    await user.clear(input)
+    await user.type(input, '다른 활동도 알려줘')
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await waitFor(() => expect(spy).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ message: '다른 활동도 알려줘' })))
+    spy.mockRestore()
+  })
+
+  it.each([undefined, []])('힌트가 없거나 비어 있으면 막힐 때 쓸 입력 예시를 보여 준다 (%j)', async (hints) => {
+    const { user, input } = await setup({
+      mapPlay: (play) => ({ ...play, hints, messages: [{ role: 'narrator', speaker: '나레이션', text: '플레이가 시작되었습니다.' }] }),
+    })
+    expect(screen.getByText('입력 예시')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '하루 공부할게' }))
+    expect(input).toHaveValue('하루 공부할게')
+    expect(within(log()).queryByText('하루 공부할게')).not.toBeInTheDocument()
+  })
+
   it('보내면 내 말이 오른쪽에 붙고, 응답과 힌트가 온다', async () => {
     const { say } = await setup()
     await say('안녕')
@@ -146,6 +172,29 @@ describe('PlayView', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('잠시 후 다시 시도해 주세요.')
     expect(input).toHaveValue('오류')
     expect(within(log()).queryByText('오류')).not.toBeInTheDocument()
+  })
+
+  it('전송 대기 중 체험 선택을 잠그고, 실패하면 기존 힌트와 제안을 유지한다', async () => {
+    const { say, input, user } = await setup()
+    await say('체험 할래')
+    await screen.findByRole('button', { name: '체험 시작' })
+    let reject!: (error: ApiError) => void
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockReturnValueOnce(new Promise((_resolve, rejectPromise) => (reject = rejectPromise)))
+    await say('다른 일을 알아볼래')
+    expect(screen.getByRole('button', { name: '체험 시작' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '다음에 할게요' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: '동아리에 대해 물어본다' })).not.toBeInTheDocument()
+    reject(new ApiError(504, 'TIMEOUT'))
+    await waitFor(() => expect(input).toBeEnabled())
+    expect(input).toHaveValue('다른 일을 알아볼래')
+    expect(screen.getByRole('button', { name: '동아리에 대해 물어본다' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '체험 시작' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: '다음에 할게요' })).toBeEnabled()
+    expect(within(log()).queryByText(/체험은 다음에 하기로 했어요/)).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '보내기' }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: '체험 시작' })).not.toBeInTheDocument())
+    expect(spy.mock.calls[1][1].requestId).toBe(spy.mock.calls[0][1].requestId)
+    spy.mockRestore()
   })
 
   it('3D 분기면 안내 카드(제목 · 직업 · 이유)를 보여 주고, 체험 시작을 부른다', async () => {
@@ -276,8 +325,10 @@ describe('PlayView', () => {
   })
 
   it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
-    await setup({ mapPlay: (play) => ({ ...play, pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
+    await setup({ mapPlay: (play) => ({ ...play, hints: [], pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
     expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '하루 공부할게' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '하루 쉴게' })).not.toBeInTheDocument()
   })
 
   it('턴 응답의 state 를 확정 값으로 상태 패널에 쓴다', async () => {
@@ -295,12 +346,15 @@ describe('PlayView', () => {
 
   it('STATE_CONFLICT 면 안내 후 대화 · 상태를 다시 조회하고 입력 문장은 남긴다', async () => {
     const getPlay = vi.spyOn(mockGameApi, 'getPlay')
-    const { say, input } = await setup()
+    const { say, input, play } = await setup()
     getPlay.mockClear()
+    getPlay.mockResolvedValueOnce({ ...play, hints: ['새 장면에 대해 물어본다'] })
     await say('충돌')
     expect(await screen.findByText('최신 상태를 조회한 뒤 다시 시도해 주세요.')).toBeInTheDocument()
     await waitFor(() => expect(getPlay).toHaveBeenCalledTimes(1))
     expect(input).toHaveValue('충돌')
+    expect(screen.getByRole('button', { name: '새 장면에 대해 물어본다' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '방과 후에 할 만한 일을 물어본다' })).not.toBeInTheDocument()
     getPlay.mockRestore()
   })
 

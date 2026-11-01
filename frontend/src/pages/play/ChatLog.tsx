@@ -42,7 +42,7 @@ export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience
               {item.text}
             </li>
           )
-        if (item.kind === 'experience') return <ExperienceItem key={item.id} item={item} onStart={onStartExperience} onDecline={onDeclineExperience} />
+        if (item.kind === 'experience') return <ExperienceItem key={item.id} item={item} disabled={waiting} onStart={onStartExperience} onDecline={onDeclineExperience} />
         const { role, speaker, text } = item.message
         if (role === 'narrator')
           return (
@@ -83,10 +83,12 @@ export function ChatLog({ items, waiting, onStartExperience, onDeclineExperience
 
 function ExperienceItem({
   item,
+  disabled,
   onStart,
   onDecline,
 }: {
   item: Extract<TimelineItem, { kind: 'experience' }>
+  disabled: boolean
   onStart: (id: string, offer: ExperienceOffer) => void
   onDecline: (id: string) => void
 }) {
@@ -117,8 +119,8 @@ function ExperienceItem({
           <p className="small muted">{item.status === 'done' ? '체험을 마쳤어요' : '체험하는 중이에요'}</p>
         ) : (
           <div className="row">
-            <Button onClick={() => onStart(item.id, offer)}>체험 시작</Button>
-            <Button variant="ghost" onClick={() => onDecline(item.id)}>
+            <Button disabled={disabled} onClick={() => onStart(item.id, offer)}>체험 시작</Button>
+            <Button variant="ghost" disabled={disabled} onClick={() => onDecline(item.id)}>
               다음에 할게요
             </Button>
           </div>

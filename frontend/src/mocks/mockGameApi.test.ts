@@ -30,6 +30,8 @@ describe('mockGameApi', () => {
     expect(play.sessionId).toBeTruthy()
     expect(play.state.age).toBe(15)
     expect(play.messages.length).toBeGreaterThan(0)
+    expect(play.hints?.length).toBeGreaterThan(0)
+    expect((await api.getPlay(play.playId)).hints).toEqual(play.hints)
   })
 
   it.each([
@@ -92,6 +94,7 @@ describe('mockGameApi', () => {
     const resumed = await api.getPlay(play.playId)
     expect(resumed.messages).toContainEqual({ role: 'user', speaker: '민준', text: '안녕' })
     expect(resumed.sessionId).toBe(play.sessionId)
+    expect(resumed.hints).toEqual(turn.hints)
     expect(turn.messages.every((m) => m.role !== 'user')).toBe(true)
   })
 

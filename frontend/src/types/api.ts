@@ -123,6 +123,7 @@ export interface StartPlayResponse {
   sessionId: string
   state: PlayState
   messages: ChatMessage[]
+  hints?: string[]
 }
 
 // 1-3
@@ -230,6 +231,7 @@ export interface PlayResume {
   sessionId: string
   state: PlayState
   messages: ChatMessage[]
+  hints?: string[]
   ended: boolean
   /** 명시적 일시정지 여부 (03 게임 상태와 턴 확장) */
   paused?: boolean
