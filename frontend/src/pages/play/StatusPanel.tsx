@@ -124,8 +124,13 @@ interface StatusProps {
   actions?: ReactNode
 }
 
+interface StatusBarProps extends StatusProps {
+  /** 좁은 화면에서 상태 아래에 함께 펼칠 내용 (3D 체험 카드) */
+  extra?: ReactNode
+}
+
 /** 좁은 화면(1024px 미만)의 접이식 상태 막대. 게임 영역 위에 둔다 */
-export function StatusBar({ values, changed, actions }: StatusProps) {
+export function StatusBar({ values, changed, actions, extra }: StatusBarProps) {
   return (
     <details className="status-bar">
       <summary>
@@ -141,6 +146,7 @@ export function StatusBar({ values, changed, actions }: StatusProps) {
       <div className="status-bar-body">
         <StatusDetails values={values} changed={changed} />
         {actions && <div className="status-actions">{actions}</div>}
+        {extra}
       </div>
     </details>
   )

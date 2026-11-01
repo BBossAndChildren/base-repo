@@ -4,8 +4,9 @@ import { ApiError, gameApi } from '../../api'
 import { DEFAULT_ERROR_MESSAGES } from '../../api/errors'
 import { usePlayer } from '../../app/playerContext'
 import { Button, useToast } from '../../components'
-import type { ExperienceOffer, NpcSummary, PendingChoice, PlayResume, PlayState, TurnResponse } from '../../types/api'
+import type { ExperienceOffer, ExperienceSuggestion, NpcSummary, PendingChoice, PlayResume, PlayState, TurnResponse } from '../../types/api'
 import { ChatLog } from './ChatLog'
+import { ExperienceCard } from './ExperienceCard'
 import { ExperienceOverlay } from './ExperienceOverlay'
 import type { ExperienceExit } from './experienceMessages'
 import { Composer } from './Composer'
@@ -37,6 +38,23 @@ const EXIT_NOTE: Record<ExperienceExit, string | null> = {
   skipped: null,
 }
 
+const WIDE_QUERY = '(min-width: 1024px)'
+/** 체험 카드에서 시작한 체험 (대화 안 안내 카드가 아님) */
+const CARD_EXPERIENCE = 'experience-card'
+
+/** 넓은 화면(상태 패널) · 좁은 화면(접이식 막대) 중 한 곳에만 체험 카드를 그린다 (3D 모델을 두 번 받지 않게) */
+function useWideScreen(): boolean {
+  const [wide, setWide] = useState(() => window.matchMedia?.(WIDE_QUERY).matches ?? true)
+  useEffect(() => {
+    const query = window.matchMedia?.(WIDE_QUERY)
+    if (!query) return
+    const update = () => setWide(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+  return wide
+}
+
 /** 화면 2: 게임 (05-ui-ux.md 화면 2) */
 export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const toast = useToast()
@@ -59,6 +77,33 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [activeExperience, setActiveExperience] = useState<{ cardId: string; offer: ExperienceOffer } | null>(null)
   // 실패한 문장과 그때의 requestId. 같은 문장을 다시 보내면 재사용한다 (05 화면 2)
   const failedRequest = useRef<{ message: string; requestId: string } | null>(null)
+  // 상태 패널 아래 3D 체험 카드 (AI 분기 없이 언제든, 12 결정 31). 다시 고를 때 이미 보여 준 체험은 뺀다
+  const wide = useWideScreen()
+  const [suggestion, setSuggestion] = useState<ExperienceSuggestion | null>(null)
+  const [suggesting, setSuggesting] = useState(false)
+  const [suggestFailed, setSuggestFailed] = useState(false)
+  const shownRef = useRef<string[]>([])
+
+  async function loadSuggestion(shuffle: boolean) {
+    setSuggesting(true)
+    setSuggestFailed(false)
+    try {
+      const next = await gameApi.suggestExperience(play.playId, shuffle ? shownRef.current : [])
+      shownRef.current = [...new Set([...shownRef.current, next.scenarioId])]
+      setSuggestion(next)
+    } catch {
+      setSuggestFailed(true)
+    } finally {
+      setSuggesting(false)
+    }
+  }
+
+  // 처음 들어왔을 때 · 일시정지를 풀었을 때 카드가 비어 있으면 하나 받는다
+  useEffect(() => {
+    if (ended || paused || suggestion || suggesting || suggestFailed) return
+    void loadSuggestion(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ended, paused])
 
   useEffect(() => {
     if (changed.size === 0) return
@@ -183,9 +228,18 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     else setActiveExperience({ cardId: id, offer })
   }
 
+  /** 체험 카드에서 시작: 채팅 분기와 같은 3D 체험 화면 (백엔드가 추천을 기록해 이벤트를 받는다, 03 1-11) */
+  function startSuggested(offer: ExperienceSuggestion) {
+    setItems((prev) => [...prev, { kind: 'system', id: nextId('s'), text: `「${offer.title}」 3D 체험을 시작했어요` }])
+    if (onStartExperience) onStartExperience(offer)
+    else setActiveExperience({ cardId: CARD_EXPERIENCE, offer })
+  }
+
   function closeExperience(exit: ExperienceExit) {
     const cardId = activeExperience?.cardId
     setActiveExperience(null)
+    // 카드로 한 체험이 끝나면 다음 체험을 새로 고른다 (해 본 체험은 백엔드가 뺀다)
+    if (cardId === CARD_EXPERIENCE && exit !== 'skipped') void loadSuggestion(false)
     // 체험을 하지 못했으면(불러오기 실패 · 건너뛰기) 카드를 "다음에 하기로 했어요" 로, 했으면 "마쳤어요" 로
     const status: 'declined' | 'done' = exit === 'skipped' ? 'declined' : 'done'
     setItems((prev) => {
@@ -206,9 +260,20 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
       </Button>
     )
 
+  const experienceCard = ended ? null : (
+    <ExperienceCard
+      suggestion={suggestion}
+      loading={suggesting}
+      failed={suggestFailed}
+      disabled={waiting || paused || activeExperience !== null}
+      onStart={startSuggested}
+      onShuffle={() => void loadSuggestion(suggestion !== null)}
+    />
+  )
+
   return (
     <>
-      <StatusBar values={status} changed={changed} actions={pauseAction} />
+      <StatusBar values={status} changed={changed} actions={pauseAction} extra={wide ? null : experienceCard} />
       <div className="play">
         <section className="chat" aria-label="이야기">
           <ChatLog items={items} waiting={waiting} onStartExperience={startExperience} onDeclineExperience={declineExperience} />
@@ -234,7 +299,10 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
             <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} choices={choices} disabled={waiting} waiting={waiting} />
           )}
         </section>
-        <StatusPanel values={status} changed={changed} actions={pauseAction} />
+        <div className="play-side">
+          <StatusPanel values={status} changed={changed} actions={pauseAction} />
+          {wide && experienceCard}
+        </div>
       </div>
       {activeExperience && <ExperienceOverlay playId={play.playId} sessionId={play.sessionId} offer={activeExperience.offer} onClose={closeExperience} />}
     </>
