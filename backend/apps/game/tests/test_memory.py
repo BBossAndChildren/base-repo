@@ -109,6 +109,18 @@ class MemoryTests(TestCase):
         self.play.refresh_from_db()
         self.assertEqual(self.play.state["elapsedDays"], 0)
 
+    def test_turn_and_resume_list_met_npc_names_without_memories(self):
+        with patch("apps.game.turns.ai.chat", return_value=self.data):
+            response = self.post()
+        self.assertEqual(response.status_code, 200)
+        expected = [{"id": "a", "name": "민수"}, {"id": "b", "name": "지수"}]
+        self.assertEqual(response.json()["data"]["npcs"], expected)
+        resumed = self.client.get(
+            f"/api/v1/plays/{self.play.pk}", HTTP_X_PLAYER_ID=str(self.player.pk)
+        ).json()["data"]
+        self.assertEqual(resumed["npcs"], expected)
+        self.assertNotIn("민수에게만 말한 비밀", str(resumed["npcs"]))
+
     def test_memory_emotion_is_separate_from_facts_and_requires_access(self):
         self.data["memoryUpdates"] = [
             {

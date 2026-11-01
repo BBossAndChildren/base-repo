@@ -106,8 +106,16 @@ class PlayResponseSerializer(serializers.Serializer):
     data = PlayDataSerializer()
 
 
+class NPCSummarySerializer(serializers.Serializer):
+    id = serializers.CharField(help_text="NPC 식별자 (state.relationship 의 키)")
+    name = serializers.CharField(help_text="화면에 보일 이름")
+
+
 class ResumeDataSerializer(serializers.Serializer):
     scene = serializers.JSONField(help_text="마지막 확정 장면·발화 NPC. 비공개 기억은 제외")
+    npcs = NPCSummarySerializer(
+        many=True, help_text="이 플레이에서 만난 인물 이름 목록. 비공개 기억 · 해석은 없음"
+    )
     pendingChoices = serializers.ListField(child=serializers.JSONField())
     lastTurnId = serializers.UUIDField(allow_null=True)
     paused = serializers.BooleanField(help_text="명시적 일시정지 여부")
@@ -277,6 +285,9 @@ class ExperienceNoticeSerializer(serializers.Serializer):
 
 
 class TurnDataSerializer(serializers.Serializer):
+    npcs = NPCSummarySerializer(
+        many=True, required=False, help_text="이번 턴 저장 후 만난 인물 이름 목록"
+    )
     pendingChoices = serializers.ListField(
         child=serializers.JSONField(), help_text="자금 부족·입원·중요 결정에서 기다리는 선택"
     )

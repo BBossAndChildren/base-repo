@@ -41,6 +41,11 @@ def target_npc(npcs, message):
     return best[1] if best else None
 
 
+def npc_list(play):
+    """만난 인물 이름 목록 (화면의 인물별 관계 표시용). 비공개 기억 · 해석은 넣지 않는다"""
+    return [{"id": npc.key, "name": npc.name} for npc in play.npcs.order_by("id")]
+
+
 def current_scene(play, message=""):
     scene = copy.deepcopy(
         play.progress.get("scene", {"id": "opening", "npcIds": [], "speakerNpcId": None})
