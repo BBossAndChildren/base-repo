@@ -517,16 +517,21 @@ PATCH 요청은 `{"paused":true}`/`{"paused":false}`, 응답은 `{code:200,data:
 |---|---|
 | `advance` | `days`, `activity`: `work/overtime/holiday/vacation/study/jobSearch/prepare/idle`. 날짜별 상태·달별 재정을 계산하고 중요한 선택에서 중단. 1년 이상은 앞선 제안과 별도 확인 필요 |
 | `confirmAdvance` | 이전 `pendingChoices.confirmAdvance`에 대한 명시적 확인. 확인 뒤 같은 턴에 일치하는 `advance`를 제안할 수 있음 |
+| `cancelAdvance` | 앞선 `pendingChoices.confirmAdvance`에 대한 명시적 취소. 그 기간 대기와 확인 플래그만 해제하며 날짜·직업·자금은 유지 |
 | `jobOffer` | `job,monthlySalary,source:{url,checkedAt,fact}`. 조건만 제시하며 바로 취업하지 않음 |
 | `housingOffer` | `type,deposit,monthlyRent,livingCost`. 조건만 제시 |
 | `loanOffer` | `amount,creditor`. 조건만 제시 |
 | `acceptJob/acceptHousing/loan` | 앞선 `offerId`와 명시적 수락 필요. 기존 직업 마무리·가용 잔액·출처 검증 |
+| `declineOffer` | 앞선 `offerId`와 명시적 거절 필요. 직업·주거·대출 제안의 해당 대기와 `pendingOffer`만 해제하며 기존 직업·자금·부채는 유지 |
 | `quitJob` | 현재 직업과 명시적 사용자 선택 필요. 이전 직업을 사건으로 보존 |
 | `repay` | `debtId,amount`. 가용 자금 내 상환만 반영 |
 | `settleArrear` | `arrearId`. 가용 자금으로 미납 상환 |
 | `development` | `value`0~100, 이번 학습·훈련 입력 근거 필요. 아르바이트 자체로 성적 차감 없음 |
 | `stressFactors` | `factors[]`. 가상 사건의 서로 다른 스트레스 요인을 기록 |
 | `supportChange` | `monthlyAmount`(0 이상). 가족 지원이 줄거나 끊기는 것을 대화로 알리는 행동. 알린 날부터 한 달 뒤 정산부터 적용 (`supportNotice` → `supportChanged` 사건) |
+
+거절·취소는 `actions`에서 단독으로 제안한다. 예: `{"kind":"declineOffer","offerId":"앞선 pendingChoices[].offer.id","evidenceQuote":"이번 대출은 거절할게"}`, `{"kind":"cancelAdvance","evidenceQuote":"1년 진행은 취소할게"}`. 서버는 이번 입력 전체가 `거절/취소`, `거절할게/취소해주세요`, `안 할게` 등 단독 명시 의사결정 문장인지 확인한다. `거절하면 어떻게 돼?`, `이율이 높으면 거절할게`, `거절하지 않을게`, `생각해볼게`처럼 질문·조건부·부정·모호한 발언에는 `actions:[]`로 대기를 보존하며 취소를 추정하지 않는다. 명시한 제안 종류·기간이 앞선 대상과 다르거나 근거·혼합 행동이 잘못되면 기존 규칙 오류 재시도와 미저장 처리를 따른다. 취소가 확정되면 `declineOffer{offerId,offerKind}` 또는 `cancelAdvance{days,activity}` 사건을 기록하고, 동일 `requestId` 재전송은 저장된 응답만 반환한다.
+
 
 AI `player`에는 `playId,currentScene,speakingNpcId,npcs,memoryScope,memories,visibleEvents,pendingChoices`를 확정 상태와 함께 보낸다. `memories`는 DB에서 현재 플레이와 NPC로 먼저 제한하며 사실·획득 경로·감정·해석을 분리한다. 현재 NPC에게 공개된 입력/응답만 최근20턴 범위에서 `history`에 넣는다. 플레이어의 재개 대화는 본인 기록 전체이므로 이 NPC 필터와 구분한다.
 
