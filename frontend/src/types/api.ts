@@ -55,6 +55,12 @@ export interface PlayState {
   [key: string]: unknown
 }
 
+/** 이 플레이에서 만난 인물 (03 게임 상태와 턴 확장 `npcs`). id 는 state.relationship 의 키 */
+export interface NpcSummary {
+  id: string
+  name: string
+}
+
 /** 메시지 형식 (03 메시지 형식) */
 export type MessageRole = 'user' | 'npc' | 'narrator'
 
@@ -141,6 +147,8 @@ export interface TurnResponse {
   pendingChoices?: PendingChoice[]
   /** 이번 턴의 공개 사건 */
   events?: unknown[]
+  /** 이번 턴 저장 후 만난 인물 */
+  npcs?: NpcSummary[]
 }
 
 /** 백엔드가 기다리는 선택 (03 게임 상태와 턴 확장). 보기를 골라 다음 입력으로 보낸다 */
@@ -164,6 +172,18 @@ export interface PendingChoice {
     amount?: number
     creditor?: string
   }
+}
+
+/** 1-11 화면 카드용 3D 체험 추천. 앞 8개 필드는 ExperienceOffer 와 같아 같은 3D 체험 화면으로 시작한다 */
+export interface ExperienceSuggestion extends ExperienceOffer {
+  /** 고른 근거: 현재 직업 · 희망 직업 · 무작위 */
+  basis: 'currentJob' | 'dreamJob' | 'random'
+  /** 카드에 크게 보일 직업명 */
+  job: string
+  /** Unity 방 이름 */
+  roomName: string
+  /** 체험에서 하는 일 */
+  description: string
 }
 
 // 일시정지 · 재개 (03 게임 상태와 턴 확장, PATCH /api/v1/plays/{playId})
@@ -217,5 +237,7 @@ export interface PlayResume {
   activePlaySeconds?: number
   scene?: unknown
   pendingChoices?: PendingChoice[]
+  /** 만난 인물 이름 목록 */
+  npcs?: NpcSummary[]
   lastTurnId?: string | null
 }

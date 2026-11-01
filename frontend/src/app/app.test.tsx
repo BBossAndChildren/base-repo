@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ensurePlayerId } from '../api'
 import { clearPlayerId, getPlayerId, setPlayerId } from '../api/player'
 import { ToastProvider } from '../components'
-import { markIntroSeen } from '../lib/introSeen'
+import { markIntroSeen, resetIntroForPageLoad } from '../lib/introSeen'
 import { clearLastPlayId, getLastPlayId, setLastPlayId } from '../lib/lastPlay'
 import { mockControl, mockGameApi } from '../mocks/mockGameApi'
 import { AppRoutes } from './AppRoutes'
@@ -73,8 +73,8 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
     expect(await screen.findByRole('heading', { name: '어른왕자', level: 1 })).toBeInTheDocument()
   })
 
-  it('처음 방문이면 시작 화면 대신 인트로로 보낸다 (FE11)', async () => {
-    localStorage.clear()
+  it('사이트를 열거나 새로고침하면 시작 화면 대신 인트로로 보낸다 (FE11, #178)', async () => {
+    resetIntroForPageLoad()
     renderApp()
     expect(await screen.findByRole('heading', { name: '인트로 화면' })).toBeInTheDocument()
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument()

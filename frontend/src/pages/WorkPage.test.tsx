@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ToastProvider } from '../components'
@@ -9,6 +9,14 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('../lib/env', () => ({ env: mocks.env }))
+// 3D 화면은 받은 props 만 기록한다 (Unity 없이 페이지 동작 확인)
+const overlay = vi.hoisted(() => ({ props: [] as Array<{ offer: unknown; api: { sendEvent: (playId: string, event: unknown) => Promise<unknown> } }> }))
+vi.mock('./play/ExperienceOverlay', () => ({
+  ExperienceOverlay: (props: (typeof overlay.props)[number]) => {
+    overlay.props.push(props)
+    return <div role="dialog" aria-label="3D 체험" />
+  },
+}))
 vi.mock('../lib/experience/runtime', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/experience/runtime')>()),
   loadManifest: mocks.loadManifest,
@@ -51,6 +59,19 @@ describe('/work 3D 체험 테스트', () => {
     await userEvent.click(screen.getByRole('button', { name: '다른 체험 고르기' }))
     expect(screen.getByRole('heading', { level: 2 }).textContent).not.toBe(first)
     expect(screen.getByRole('button', { name: '체험 시작' })).toBeEnabled()
+  })
+
+  it('체험 중 이벤트가 와서 다시 그려져도 같은 체험 정보를 넘긴다 (3D 연결이 다시 만들어지지 않게)', async () => {
+    overlay.props.length = 0
+    mocks.loadManifest.mockResolvedValue({ build: { build_id: DEFAULT_BUILD_ID }, supported: [row(1)] })
+    renderPage()
+    await userEvent.click(await screen.findByRole('button', { name: '체험 시작' }))
+    const first = overlay.props.at(-1)!
+    await act(async () => {
+      await first.api.sendEvent('work-test', { type: 'experience.started', sequence: 1, sessionId: 's', eventId: 'e1' })
+    })
+    expect(overlay.props.length).toBeGreaterThan(1)
+    expect(overlay.props.at(-1)!.offer).toBe(first.offer)
   })
 
   it('목록을 못 받으면 이유를 보여 준다', async () => {

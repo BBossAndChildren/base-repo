@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from . import ai
 from .common import GameError, is_ended
-from .memory import ai_context, current_scene, plan_memory, save_memory
+from .memory import ai_context, current_scene, npc_list, plan_memory, save_memory
 from .models import Message, Play, Turn, TurnRequest
 from .pause import settle_active_time
 from .rules import RuleViolation, evolve, integer
@@ -181,6 +181,9 @@ def run_turn(play, message, base_url, request_id):
                 or current.state_version != original_version
             ):
                 raise GameError(409, "STATE_CONFLICT", "진행 상태가 변경되어 다시 입력해야 합니다.")
+            save_memory(current, memory_plan, f"{play.pk}:{request_id}", new_state["gameDate"])
+            # 이번 턴에 새로 만난 인물까지 포함한 이름 목록 (재전송 응답에도 그대로 저장)
+            result["npcs"] = npc_list(current)
             Turn.objects.create(
                 id=turn_id,
                 play=current,
@@ -193,7 +196,6 @@ def run_turn(play, message, base_url, request_id):
                     "sceneId": scene["id"],
                 },
             )
-            save_memory(current, memory_plan, f"{play.pk}:{request_id}", new_state["gameDate"])
             number = past[-1].number + 1 if past else 1
             Message.objects.create(
                 play=current,

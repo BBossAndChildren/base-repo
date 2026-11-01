@@ -4,9 +4,28 @@ from django.db import transaction
 from django.utils import timezone
 
 from .common import GameError, is_ended
-from .models import Experience, Play
+from .models import Experience, ExperienceOffer, Play
 
 METADATA_KEYS = ("buildId", "roomId", "scenarioId", "scenarioVersion")
+
+
+RECENT_CARD_OFFERS = 5
+
+
+def recent_offers(play):
+    """시작할 수 있는 추천: 최근 채팅 턴의 3D 분기 + 화면 카드 추천 몇 개 (#163). 최신순"""
+    rows = []
+    turn = (
+        play.turns.filter(response__experience__buildId__isnull=False).order_by("-number").first()
+    )
+    if turn:
+        rows.append((turn.created_at, turn.response["experience"]))
+    for offer in ExperienceOffer.objects.filter(play=play).order_by("-created_at")[
+        :RECENT_CARD_OFFERS
+    ]:
+        rows.append((offer.created_at, offer.payload))
+    rows.sort(key=lambda row: row[0], reverse=True)
+    return [payload for _, payload in rows]
 
 
 def get_experience(play, external_id, metadata=None):
@@ -16,16 +35,21 @@ def get_experience(play, external_id, metadata=None):
     if experience is None:
         if is_ended(play):
             raise GameError(409, "ALREADY_ENDED", "이미 끝난 플레이입니다.")
-        offer = (
-            play.turns.filter(response__experience__buildId__isnull=False)
-            .order_by("-number")
-            .first()
-        )
-        offered = offer.response["experience"] if offer else None
-        if not offered:
+        offers = recent_offers(play)
+        if not offers:
             raise GameError(404, "NOT_FOUND", "시작 가능한 체험을 찾을 수 없어요.")
-        if metadata and any(metadata.get(key) != offered.get(key) for key in METADATA_KEYS):
-            raise GameError(400, "INVALID_INPUT", "추천한 체험과 요청 정보가 다릅니다.")
+        offered = offers[0]
+        if metadata:
+            offered = next(
+                (
+                    item
+                    for item in offers
+                    if all(metadata.get(key) == item.get(key) for key in METADATA_KEYS)
+                ),
+                None,
+            )
+            if offered is None:
+                raise GameError(400, "INVALID_INPUT", "추천한 체험과 요청 정보가 다릅니다.")
         experience, _ = Experience.objects.get_or_create(
             external_id=external_id,
             defaults={

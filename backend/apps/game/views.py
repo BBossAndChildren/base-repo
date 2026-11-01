@@ -13,12 +13,16 @@ from .common import (
 from .ending import get_or_generate_result
 from .events import store_event
 from .experiences import heartbeat, mark_pending
+from .memory import npc_list
 from .models import Message, Play, Player
+from .offers import suggest
 from .pause import set_paused
 from .reconciliation import reconcile
 from .serializers import (
     EventAckResponseSerializer,
     EventInputSerializer,
+    ExperienceSuggestionInputSerializer,
+    ExperienceSuggestionResponseSerializer,
     GameErrorResponseSerializer,
     HeartbeatInputSerializer,
     HeartbeatResponseSerializer,
@@ -188,6 +192,7 @@ class ResumeView(PlayerRequiredView):
                     "scene", {"id": "opening", "npcIds": [], "speakerNpcId": None}
                 ),
                 "pendingChoices": play.progress.get("pendingChoices", []),
+                "npcs": npc_list(play),
                 "lastTurnId": str(
                     play.turns.order_by("-number").values_list("id", flat=True).first() or ""
                 )
@@ -253,6 +258,37 @@ class TurnView(PlayerRequiredView):
                 request.build_absolute_uri("/"),
                 serializer.validated_data["requestId"],
             )
+        )
+
+
+@extend_schema(parameters=PLAY_PARAMETERS)
+class ExperienceOfferView(PlayerRequiredView):
+    @extend_schema(
+        tags=["3D 체험"],
+        summary="3D 체험 추천 받기 (화면 카드)",
+        description=(
+            "채팅 분기 없이 상태 패널 카드에서 3D 체험을 고른다. "
+            "현재 직업 → 희망 직업 → 무작위 순서, 해 본 체험은 뺀다. "
+            "exclude 를 주면(다시 고르기) 무작위. 받은 추천은 기록되어 "
+            "이 체험의 Unity 이벤트 · 생존 신호를 받는다. 종료 · 일시정지 플레이는 409."
+        ),
+        examples=[
+            OpenApiExample("처음 고르기", value={}, request_only=True),
+            OpenApiExample(
+                "다시 고르기",
+                value={"exclude": ["career-net-951-experience"]},
+                request_only=True,
+            ),
+        ],
+        request=ExperienceSuggestionInputSerializer,
+        responses=api_responses(ExperienceSuggestionResponseSerializer, 400, 401, 404, 409, 503),
+    )
+    def post(self, request, play_id):
+        play = owned_play(self.player, play_id)
+        serializer = ExperienceSuggestionInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return success(
+            suggest(play, serializer.validated_data["exclude"], request.build_absolute_uri("/"))
         )
 
 

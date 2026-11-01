@@ -223,6 +223,58 @@ describe('PlayView', () => {
     spy.mockRestore()
   })
 
+  it('주변 인물과의 관계를 이름과 함께 보여 준다 (#145)', async () => {
+    await setup({ mapPlay: (play) => ({ ...play, npcs: [{ id: 'minsu', name: '친구 민수' }], state: { ...play.state, relationship: { minsu: 64 } } }) })
+    const panel = screen.getByRole('complementary', { name: '내 상태' })
+    const people = within(panel).getByRole('region', { name: '주변 인물' })
+    expect(within(people).getByRole('meter', { name: '친구 민수' })).toHaveAttribute('aria-valuenow', '64')
+  })
+
+  it('시간이 흐른 턴이면 대화에 경과 요약을 보여 준다 (#147)', async () => {
+    const real = mockGameApi.sendTurn.bind(mockGameApi)
+    const spy = vi.spyOn(mockGameApi, 'sendTurn').mockImplementationOnce(async (playId, body) => {
+      const turn = await real(playId, body)
+      return {
+        ...turn,
+        stateChanges: [{ field: 'age', from: 15, to: 16 }],
+        events: [
+          { kind: 'monthlySettlement', facts: {} },
+          { kind: 'timePassed', facts: { requestedDays: 365, activity: 'study' } },
+        ],
+        state: { ...(turn.state ?? { age: 15 }), age: 16, elapsedDays: 365, funds: 700000 },
+      }
+    })
+    const { say } = await setup({ mapState: (state) => ({ ...state, elapsedDays: 0, funds: 100000 }) })
+    await say('1년 동안 공부할게')
+    expect(await within(log()).findByText('1년 동안 공부하며 시간이 흘렀어요 · 월 정산 1번 · 자금 100,000원 → 700,000원 · 16세')).toBeInTheDocument()
+    // 나이 변화는 요약에 들어가므로 따로 "시간이 흘렀어요 · 16세" 를 또 띄우지 않는다
+    expect(within(log()).queryByText('시간이 흘렀어요 · 16세')).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('상태 패널 아래 3D 체험 카드로 언제든 체험을 시작하고, 다시 고르면 본 체험을 뺀다 (#171)', async () => {
+    const onStartExperience = vi.fn()
+    const suggest = vi.spyOn(mockGameApi, 'suggestExperience')
+    const { user } = await setup({ onStartExperience })
+    const card = await screen.findByRole('region', { name: '3D 직업 체험' })
+    expect(await within(card).findByRole('heading', { name: '행사기획자' })).toBeInTheDocument()
+    expect(suggest).toHaveBeenCalledWith(expect.any(String), [])
+    await user.click(within(card).getByRole('button', { name: '다른 체험 고르기' }))
+    expect(suggest).toHaveBeenLastCalledWith(expect.any(String), ['career-net-951-experience'])
+    expect(await within(card).findByRole('heading', { name: '사무원' })).toBeInTheDocument()
+    await user.click(within(card).getByRole('button', { name: '내 업무 체험하기' }))
+    expect(onStartExperience).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'career-net-98-experience' }))
+    expect(within(log()).getByText('「공용 사무실 업무」 3D 체험을 시작했어요')).toBeInTheDocument()
+    suggest.mockRestore()
+  })
+
+  it('일시정지 중이면 체험 카드를 고르지 않는다', async () => {
+    const suggest = vi.spyOn(mockGameApi, 'suggestExperience')
+    await setup({ mapPlay: (play) => ({ ...play, paused: true }) })
+    expect(suggest).not.toHaveBeenCalled()
+    suggest.mockRestore()
+  })
+
   it('재개 응답의 대기 중인 선택도 보여 준다', async () => {
     await setup({ mapPlay: (play) => ({ ...play, pendingChoices: [{ kind: 'confirmAdvance', days: 365, activity: 'study', options: ['기간 진행 확인', '기간 변경'] }] }) })
     expect(screen.getByText('약 1년 동안 공부하며 시간을 보낼까요?')).toBeInTheDocument()

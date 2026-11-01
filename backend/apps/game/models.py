@@ -131,6 +131,18 @@ class Message(models.Model):
         db_table = "messages"
 
 
+class ExperienceOffer(models.Model):
+    """채팅 분기 없이 화면 카드에서 받은 3D 체험 추천 (#163). 이 추천과 일치하는 이벤트를 받는다"""
+
+    play = models.ForeignKey(Play, on_delete=models.CASCADE, related_name="experience_offers")
+    payload = models.JSONField()
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    class Meta:
+        db_table = "experience_offers"
+        indexes = [models.Index(fields=["play", "-created_at"], name="experience_offer_recent")]
+
+
 class Experience(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     external_id = models.CharField(max_length=200, unique=True)
