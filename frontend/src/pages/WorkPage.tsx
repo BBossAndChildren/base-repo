@@ -88,19 +88,24 @@ export function WorkPage() {
     [],
   )
 
-  const offer: ExperienceOffer | null =
-    picked && buildUrl
-      ? {
-          buildId: picked.buildId,
-          buildUrl,
-          roomId: picked.roomId,
-          scenarioId: picked.scenarioId,
-          scenarioVersion: picked.scenarioVersion,
-          title: picked.title ?? picked.scenarioId,
-          jobs: picked.jobs ?? [],
-          reason: '내부 테스트',
-        }
-      : null
+  // 체험 이벤트가 올 때마다 이 페이지가 다시 그려진다. offer 가 매번 새 객체면 3D 화면이 체험을 다시 불러와
+  // 진행 중인 연결을 버리므로 (종료 때 NOT_STARTED), 고른 체험이 바뀔 때만 새로 만든다
+  const offer: ExperienceOffer | null = useMemo(
+    () =>
+      picked && buildUrl
+        ? {
+            buildId: picked.buildId,
+            buildUrl,
+            roomId: picked.roomId,
+            scenarioId: picked.scenarioId,
+            scenarioVersion: picked.scenarioVersion,
+            title: picked.title ?? picked.scenarioId,
+            jobs: picked.jobs ?? [],
+            reason: '내부 테스트',
+          }
+        : null,
+    [picked, buildUrl],
+  )
 
   function start() {
     // 실제 플레이의 "종료 미수신 체험" 기록을 덮어쓰지 않게 잠시 보관했다가 되돌린다
