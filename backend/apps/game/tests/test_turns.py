@@ -129,7 +129,7 @@ class TurnTests(TestCase):
             patch("apps.game.turns.ai.recommend", return_value=offer) as recommend,
         ):
             result = self.post().json()["data"]
-        self.assertEqual(result["experience"], offer)
+        self.assertEqual(result["experience"], {**offer, "offerId": result["turnId"]})
         self.assertEqual(recommend.call_args.args[1], branch)
         self.assertEqual(recommend.call_args.args[4], "http://testserver/")
         self.assertEqual(

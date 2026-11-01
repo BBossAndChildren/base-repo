@@ -96,6 +96,7 @@
 | POST | `/api/v1/plays/{playId}/experience-heartbeat` | 체험 생존 신호 (응답 감싸지 않음) | |
 | POST | `/api/v1/plays/{playId}/experience-pending` | 종료 응답 미수신 기록 (응답 감싸지 않음) | |
 | POST | `/api/v1/plays/{playId}/experience-offers` | 3D 체험 추천 받기 (화면 카드, 채팅 분기 없이) | BE16 |
+| POST | `/api/v1/plays/{playId}/experience-offers/dismiss` | 현재 채팅 체험 제안 명시적 거절 | BE11 |
 | GET | `/api/v1/plays/{playId}/result` | 결말 · 추천 직업 | |
 | GET | `/api/v1/players/me/plays` | 지난 플레이 기록 목록 | |
 
@@ -200,6 +201,7 @@
 - `title` 은 Unity 허용 목록(`production-supported-manifest.json`)의 `title`, `jobs` 는 카탈로그의 `jobs`, `reason` 은 AI 응답 `branch.reason`. 3D 안내 카드에 "무슨 체험인지 · 왜 지금인지"를 보여 주는 용도
 - `buildUrl` 은 백엔드가 요청이 들어온 주소(현재 터널 주소) 기준으로 만든다 ([06 5-2](06-deployment.md#5-2-3d-빌드-파일-저장--관리--전달))
 - `experience` 는 3D 분기일 때만 채운다. 맞는 빌드가 없으면 `null` 과 함께 `notice` 를 준다
+- 채팅 제안의 `experience.offerId`는 이 응답의 `turnId`와 같다. 재개/명시 거절에서 안정적으로 사용하며, 구버전 응답과 별도 화면 추천 카드에서는 생략할 수 있다.
 ```json
 "experience": {
   "buildId": "career-suite-integration-v005",
@@ -293,6 +295,19 @@
 ```
 - `sessionId` 는 게임 시작(1-2) 때 받은 값과 같다. 다른 기기 · 브라우저에서 이어 해도 3D 체험에 같은 `sessionId` 를 쓸 수 있게 돌려준다
 - 재접속만으로는 진행 중이던 3D 체험을 정산하지 않는다 (정산은 [1-8](#1-8-종료-응답-없는-체험-정산))
+- 선택 필드 `experience`는 **마지막 확정 채팅 턴**의 제안만 현재 카탈로그·허용 목록으로 재검증하고 현재 요청 주소의 buildUrl로 복원한다. 뒤 대화가 있으면 더 오래된 제안을 찾지 않는다. `pendingChoices`의 직업·대출 제안과 별개다.
+- `experienceState`는 `{offerId,lifecycleStatus,experienceId,outcome}` 또는 null이다. 제안만 저장된 경우 `offered`이며 실제 미시작/완료를 추정한 값이 아니다. 같은 플레이·세션·체험 정체성의 관측 기록이 있으면 카드 `experience`는 null이고 DB의 실제 lifecycleStatus를 반환한다. 종료 이벤트가 있으면 `ended`와 원본 `result.outcome`만 반환하고, `experience.error` 관측은 `error`다. `recommended/started/pending_reconciliation/deferred_active/interrupted/not_started`도 신규 카드로 복원하지 않는다.
+- 명시 거절은 `declined`, 카탈로그에서 사라진 제안은 `unavailable`로 카드 없이 반환한다. 완료한 체험과 동일 시나리오라도 **그 완료 이후에 새로 받은 제안**은 다른 offerId로 구분한다. 아직 처리 중인 동일 체험 또는 제안 이후 갱신된 관측 기록은 새 미시작 제안으로 취급하지 않는다.
+- 선택 필드 `hints`는 마지막 턴의 안내이며, 해당 체험의 관측·거절·사용 불가 또는 인생 종료 후에는 빈 목록이다. 뒤에 새 대화 턴이 저장되면 그 턴의 힌트를 사용한다. 조회는 체험 생성·정산·게임 상태 저장을 하지 않는다.
+
+현재 채팅 체험 제안 닫기: `POST /api/v1/plays/{playId}/experience-offers/dismiss` · 인증 `X-Player-Id`
+
+```json
+{"sessionId":"현재 플레이 세션 UUID","offerId":"현재 채팅 제안의 턴 UUID"}
+```
+
+성공: `{code:200,data:{offerId:"UUID",lifecycleStatus:"declined"}}`. 같은 제안 거절은 멱등이며 상태 버전을 한 번만 증가시켜 진행 중 채팅이 거절 기록을 덮어쓰지 못하게 한다. 세션 불일치/입력 오류 400, 다른 소유자·이전 턴·없는 제안 404, 이미 관측되거나 끝난 체험 409 `STATE_CONFLICT`. 거절한 제안은 이후 체험 시작 근거로 사용하지 않는다. 프론트는 명시 거절 또는 시작 전 건너뛰기의 ACK를 받은 뒤 카드를 닫고, 실패하면 카드를 유지한다. 이 계약은 채팅 턴의 카드에만 적용하며 별도 화면 추천(1-11)의 동작을 바꾸지 않는다.
+
 
 ### 1-8. 종료 응답 없는 체험 정산
 `POST /api/v1/plays/{playId}/experience-reconcile` · 인증: `X-Player-Id`

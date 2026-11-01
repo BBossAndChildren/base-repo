@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     EventView,
+    ExperienceDismissView,
     ExperienceOfferView,
     HeartbeatView,
     PendingView,
@@ -27,6 +28,11 @@ urlpatterns = [
         "plays/<str:play_id>/experience-offers",
         ExperienceOfferView.as_view(),
         name="experience-offers",
+    ),
+    path(
+        "plays/<str:play_id>/experience-offers/dismiss",
+        ExperienceDismissView.as_view(),
+        name="experience-dismiss",
     ),
     path("plays/<str:play_id>/experience-reconcile", ReconcileView.as_view(), name="reconcile"),
     path("plays/<str:play_id>/result", ResultView.as_view(), name="result"),

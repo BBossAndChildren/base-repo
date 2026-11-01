@@ -156,6 +156,8 @@ def run_turn(play, message, base_url, request_id):
         if time.monotonic() >= deadline:
             raise GameError(504, "TIMEOUT", "응답 시간이 초과되었습니다.")
         turn_id = uuid.uuid4()
+        if experience:
+            experience = {**experience, "offerId": str(turn_id)}
         result = {
             "turnId": str(turn_id),
             "messages": data["messages"],

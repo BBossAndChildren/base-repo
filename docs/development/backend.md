@@ -212,6 +212,13 @@ docker compose build backend
 | 64 | 실제 AI 연결 (GPU 서버) #113 | 서버: 중계기 `ai-relay`(172.17.0.1:18010 → AI 127.0.0.1:8010), `.env` `AI_API_BASE_URL=http://host.docker.internal:18010` · 기존 키, 컨테이너에서 `/openapi.json`, 게이트웨이로 게스트 → 시작 → 턴. 배포 사이트 headless Chrome 대화 2턴 | 컨테이너 → AI 200, 턴 `code:200` (실제 Qwen 대사 · 확정 state), 사이트 대화 200 · 약 6초 · 이전 대화 기억. 추천 · 결말 API 는 AI 쪽 미구현, Cloudflare 502 변환(11 E3) 남음 | AI 쪽 추천 · 결말 구현 대기 |
 | 65 | 허용 출처 zeta 하나로 #122 | `python3 backend/scripts/test_intro_gateway.py`, 전체 `python manage.py test`, Ruff | 게이트웨이 PASS (zeta 허용 · 이전 `base-repo-ck83` · 목록 밖 출처는 CORS 헤더 없음), Django 148개 통과. GPU 서버 반영(pull · `.env` · 재기동)은 서버 작업 | 서버 반영 대기 |
 
+| 75 | 마지막 턴 체험 제안 재개 (#167) | 새 experience_resume → experience_resume·resume·turns (로컬 PostgreSQL16) | 수정 전 응답 필드 부재로 실패, 구현 후 기존 offerId 기대값 갱신하고 관련 22개 통과. 현재 카탈로그/주소 검증·뒤 대화 이후 미복원·관측 상태/완주/실패 구분·다른 플레이/세션 분리·조회 무쓰기 확인 | 명시 거절 저장 구현 가능 |
+
+| 76 | 채팅 체험 제안 거절 저장 (#167) | 새 거절 3개 실패 → experience_resume·resume·events·experience_offers | 멱등 거절·소유권/세션/현재 턴 검증·관측 체험 거부·시작 차단·동시 생성 버전 보호 구현 후 관련 30개 통과 | 종료 시점 경계 확인 |
+| 77 | 제안 이후 체험 종료 경계 (#167) | 기존 생성 시각만으로는 제안 전 시작/제안 후 종료 시 카드 재등장 1개 실패 → 마지막 갱신 시각 포함 | 종료 이후 재등장 차단·원본 error 상태 추가, 관련 42개 PostgreSQL 테스트 통과. 새 제안 전 이미 끝난 같은 시나리오는 구분 | 전체 회귀 실행 |
+
+| 78 | 체험 카드 재개 최종 검사 (#167) | 전체 test · check · makemigrations/migrate check · spectacular `--validate --fail-on-warn` · Ruff · Docker build | 실제 로컬 PostgreSQL16·모의 AI 189개 통과(4.892초). 사용하지 않는 테스트 import 1개 제거 후 Ruff 101파일·스키마·이미지 빌드 통과. 실제 프론트/GPU/Unity 통합은 별도 검증 | Draft PR 준비 가능 |
+
 ## 5. 미확정·외부 의존 사항
 
 - 미배정 자산·비용은 0, 미확정 급여·성적·흥미 단계는 null로 두며 현실 수치를 추정하지 않는다. AI의 사망 제안만으로 종료하지 않고 건강 0 지속/과로 확정 판정을 사용한다. 이전 추상 상태는 다음 유효 턴에서 전환하고 원본을 비공개 보존한다.

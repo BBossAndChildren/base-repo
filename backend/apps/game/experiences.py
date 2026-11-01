@@ -4,6 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from .common import GameError, is_ended
+from .experience_resume import is_dismissed
 from .models import Experience, ExperienceOffer, Play
 
 METADATA_KEYS = ("buildId", "roomId", "scenarioId", "scenarioVersion")
@@ -15,10 +16,12 @@ RECENT_CARD_OFFERS = 5
 def recent_offers(play):
     """시작할 수 있는 추천: 최근 채팅 턴의 3D 분기 + 화면 카드 추천 몇 개 (#163). 최신순"""
     rows = []
-    turn = (
-        play.turns.filter(response__experience__buildId__isnull=False).order_by("-number").first()
-    )
-    if turn:
+    turn = play.turns.order_by("-number").first()
+    if (
+        turn
+        and (turn.response.get("experience") or {}).get("buildId")
+        and not is_dismissed(play, turn)
+    ):
         rows.append((turn.created_at, turn.response["experience"]))
     for offer in ExperienceOffer.objects.filter(play=play).order_by("-created_at")[
         :RECENT_CARD_OFFERS
