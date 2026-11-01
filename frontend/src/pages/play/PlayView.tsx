@@ -18,6 +18,7 @@ import { declineOpenOffers, messagesToTimeline, nextId, type TimelineItem } from
 const CHANGE_HIGHLIGHT_MS = 1600
 
 const NO_CHANGES: ReadonlySet<StatusField> = new Set()
+const COMPLETED_INPUT_EXAMPLES = ['방금 체험한 내용에 대해 이야기하고 싶어', '다른 활동도 알아보고 싶어']
 
 /** 이 오류 뒤에 같은 문장을 다시 보내면 같은 requestId 를 쓴다 (서버가 저장한 결과를 주거나 다시 처리). REQUEST_CONFLICT 만 새 ID */
 const KEEP_REQUEST_ID = new Set(['TIMEOUT', 'NETWORK', 'AI_UNAVAILABLE', 'TURN_IN_PROGRESS', 'STATE_CONFLICT', 'PLAY_PAUSED', 'CONTENT_UNAVAILABLE', 'UNKNOWN'])
@@ -50,6 +51,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   const [status, setStatus] = useState<StatusValues>(() => pickStatus(play.state, play.npcs ?? []))
   const [changed, setChanged] = useState<ReadonlySet<StatusField>>(NO_CHANGES)
   const [hints, setHints] = useState<string[]>([])
+  const [showCompletedExamples, setShowCompletedExamples] = useState(false)
   const [choices, setChoices] = useState<PendingChoice[]>(() => usableChoices(play.pendingChoices))
   const [draft, setDraft] = useState('')
   const [waiting, setWaiting] = useState(false)
@@ -88,6 +90,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     if (turn.notice) toast.show({ message: turn.notice.message })
     setItems((prev) => [...prev, ...added])
     setHints(turn.hints)
+    setShowCompletedExamples(false)
     setChoices(usableChoices(turn.pendingChoices))
     if (turn.ended) setEnded(true)
   }
@@ -167,6 +170,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
     try {
       const latest = await gameApi.getPlay(play.playId)
       setItems(messagesToTimeline(latest.messages))
+      setShowCompletedExamples(false)
       if (latest.npcs) npcsRef.current = latest.npcs
       stateRef.current = latest.state
       setStatus(pickStatus(latest.state, npcsRef.current))
@@ -186,6 +190,9 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   function closeExperience(exit: ExperienceExit) {
     const cardId = activeExperience?.cardId
     setActiveExperience(null)
+    // 체험 전 턴의 힌트는 이미 지난 안내다. 완료가 확인된 경우에만 회고 예시를 제공한다
+    setHints([])
+    setShowCompletedExamples(exit === 'completed')
     // 체험을 하지 못했으면(불러오기 실패 · 건너뛰기) 카드를 "다음에 하기로 했어요" 로, 했으면 "마쳤어요" 로
     const status: 'declined' | 'done' = exit === 'skipped' ? 'declined' : 'done'
     setItems((prev) => {
@@ -196,6 +203,8 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
   }
 
   function declineExperience(id: string) {
+    setHints([])
+    setShowCompletedExamples(false)
     setItems((prev) => prev.map((item) => (item.id === id && item.kind === 'experience' ? { ...item, status: 'declined' } : item)))
   }
 
@@ -231,7 +240,7 @@ export function PlayView({ play, onStartExperience }: PlayViewProps) {
               </div>
             </div>
           ) : (
-            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} choices={choices} disabled={waiting} waiting={waiting} />
+            <Composer value={draft} onChange={setDraft} onSubmit={() => void send()} hints={hints} inputExamples={showCompletedExamples ? COMPLETED_INPUT_EXAMPLES : undefined} choices={choices} disabled={waiting} waiting={waiting} />
           )}
         </section>
         <StatusPanel values={status} changed={changed} actions={pauseAction} />
