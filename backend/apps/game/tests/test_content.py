@@ -42,6 +42,36 @@ class ContentTests(SimpleTestCase):
         self.assertTrue(scenario.endswith("최신 확정 규칙"))
         self.assertIn("우선 적용", scenario)
 
+    def test_career_matching_guide_is_sent_after_latest_rules(self):
+        (self.root / "07-career-matching-and-rating-v001.md").write_text(
+            "직업체험 3회 · 별점 1~5<!-- 주석 -->", encoding="utf-8"
+        )
+        scenario = content_bundle()[1]
+        self.assertTrue(
+            scenario.endswith("[직업체험 매칭 · 만족도 · 최종 선택 지침]\n직업체험 3회 · 별점 1~5")
+        )
+        self.assertLess(scenario.index("최신 확정 규칙"), scenario.index("직업체험 3회"))
+
+    def test_career_matching_path_can_be_overridden_and_is_optional(self):
+        other = self.root / "다른-매칭.md"
+        other.write_text("다른 매칭 지침", encoding="utf-8")
+        with override_settings(GAME_CAREER_MATCHING_PATH=str(other)):
+            self.assertIn("다른 매칭 지침", content_bundle()[1])
+        read_markdown.cache_clear()
+        self.assertNotIn("직업체험 매칭", content_bundle()[1])  # 파일이 없으면 넣지 않고 계속 진행
+
+    def test_real_repository_bundle_includes_career_matching_guide(self):
+        from django.conf import settings as real
+
+        repo = Path(real.BASE_DIR).parent / "docs/game"
+        with override_settings(
+            GAME_CONTENT_DIR=str(repo),
+            GAME_GUIDELINES_PATH=str(repo / "00-guidelines.md"),
+            GAME_SCENARIO_PATH=str(repo / "02-game-scenario.md"),
+        ):
+            read_markdown.cache_clear()
+            self.assertIn("대화 기반 직업체험 매칭·만족도·최종 선택 지침", content_bundle()[1])
+
     def test_missing_optional_documents_keep_latest_mandatory_rules(self):
         self.assertIn("최신 확정 규칙", content_bundle()[1])
 

@@ -110,5 +110,7 @@ GAME_GUIDELINES_PATH = env(
 GAME_SCENARIO_PATH = env(
     "GAME_SCENARIO_PATH", default=str(Path(GAME_CONTENT_DIR) / "02-game-scenario.md")
 )
+# 직업체험 매칭 · 만족도 · 최종 선택 지침. 비우면 GAME_CONTENT_DIR 의 기본 파일 (10 1절)
+GAME_CAREER_MATCHING_PATH = env("GAME_CAREER_MATCHING_PATH", default="")
 GAME_BUILD_CATALOG_PATH = env("GAME_BUILD_CATALOG_PATH", default="")
 MOCK_AI_ENABLED = env.bool("MOCK_AI_ENABLED", default=False)
