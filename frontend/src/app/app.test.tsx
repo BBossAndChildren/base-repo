@@ -145,7 +145,7 @@ describe('앱 시작 · 라우팅 · 이어하기', () => {
     renderApp(`/play/${playId}`)
     const panel = await screen.findByRole('complementary', { name: '내 상태' })
     expect(within(panel).getByText('15세')).toBeInTheDocument()
-    expect(getLastPlayId()).toBe(playId)
+    await waitFor(() => expect(getLastPlayId()).toBe(playId))
   })
 
   it('없는 플레이는 안내와 시작 화면 링크를 보여 준다', async () => {
